@@ -1892,3 +1892,498 @@ textarea {
 .dialog.dialog-wide {
   max-width: 520px;
 }
+
+/* ---------- Weekly Report Card (in dialog) -------------------------------- */
+.report-dialog {
+  max-width: 560px;
+}
+.weekly-card {
+  margin-top: 1rem;
+  border-radius: 18px;
+  padding: 1.25rem 1.25rem 1.1rem;
+  background:
+    radial-gradient(120% 80% at 0% 0%, color-mix(in oklab, var(--color-accent) 22%, transparent), transparent 60%),
+    radial-gradient(90% 80% at 100% 0%, color-mix(in oklab, var(--color-ring, #54e6ff) 18%, transparent), transparent 55%),
+    linear-gradient(180deg, color-mix(in oklab, var(--color-accent) 8%, var(--color-elevated)) 0%, var(--color-elevated) 100%);
+  box-shadow: var(--shadow-border), 0 10px 40px -18px color-mix(in oklab, var(--color-accent) 50%, transparent);
+  color: var(--color-fg);
+  position: relative;
+  overflow: hidden;
+}
+.wc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+.wc-brand { display: flex; align-items: center; gap: 0.6rem; }
+.wc-logo {
+  width: 40px; height: 40px;
+  border-radius: 12px;
+  background: var(--color-accent);
+  color: var(--color-accent-fg);
+  display: grid; place-items: center;
+  font-weight: 800; letter-spacing: 0.02em;
+  box-shadow: 0 4px 14px -6px color-mix(in oklab, var(--color-accent) 80%, transparent);
+}
+.wc-app { margin: 0; font-weight: 700; font-size: 1rem; line-height: 1.1; }
+.wc-week { margin: 0.1rem 0 0 0; font-size: 0.75rem; color: var(--color-subtle); }
+.wc-streak {
+  display: inline-flex; align-items: baseline; gap: 0.25rem;
+  padding: 0.35rem 0.6rem;
+  background: color-mix(in oklab, #ff8a3d 18%, transparent);
+  color: #ffb37a;
+  border: 1px solid color-mix(in oklab, #ff8a3d 30%, transparent);
+  border-radius: 999px;
+  font-weight: 700;
+}
+.wc-fire { font-size: 1rem; }
+.wc-streak-num { font-size: 1.05rem; }
+.wc-streak-lbl { font-weight: 500; font-size: 0.72rem; opacity: 0.85; }
+
+.wc-big { margin-top: 1.15rem; text-align: center; }
+.wc-kicker { margin: 0; color: var(--color-subtle); font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; }
+.wc-number {
+  margin: 0.25rem 0 0.1rem;
+  font-size: clamp(2.6rem, 9vw, 3.6rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, var(--color-accent) 0%, color-mix(in oklab, var(--color-accent) 60%, #f0c27b) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.wc-sub { margin: 0; color: var(--color-muted); font-size: 0.8rem; }
+
+.wc-grid {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+.wc-mini {
+  padding: 0.7rem 0.8rem;
+  border-radius: 12px;
+  background: color-mix(in oklab, var(--color-fg) 5%, transparent);
+  border: 1px solid color-mix(in oklab, var(--color-fg) 8%, transparent);
+}
+.wc-mini-kicker { margin: 0; color: var(--color-subtle); font-size: 0.7rem; letter-spacing: 0.05em; text-transform: uppercase; }
+.wc-mini-val { margin: 0.25rem 0 0; font-weight: 700; font-size: 0.95rem; }
+.wc-mini-sub { margin: 0.12rem 0 0; color: var(--color-muted); font-size: 0.75rem; }
+
+/* Mini per-day bars (weekly card) */
+.wc-bars, .sc-bars {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.375rem;
+  align-items: end;
+  margin-top: 1rem;
+  padding: 0.65rem 0.5rem;
+  border-radius: 12px;
+  background: color-mix(in oklab, var(--color-fg) 3%, transparent);
+  border: 1px solid color-mix(in oklab, var(--color-fg) 6%, transparent);
+}
+.wc-bars { height: 150px; }
+.bar-col {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 0.25rem;
+  align-items: end;
+  justify-items: center;
+  height: 100%;
+}
+.bar-lbl, .sc-bar-lbl {
+  font-size: 0.68rem;
+  color: var(--color-subtle);
+  font-weight: 500;
+  text-align: center;
+}
+.bar-lbl.today, .sc-bar-lbl.today { color: var(--color-accent); font-weight: 700; }
+.bar-track {
+  width: 78%;
+  height: 100%;
+  background: color-mix(in oklab, var(--color-fg) 8%, transparent);
+  border-radius: 999px;
+  position: relative;
+  overflow: hidden;
+}
+.bar-fill {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: var(--h, 0%);
+  border-radius: 999px;
+  transition: height 0.3s ease;
+  box-shadow: 0 0 12px -6px color-mix(in oklab, var(--color-accent) 70%, transparent);
+}
+.bar-val, .sc-bar-val {
+  font-size: 0.68rem;
+  color: var(--color-muted);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.wc-quote {
+  margin-top: 1rem;
+  padding: 0.75rem 0.8rem;
+  border-left: 3px solid var(--color-accent);
+  background: color-mix(in oklab, var(--color-accent) 8%, transparent);
+  border-radius: 0 10px 10px 0;
+  color: var(--color-fg);
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+}
+.wc-quote svg { color: var(--color-accent); opacity: 0.9; margin-top: 2px; flex: 0 0 auto; }
+.wc-quote-text { margin: 0; font-size: 0.85rem; line-height: 1.55; font-family: var(--font-serif); }
+
+.wc-footer {
+  margin-top: 0.9rem;
+  text-align: center;
+  padding: 0.5rem 0.75rem;
+  border-radius: 10px;
+  background: color-mix(in oklab, var(--color-fg) 4%, transparent);
+}
+.wc-footer-text {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--color-muted);
+  font-style: italic;
+}
+
+/* ---------- Story 9:16 card (for PNG export via html2canvas) ------------- */
+#story-card-root {
+  position: fixed;
+  left: -99999px;
+  top: 0;
+  visibility: hidden;
+  pointer-events: none;
+  z-index: -999;
+}
+.story-card {
+  width: 360px;
+  height: 640px; /* 9:16 exact */
+  position: relative;
+  overflow: hidden;
+  border-radius: 28px;
+  padding: 26px 26px 22px;
+  color: #f3f4ef;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  background:
+    radial-gradient(80% 60% at 100% 0%, rgba(255, 194, 123, 0.35) 0%, transparent 60%),
+    radial-gradient(70% 55% at 0% 100%, rgba(132, 204, 22, 0.32) 0%, transparent 62%),
+    radial-gradient(120% 70% at 0% 0%, rgba(181, 100, 214, 0.35) 0%, transparent 58%),
+    linear-gradient(160deg, #130f2a 0%, #20183b 40%, #231833 100%);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+.story-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(115deg, rgba(255,255,255,0.035) 0 1px, transparent 1px 18px),
+    radial-gradient(180% 90% at 20% 20%, rgba(255,255,255,0.04), transparent 60%);
+  mix-blend-mode: screen;
+}
+.sc-glow {
+  position: absolute;
+  width: 220px; height: 220px;
+  top: -60px; right: -60px;
+  background: radial-gradient(circle at 50% 50%, rgba(255, 160, 80, 0.55), transparent 70%);
+  filter: blur(10px);
+  pointer-events: none;
+}
+.sc-top {
+  display: flex; align-items: center; gap: 12px;
+  position: relative;
+  z-index: 1;
+}
+.sc-logo-round {
+  width: 46px; height: 46px;
+  border-radius: 14px;
+  display: grid; place-items: center;
+  background: linear-gradient(135deg, #d9f99d 0%, #bef264 100%);
+  color: #1a2e05;
+  font-weight: 900;
+  font-size: 18px;
+  box-shadow: 0 8px 22px -10px rgba(190,242,100,0.8), inset 0 1px 0 rgba(255,255,255,0.4);
+  font-family: inherit;
+}
+.sc-app-name { margin: 0; font-weight: 800; font-size: 18px; letter-spacing: -0.01em; }
+.sc-app-sub { margin: 2px 0 0; font-size: 11.5px; color: rgba(255,255,255,0.65); }
+
+.sc-hero {
+  margin-top: 24px;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+.sc-hero-num {
+  margin: 0;
+  font-size: 68px;
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #fde68a 0%, #fca5a5 50%, #d9f99d 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-family: inherit;
+  text-shadow: 0 2px 40px rgba(253,230,138,0.18);
+}
+.sc-hero-lbl {
+  margin: 6px 0 0;
+  font-size: 12.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: rgba(255,255,255,0.55);
+  font-weight: 600;
+}
+
+.sc-streak-row {
+  margin: 18px auto 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(6px);
+  justify-self: center;
+  position: relative;
+  z-index: 1;
+}
+.sc-fire { font-size: 17px; }
+.sc-streak-num { font-weight: 900; font-size: 17px; color: #ffcc70; }
+.sc-streak-lbl { font-size: 11.5px; color: rgba(255,255,255,0.7); font-weight: 600; }
+
+.sc-stats {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  position: relative;
+  z-index: 1;
+}
+.sc-stat {
+  padding: 10px 10px 11px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  text-align: center;
+}
+.sc-stat-k {
+  margin: 0;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: rgba(255,255,255,0.5);
+  font-weight: 700;
+}
+.sc-stat-v {
+  margin: 5px 0 0;
+  font-weight: 800;
+  font-size: 14px;
+  line-height: 1.2;
+  color: #f8faf3;
+}
+
+.sc-bars {
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  padding: 12px 10px 10px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+  margin-top: 18px;
+  height: 120px;
+  position: relative;
+  z-index: 1;
+}
+.sc-bar-col {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 4px;
+  align-items: end;
+  justify-items: center;
+  height: 100%;
+}
+.sc-bar-lbl {
+  font-size: 9.5px;
+  color: rgba(255,255,255,0.55);
+  font-weight: 600;
+  font-family: inherit;
+}
+.sc-bar-track {
+  width: 80%;
+  height: 100%;
+  background: rgba(255,255,255,0.08);
+  border-radius: 999px;
+  position: relative;
+  overflow: hidden;
+}
+.sc-bar-fill {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: var(--h, 0%);
+  border-radius: 999px;
+  box-shadow: 0 0 10px -2px rgba(217, 249, 157, 0.55);
+}
+.sc-bar-val {
+  font-size: 9px;
+  color: rgba(255,255,255,0.55);
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+}
+
+.sc-quote {
+  margin-top: 18px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-left: 3px solid #bef264;
+  position: relative;
+  z-index: 1;
+}
+.sc-quote p {
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: rgba(255,255,255,0.82);
+  font-family: "Fraunces", Georgia, serif;
+}
+
+.sc-footer {
+  margin-top: auto;
+  padding-top: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: rgba(255,255,255,0.5);
+  position: relative;
+  z-index: 1;
+}
+.sc-handle { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; }
+.sc-week { font-size: 10px; font-weight: 600; opacity: 0.7; }
+
+/* ---------- Guide / Thank-you page ------------------------------------- */
+.guide-letter {
+  margin-bottom: 1.25rem;
+  background:
+    radial-gradient(90% 70% at 0% 0%, color-mix(in oklab, var(--color-accent) 16%, transparent), transparent 60%),
+    radial-gradient(90% 70% at 100% 100%, color-mix(in oklab, #f0c27b 14%, transparent), transparent 60%),
+    var(--color-elevated);
+  box-shadow: var(--shadow-border);
+  border-radius: var(--radius-lg);
+  padding: 1.1rem 1.1rem 0.9rem;
+  position: relative;
+  overflow: hidden;
+}
+.guide-letter-top {
+  display: flex; align-items: center; gap: 0.8rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px dashed color-mix(in oklab, var(--color-fg) 14%, transparent);
+  margin-bottom: 0.75rem;
+}
+.guide-avatar {
+  width: 48px; height: 48px;
+  border-radius: 16px;
+  display: grid; place-items: center;
+  background: color-mix(in oklab, var(--color-accent) 20%, var(--color-elevated));
+  font-size: 22px;
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-accent) 30%, transparent);
+}
+.guide-letter h3 { margin: 0; font-size: 1.05rem; line-height: 1.25; }
+.guide-letter-body p {
+  margin: 0 0 0.65rem;
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: var(--color-fg);
+}
+.guide-letter-body code {
+  padding: 0.08rem 0.35rem;
+  font-size: 0.82em;
+  background: color-mix(in oklab, var(--color-fg) 8%, transparent);
+  border-radius: 6px;
+  border: 1px solid color-mix(in oklab, var(--color-fg) 8%, transparent);
+}
+.guide-note {
+  margin-top: 0.9rem;
+  padding: 0.85rem 0.95rem;
+  border-radius: 12px;
+  background:
+    linear-gradient(135deg, color-mix(in oklab, #f0c27b 14%, transparent) 0%, transparent 50%),
+    color-mix(in oklab, var(--color-accent) 7%, var(--color-surface));
+  border: 1px solid color-mix(in oklab, #f0c27b 28%, transparent);
+  color: var(--color-fg);
+}
+.guide-note-title { margin: 0 0 0.2rem; font-weight: 700; font-size: 0.9rem; color: var(--color-accent); }
+.guide-note-body { margin: 0; font-size: 0.85rem; line-height: 1.6; color: var(--color-muted); }
+.guide-note-body b { color: var(--color-fg); }
+
+.guide-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.guide-item {
+  background: var(--color-elevated);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-border);
+  padding: 0.7rem 0.9rem 0.1rem;
+  border: 1px solid var(--color-border);
+}
+.guide-item > summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 0.2rem 0 0.6rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+}
+.guide-item > summary::-webkit-details-marker { display: none; }
+.guide-item h4 { margin: 0; font-size: 0.92rem; line-height: 1.3; }
+.guide-item h4 + .desc { margin: 0.25rem 0 0; font-size: 0.78rem; }
+.guide-ic {
+  font-size: 1.25rem;
+  width: 34px; height: 34px;
+  display: grid; place-items: center;
+  border-radius: 10px;
+  background: color-mix(in oklab, var(--color-accent) 14%, var(--color-surface));
+  border: 1px solid color-mix(in oklab, var(--color-accent) 25%, transparent);
+  flex: 0 0 auto;
+}
+.guide-item[open] .guide-ic {
+  background: var(--color-accent);
+  color: var(--color-accent-fg);
+}
+.guide-body {
+  padding: 0 0 0.9rem;
+  padding-left: calc(34px + 0.7rem);
+}
+.guide-body ul { margin: 0; padding-left: 1.1rem; display: flex; flex-direction: column; gap: 0.45rem; }
+.guide-body li { font-size: 0.85rem; line-height: 1.55; color: var(--color-muted); }
+.guide-body code {
+  padding: 0.08rem 0.35rem;
+  font-size: 0.82em;
+  background: color-mix(in oklab, var(--color-fg) 8%, transparent);
+  border-radius: 6px;
+  border: 1px solid color-mix(in oklab, var(--color-fg) 8%, transparent);
+  color: var(--color-fg);
+}
+.guide-body b { color: var(--color-fg); }
+
+/* -------- Bottom nav wider for 6 items (include guide) ------------------ */
+@media (max-width: 860px) {
+  .bottom-nav ul {
+    grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+  }
+  .bottom-nav .nav-btn span {
+    font-size: 10px;
+  }
+}

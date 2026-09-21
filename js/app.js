@@ -9,7 +9,7 @@
   const DICTS = {
     vi: {
       brand: { tagline: "Phòng học tập cá nhân", localOnly: "Dữ liệu chỉ lưu ở trình duyệt của bạn." },
-      nav: { focus: "Tập trung", schedule: "Lịch học", board: "Bảng việc", insights: "Thống kê", data: "Dữ liệu" },
+      nav: { focus: "Tập trung", schedule: "Lịch học", board: "Bảng việc", insights: "Thống kê", data: "Dữ liệu", guide: "Cảm ơn & HD" },
       author: { title: "Tác giả" },
       common: { start: "Bắt đầu", pause: "Tạm dừng", reset: "Đặt lại", settings: "Cài đặt",
         add: "Thêm", cancel: "Hủy", save: "Lưu", done: "Hoàn thành", undo: "Hoàn tác",
@@ -88,11 +88,58 @@
         bgLofi: "Lofi Pixel",
         bgCyber: "Cyber Neon"
       },
+      report: {
+        openWeekly: "Thẻ tổng kết tuần",
+        title: "Thẻ tổng kết tuần",
+        range: "{start} → {end}",
+        app: "QuietHours",
+        days: "ngày",
+        thisWeek: "Tổng giờ tuần này",
+        sessions: "phiên tập trung",
+        topSubject: "Môn học nhiều nhất",
+        bestDay: "Ngày năng suất nhất",
+        downloadStory: "Tải ảnh Story",
+        tagline: "Tuần này tôi đã học",
+        focusHours: "Giờ tập trung",
+        dayStreak: "Ngày liên tục",
+        prepDownload: "Đang chuẩn bị ảnh...",
+        downloaded: "Đã tải! 🌿",
+        notAvailable: "Thư viện html2canvas chưa được tải. Vui lòng kiểm tra mạng.",
+        mon: "Thứ 2", tue: "Thứ 3", wed: "Thứ 4", thu: "Thứ 5", fri: "Thứ 6", sat: "Thứ 7", sun: "Chủ nhật",
+        todayShort: "Hôm nay"
+      },
+      guide: {
+        kicker: "Góc nhỏ",
+        title: "Cảm ơn & Hướng dẫn sử dụng",
+        subtitle: "Những điều nhỏ xinh bạn nên biết để đồng hành cùng QuietHours thật hiệu quả.",
+        letterTitle: "Thư gửi bạn - người sử dụng QuietHours",
+        letterFrom: "Tác giả · s1gnuh · một người luôn tin vào sức mạnh của thói quen nhỏ.",
+        dataTitle: "Về dữ liệu của bạn - Lưu ý quan trọng",
+        h1Title: "Duy trì Streak và quy tắc đứt chuỗi",
+        h1Sub: "Chuỗi ngày học tập liên tục - nguồn động lực vô hình đáng giá nhất.",
+        h1p1: "✅ <b>Cách tính Streak:</b> Tính từ hôm nay (hoặc hôm qua nếu hôm nay chưa học), lùi về phía trước đếm số ngày liên tiếp bạn đã hoàn thành <b>ít nhất 1 phiên Pomodoro Tập trung</b> (log ghi nhận).",
+        h1p2: "✅ <b>Mẹo duy trì:</b> Đừng để ngày \"trắng\"! Ngày bận quá cũng hãy hoàn thành <b>ít nhất 1 Pomodoro ngắn</b> (25 phút) - một chút còn hơn mất trắng, giúp Streak không bị đứt.",
+        h1p3: "❌ <b>Đứt chuỗi:</b> Bỏ lỡ 1 ngày bất kỳ trong chuỗi → Streak reset về 0 vào ngày hôm sau. Đừng quá buồn nhé, thói quen tốt đáng để ta bắt đầu lại bất cứ lúc nào.",
+        h1p4: "💡 <b>Trick:</b> Đặt lịch Pomodoro 25 phút đầu ngày làm nhiệm vụ \"đánh dấu có mặt\" - bạn sẽ ngạc nhiên vì mức độ hiệu quả của nó.",
+        h2Title: "Tạo & lưu Sound Mixes cá nhân (Atmosphere)",
+        h2Sub: "Lập không gian âm thanh yêu thích của riêng bạn - mưa, quán cà phê, lửa trại, sóng biển, lofi...",
+        h2p1: "✅ Mở tab <b>Tập trung</b>, tìm thẻ <b>Atmosphere</b> (Ambient Mixer).",
+        h2p2: "✅ Bật các track (Mưa, Quán cà phê, Biển, Lò sưởi, Lofi beat) bằng nút 🔘, kéo thanh trượt Volume để cân bằng độ lớn theo ý thích.",
+        h2p3: "✅ Tăng giảm <b>Master Volume</b> (âm lượng tổng) nhanh chóng.",
+        h2p4: "💾 <b>Tự động lưu:</b> mọi thay đổi của bạn (bật/tắt track, volume) được lưu tự động vào Local Storage. Lần sau khi mở web, Mix yêu thích của bạn vẫn nguyên vẹn.",
+        h2p5: "💡 <b>Mẹo mix ngon:</b> Mưa (60%) + Quán cà phê (25%) + Master 50% = hiệu quả work từ 2-3 tiếng không mệt.",
+        h3Title: "Sử dụng Zen Mode & Xuất ảnh Story chia sẻ",
+        h3Sub: "Tập trung cực sâu + khoe thành tích tuần 1 cách đẹp mắt lên MXH.",
+        h3p1: "🧘 <b>Zen Mode (tối giản toàn màn hình):</b> Tìm nút \"Chuyển sang chế độ toàn màn hình / Chế độ Zen\" trên thanh công cụ. Các thanh điều hướng, thẻ phụ sẽ ẩn đi, chỉ giữ lại Đồng hồ Pomodoro nghệ thuật + câu Quote truyền cảm hứng. Nhấn <code>ESC</code> hoặc nút \"Thoát Zen\" để về giao diện bình thường.",
+        h3p2: "📊 <b>Thẻ Tổng Kết Tuần:</b> Mở tab <b>Thống kê</b>, bấm nút <b>Thẻ tổng kết tuần</b>. Một Modal hiện ra với: tổng giờ học, Streak, Môn học nhiều nhất, Ngày năng suất nhất, biểu đồ ngày trong tuần và 1 câu quote ngẫu nhiên.",
+        h3p3: "📸 <b>Tải ảnh Story 9:16:</b> Trong Modal Tổng kết tuần, bấm nút <b>Tải ảnh Story</b>. Ứng dụng sẽ dựng một thẻ tỉ lệ <b>9:16</b> (chuẩn Instagram / Facebook Story) với gradient hiện đại, chụp bằng thư viện <code>html2canvas</code> và tự động tải về máy. Bạn chỉ cần đăng tải lên MXH thôi!",
+        h3p4: "💡 <b>Chia sẻ hay nói gì?</b> Đừng quên tag <code>@quiethours</code> / hashtag <code>#quiethours</code> / <code>#s1gnuh</code> để mình có thể thấy và vui cùng bạn 💚"
+      },
       lang: { switch: "Chuyển ngôn ngữ" }
     },
     en: {
       brand: { tagline: "Your private study room", localOnly: "Your data stays in this browser only." },
-      nav: { focus: "Focus", schedule: "Schedule", board: "Board", insights: "Insights", data: "Data" },
+      nav: { focus: "Focus", schedule: "Schedule", board: "Board", insights: "Insights", data: "Data", guide: "Guide" },
       author: { title: "Author" },
       common: { start: "Start", pause: "Pause", reset: "Reset", settings: "Settings",
         add: "Add", cancel: "Cancel", save: "Save", done: "Done", undo: "Undo",
@@ -170,6 +217,53 @@
         bgRain: "Rainy window",
         bgLofi: "Lofi Pixel",
         bgCyber: "Cyber Neon"
+      },
+      report: {
+        openWeekly: "Weekly report card",
+        title: "Weekly report card",
+        range: "{start} → {end}",
+        app: "QuietHours",
+        days: "days",
+        thisWeek: "This week",
+        sessions: "focus sessions",
+        topSubject: "Top subject",
+        bestDay: "Most productive day",
+        downloadStory: "Download Story",
+        tagline: "This week I studied",
+        focusHours: "Focus hours",
+        dayStreak: "Day streak",
+        prepDownload: "Preparing image...",
+        downloaded: "Downloaded! 🌿",
+        notAvailable: "html2canvas not loaded. Please check your network.",
+        mon: "Mon", tue: "Tue", wed: "Wed", thu: "Thu", fri: "Fri", sat: "Sat", sun: "Sun",
+        todayShort: "Today"
+      },
+      guide: {
+        kicker: "A little corner",
+        title: "Thank you & How to use",
+        subtitle: "Small things worth knowing to make the most of QuietHours.",
+        letterTitle: "A letter to you — the QuietHours user",
+        letterFrom: "Author · s1gnuh · someone who always believes in the power of small habits.",
+        dataTitle: "About your data — important notice",
+        h1Title: "Keep your Streak & how streak resets",
+        h1Sub: "Consecutive study days — the most valuable invisible motivator.",
+        h1p1: "✅ <b>How Streak is counted:</b> starting from today (or yesterday if you haven't studied yet today), go backwards and count consecutive days with <b>at least 1 completed Focus Pomodoro session</b> (logged).",
+        h1p2: "✅ <b>Tip to maintain:</b> don't let a day go \"blank\"! On super busy days, still finish <b>at least 1 short Pomodoro</b> (25 min) — anything is better than losing a streak.",
+        h1p3: "❌ <b>Breaking the streak:</b> miss any single day → the streak resets to 0 the next day. Don't be sad — good habits are always worth restarting.",
+        h1p4: "💡 <b>Trick:</b> schedule a 25-min Pomodoro first thing in the morning as a \"check-in\" — you'll be surprised how effective it is.",
+        h2Title: "Create & save personal Sound Mixes (Atmosphere)",
+        h2Sub: "Build your own favorite audio space — rain, café, fireplace, ocean waves, lofi...",
+        h2p1: "✅ Open the <b>Focus</b> tab, find the <b>Atmosphere</b> card (Ambient Mixer).",
+        h2p2: "✅ Toggle tracks (Rain, Café, Ocean, Fireplace, Lofi beat) with the 🔘 buttons, drag Volume sliders to taste.",
+        h2p3: "✅ Tweak <b>Master Volume</b> anytime.",
+        h2p4: "💾 <b>Auto-save:</b> all changes (track on/off, volume) persist automatically in Local Storage. Your mix is still there next time you open QuietHours.",
+        h2p5: "💡 <b>Tasty mix tip:</b> Rain (60%) + Café (25%) + Master 50% = a sweet 2–3 hour deep work vibe.",
+        h3Title: "Use Zen Mode & share a Story image",
+        h3Sub: "Go ultra-deep focused + show off weekly wins beautifully on social media.",
+        h3p1: "🧘 <b>Zen Mode (distraction-free fullscreen):</b> look for the \"Go fullscreen / Zen Mode\" button on the toolbar. Sidebars and extra cards hide, leaving only the artistic Pomodoro clock + the inspiring quote. Press <code>ESC</code> or the \"Exit Zen\" button to return.",
+        h3p2: "📊 <b>Weekly report card:</b> open the <b>Insights</b> tab, click <b>Weekly report card</b>. A modal reveals total hours, Streak, top subject, best day, per-day mini bars, plus a random quote.",
+        h3p3: "📸 <b>Download 9:16 Story:</b> inside the Weekly modal, click <b>Download Story</b>. The app renders a <b>9:16</b> Instagram/Facebook Story-sized card with a modern gradient, captures it with <code>html2canvas</code>, and auto-downloads a PNG. Just share!",
+        h3p4: "💡 <b>What to say when sharing:</b> tag <code>@quiethours</code> / use <code>#quiethours</code> / <code>#s1gnuh</code> so I can celebrate with you 💚"
       },
       lang: { switch: "Switch language" }
     }
@@ -640,6 +734,185 @@
       });
     }
     return { init, theme: setTheme, background: setBackground, getTheme, getBg, refreshActiveSwatches };
+  })();
+
+  // -------- Reports (Weekly card + Story export PNG) ----------------------
+  const Reports = (function () {
+    const DOW_KEYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
+    function pad(n) { return String(n).padStart(2, "0"); }
+    function dowLabel(d, isToday) {
+      const k = DOW_KEYS[d.getDay() === 0 ? 6 : d.getDay() - 1];
+      let base = t("report." + k);
+      const todayIso = todayISO();
+      const iso = todayISO(d);
+      if (isToday && iso === todayIso) base += " · " + t("report.todayShort");
+      return base;
+    }
+    function isoDM(d) {
+      return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}`;
+    }
+    function computeWeekData(asOf = new Date()) {
+      const days = weekDays(asOf); // Mon..Sun
+      const isoSet = new Set(days.map(todayISO));
+      const weekLogs = state.logs.filter((l) => isoSet.has(l.date));
+      const totalMin = weekLogs.reduce((s, l) => s + (l.minutes || 0), 0);
+      const sessions = weekLogs.length;
+      // Per-day minutes
+      const perDay = days.map((d) => 0);
+      weekLogs.forEach((l) => {
+        const ld = parseISO(l.date);
+        if (!ld) return;
+        const idx = days.findIndex((d) => todayISO(d) === l.date);
+        if (idx >= 0) perDay[idx] += l.minutes || 0;
+      });
+      // Streak
+      const streak = computeStreak(state.logs, asOf);
+      // Top subject
+      const bySubj = minutesBySubject(weekLogs);
+      let topSubject = null, topMin = 0;
+      bySubj.forEach((mins, id) => {
+        if (mins > topMin) { topMin = mins; topSubject = id; }
+      });
+      const topSubjName = topSubject ? (topSubject === "__none__" ? t("common.none") : (state.subjects.find((s) => s.id === topSubject)?.name || t("common.none"))) : "—";
+      // Best day
+      let bestIdx = -1, bestMin = 0;
+      perDay.forEach((m, i) => { if (m > bestMin) { bestMin = m; bestIdx = i; } });
+      const bestDayName = bestIdx >= 0 ? dowLabel(days[bestIdx]) : "—";
+      const bestDayMin = bestIdx >= 0 ? bestMin : 0;
+      // Quote
+      let quoteTxt = "";
+      try {
+        const q = Quotes.random();
+        quoteTxt = currentLang === "vi" ? (q.vi || "") : (q.en || "");
+      } catch (_) {
+        quoteTxt = currentLang === "vi"
+          ? "Hành trình ngàn dặm bắt đầu từ một bước chân. — Lão Tử"
+          : "A journey of a thousand miles begins with a single step. — Lao Tzu";
+      }
+      return { days, perDay, totalMin, sessions, streak, topSubject, topSubjName, topMin, bestIdx, bestDayName, bestDayMin, quoteTxt };
+    }
+    function barsHTML(container, perDay, days, vertical = false, accent = "var(--color-accent)") {
+      container.innerHTML = "";
+      const max = Math.max(1, ...perDay);
+      const todayIso = todayISO();
+      perDay.forEach((min, i) => {
+        const pct = Math.max(2, Math.round((min / max) * 100));
+        const wrap = document.createElement("div");
+        wrap.className = vertical ? "sc-bar-col" : "bar-col";
+        const d = days[i];
+        const label = document.createElement("span");
+        label.className = vertical ? "sc-bar-lbl" : "bar-lbl";
+        label.textContent = DOW_SHORT_LABEL(d);
+        if (todayISO(d) === todayIso) label.classList.add("today");
+        wrap.appendChild(label);
+        const track = document.createElement("div");
+        track.className = vertical ? "sc-bar-track" : "bar-track";
+        const bar = document.createElement("div");
+        bar.className = vertical ? "sc-bar-fill" : "bar-fill";
+        bar.style.setProperty("--h", pct + "%");
+        bar.style.background = accent;
+        track.appendChild(bar);
+        wrap.appendChild(track);
+        const val = document.createElement("span");
+        val.className = vertical ? "sc-bar-val" : "bar-val";
+        const rounded = Math.round(min);
+        if (rounded === 0) val.textContent = "—";
+        else if (rounded < 60) val.textContent = rounded + (currentLang === "vi" ? "p" : "m");
+        else val.textContent = (rounded / 60).toFixed(rounded % 60 === 0 ? 0 : 1) + (currentLang === "vi" ? "g" : "h");
+        wrap.appendChild(val);
+        container.appendChild(wrap);
+      });
+    }
+    function DOW_SHORT_LABEL(d) {
+      const keys = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
+      return t("report." + keys[d.getDay() === 0 ? 6 : d.getDay() - 1]);
+    }
+    function openWeekly() {
+      const W = computeWeekData();
+      // Header range
+      const rng = document.getElementById("weekly-range");
+      if (rng) rng.textContent = formatTpl(t("report.range"), { start: isoDM(W.days[0]), end: isoDM(W.days[6]) });
+      const wcWeek = document.getElementById("wc-week");
+      if (wcWeek) wcWeek.textContent = `${isoDM(W.days[0])} → ${isoDM(W.days[6])}`;
+      const scWeek = document.getElementById("sc-week");
+      if (scWeek) scWeek.textContent = `WEEK ${isoDM(W.days[0])} – ${isoDM(W.days[6])}`;
+      document.getElementById("wc-streak").textContent = String(W.streak);
+      document.getElementById("sc-streak").textContent = String(W.streak);
+      document.getElementById("wc-hours").textContent = minutesToLabel(W.totalMin);
+      document.getElementById("sc-hours").textContent = minutesToLabel(W.totalMin);
+      const sesLbl = currentLang === "vi" ? "phiên" : "sessions";
+      document.getElementById("wc-sessions").textContent = `${W.sessions} ${sesLbl} · ${t("report.sessions")}`;
+      document.getElementById("sc-sessions").textContent = String(W.sessions);
+      // Top subject
+      document.getElementById("wc-top-subject").textContent = W.topSubjName;
+      document.getElementById("sc-top-subject").textContent = W.topSubjName;
+      document.getElementById("wc-top-subject-min").textContent = minutesToLabel(W.topMin);
+      // Best day
+      document.getElementById("wc-best-day").textContent = W.bestDayName;
+      document.getElementById("sc-best-day").textContent = W.bestDayName;
+      document.getElementById("wc-best-day-min").textContent = minutesToLabel(W.bestDayMin);
+      // Bars
+      const wcBars = document.getElementById("wc-bars");
+      if (wcBars) barsHTML(wcBars, W.perDay, W.days, false);
+      const scBars = document.getElementById("sc-bars");
+      if (scBars) barsHTML(scBars, W.perDay, W.days, true, "#d9f99d");
+      // Quote
+      document.getElementById("wc-quote-text").textContent = W.quoteTxt;
+      document.getElementById("sc-quote-text").textContent = W.quoteTxt;
+      // Footer encouragement
+      const ftr = document.getElementById("wc-footer");
+      if (ftr) {
+        if (W.streak >= 7) ftr.textContent = currentLang === "vi" ? "Một tuần tuyệt vời! Tiếp tục nào 🔥" : "Incredible week! Keep going 🔥";
+        else if (W.totalMin >= 10 * 60) ftr.textContent = currentLang === "vi" ? "Hơn 10 giờ tuần này. Vạn sự khởi đầu nan 💚" : "Over 10 hours this week — incredible 💚";
+        else if (W.sessions > 0) ftr.textContent = currentLang === "vi" ? "Mỗi nỗ lực đều đáng giá. Keep going! 🌿" : "Every minute counts. Keep going! 🌿";
+        else ftr.textContent = currentLang === "vi" ? "Tuần này chưa có phiên nào — bắt đầu từ hôm nay nhé! ✨" : "No sessions logged yet. Start with one pomodoro today ✨";
+      }
+      openDialog("dialog-weekly");
+    }
+    async function downloadStory() {
+      const status = document.getElementById("share-status");
+      if (typeof html2canvas !== "function") {
+        if (status) status.textContent = t("report.notAvailable");
+        return;
+      }
+      if (status) status.textContent = t("report.prepDownload");
+      const root = document.getElementById("story-card-root");
+      const card = document.getElementById("story-card");
+      try {
+        root.style.display = "block";
+        root.style.position = "fixed";
+        root.style.left = "-10000px";
+        root.style.top = "0px";
+        // Wait for layout
+        await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+        const canvas = await html2canvas(card, {
+          backgroundColor: null,
+          scale: 2,
+          useCORS: true,
+          logging: false
+        });
+        const W = computeWeekData();
+        const fname = `quiethours-story-Tuan${pad(W.days[0].getDate())}${pad(W.days[0].getMonth() + 1)}-${pad(W.days[6].getDate())}${pad(W.days[6].getMonth() + 1)}.png`;
+        const url = canvas.toDataURL("image/png");
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = fname;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        if (status) status.textContent = t("report.downloaded");
+        setTimeout(() => { if (status && document.body.contains(status)) status.textContent = ""; }, 3200);
+      } catch (e) {
+        if (status) status.textContent = currentLang === "vi" ? "Không thể tạo ảnh, thử lại nhé." : "Couldn't create image. Please try again.";
+        console.error(e);
+      } finally {
+        root.style.display = "";
+        root.style.position = "";
+        root.style.left = "";
+        root.style.top = "";
+      }
+    }
+    return { openWeekly, downloadStory, computeWeekData };
   })();
 
   // -------- View / navigation switching -------------------------------------
@@ -1819,6 +2092,12 @@
     if (ba) ba.addEventListener("click", openAppearance);
     const bam = document.getElementById("btn-open-appearance-mobile");
     if (bam) bam.addEventListener("click", openAppearance);
+
+    // Reports: weekly report card + story download
+    const bwr = document.getElementById("btn-weekly-report");
+    if (bwr) bwr.addEventListener("click", () => Reports.openWeekly());
+    const bds = document.getElementById("btn-download-story");
+    if (bds) bds.addEventListener("click", () => Reports.downloadStory());
 
     // Schedule: view mode
     document.querySelectorAll("#schedule-view-seg button").forEach((b) => {
