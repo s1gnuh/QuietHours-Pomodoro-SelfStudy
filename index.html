@@ -801,6 +801,33 @@
             <input type="checkbox" id="ts-autostart" style="width: auto; box-shadow: none" />
           </label>
         </div>
+        <div style="margin-top: 0.75rem; padding: 0.75rem; background: var(--color-elevated); border-radius: 0.5rem; border: 1px dashed color-mix(in oklab, var(--color-accent) 30%, transparent)">
+          <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 0.75rem; margin-bottom: 0.6rem">
+            <div>
+              <p style="font-size: 0.875rem; font-weight: 600; margin: 0" data-i18n="timerSettings.notifTitle">Chuông thông báo khi kết thúc phiên</p>
+              <p style="font-size: 0.75rem; color: var(--color-muted); margin: 0.15rem 0 0" data-i18n="timerSettings.notifSubtitle">Chọn loại âm và số lần lặp lại để biết khi nào phiên Pomodoro kết thúc.</p>
+            </div>
+            <button type="button" class="btn btn-ghost btn-icon-sm" id="btn-notif-preview" title="Preview" aria-label="Preview notification chime">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
+            </button>
+          </div>
+          <div class="field-row" style="grid-template-columns: 1.35fr 1fr; gap: 0.5rem; margin: 0">
+            <div class="field" style="margin: 0">
+              <label data-i18n="timerSettings.notifSound">Loại chuông</label>
+              <select id="ts-notif-sound">
+                <option value="chime" data-i18n="timerSettings.sounds.chime">Chime (Ding-Dong)</option>
+                <option value="bell" data-i18n="timerSettings.sounds.bell">Chuông tháp</option>
+                <option value="zen" data-i18n="timerSettings.sounds.zen">Tibetan Bowl</option>
+                <option value="digital" data-i18n="timerSettings.sounds.digital">Digital Beep</option>
+                <option value="nature" data-i18n="timerSettings.sounds.nature">Chim hót</option>
+              </select>
+            </div>
+            <div class="field" style="margin: 0">
+              <label data-i18n="timerSettings.notifRepeat">Số lần lặp</label>
+              <input type="number" id="ts-notif-repeat" min="1" max="5" value="2" />
+            </div>
+          </div>
+        </div>
         <div class="form-actions">
           <button class="btn btn-ghost btn-sm" data-dialog-close="dialog-timer" data-i18n="common.cancel">Hủy</button>
           <button class="btn btn-primary btn-sm" id="btn-save-timer-settings" data-i18n="common.save">Lưu</button>

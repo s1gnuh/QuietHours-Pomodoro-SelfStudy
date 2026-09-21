@@ -28,7 +28,18 @@
         desc: "Độ dài các phiên. Một phiên nghỉ dài sẽ xuất hiện sau mỗi {n} phiên tập trung.",
         focus: "Tập trung (phút)", shortBreak: "Nghỉ ngắn (phút)", longBreak: "Nghỉ dài (phút)",
         longBreakEvery: "Nghỉ dài sau (phiên)", autoStart: "Tự động bắt đầu phiên tiếp theo",
-        autoStartDesc: "Không cần nhấn Bắt đầu sau mỗi chu kỳ."
+        autoStartDesc: "Không cần nhấn Bắt đầu sau mỗi chu kỳ.",
+        notifTitle: "Chuông thông báo khi kết thúc phiên",
+        notifSubtitle: "Chọn loại âm và số lần lặp lại để biết khi nào phiên Pomodoro kết thúc.",
+        notifSound: "Loại chuông",
+        notifRepeat: "Số lần lặp",
+        sounds: {
+          chime: "Chime (Ding-Dong)",
+          bell: "Chuông tháp",
+          zen: "Tibetan Bowl",
+          digital: "Digital Beep",
+          nature: "Chim hót"
+        }
       },
       mixer: {
         atmosphere: "Không gian", soundMixer: "Trộn âm thanh", master: "Tổng",
@@ -168,7 +179,18 @@
         desc: "Length of each interval. A long break appears after every {n} focus sessions.",
         focus: "Focus (min)", shortBreak: "Short break (min)", longBreak: "Long break (min)",
         longBreakEvery: "Long break every", autoStart: "Auto-start next session",
-        autoStartDesc: "Don't require pressing Start after each cycle."
+        autoStartDesc: "Don't require pressing Start after each cycle.",
+        notifTitle: "End-of-session notification chime",
+        notifSubtitle: "Pick a sound and how many times it repeats so you know when a Pomodoro ends.",
+        notifSound: "Chime sound",
+        notifRepeat: "Repeat count",
+        sounds: {
+          chime: "Chime (Ding-Dong)",
+          bell: "Tubular Bell",
+          zen: "Tibetan Bowl",
+          digital: "Digital Beep",
+          nature: "Bird Chirp"
+        }
       },
       mixer: {
         atmosphere: "Atmosphere", soundMixer: "Ambient mixer", master: "Master",
@@ -362,7 +384,7 @@
   function seedSampleData() {
     return {
       subjects: [],
-      timerSettings: { focusMin: 25, shortBreakMin: 5, longBreakMin: 15, longBreakEvery: 4, autoStart: false },
+      timerSettings: { focusMin: 25, shortBreakMin: 5, longBreakMin: 15, longBreakEvery: 4, autoStart: false, notifSound: "chime", notifRepeat: 2 },
       timer: { mode: "focus", running: false, endAt: null, remainingMs: 25 * 60 * 1000, focusCount: 0 },
       mixer: {
         master: 0.7,
@@ -384,7 +406,14 @@
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
-        if (parsed && typeof parsed === "object") return parsed;
+        if (parsed && typeof parsed === "object") {
+          // Backfill new settings for existing users
+          if (!parsed.timerSettings) parsed.timerSettings = seedSampleData().timerSettings;
+          const df = seedSampleData().timerSettings;
+          if (typeof parsed.timerSettings.notifSound !== "string") parsed.timerSettings.notifSound = df.notifSound;
+          if (!Number.isFinite(parsed.timerSettings.notifRepeat)) parsed.timerSettings.notifRepeat = df.notifRepeat;
+          return parsed;
+        }
       }
     } catch (_) {}
     const sd = seedSampleData();
@@ -1146,6 +1175,9 @@
     state.timer.running = !!state.timerSettings.autoStart;
     if (state.timer.running) state.timer.endAt = Date.now() + state.timer.remainingMs;
     persist();
+    // Chime notification
+    try { unlockAudioIfNeeded(); } catch (_) {}
+    try { NotificationSounds && NotificationSounds.playEndOfSession && NotificationSounds.playEndOfSession(); } catch (_) {}
     // Notification-ish (small inline popup via console for static demo)
     console.log(
       `[QuietHours] ${t(modeLabelKey(completedMode))} ${t("focus.complete")} — ${t("focus.next")}: ${t(modeLabelKey(nextMode))}`
@@ -1542,6 +1574,169 @@
     return { unlock, setMaster, setTrack, getContext };
   })();
   function unlockAudioIfNeeded() { try { AmbientEngine.unlock(); } catch (_) {} }
+
+  // -------- Notification Sounds — 5 procedural chimes + repeat -------------
+  const NotificationSounds = (function () {
+    const VALID = ["chime", "bell", "zen", "digital", "nature"];
+    function normalize(id) { return VALID.includes(id) ? id : "chime"; }
+    function normRepeat(n) {
+      const x = Number(n);
+      if (!Number.isFinite(x)) return 2;
+      return Math.max(1, Math.min(5, Math.round(x)));
+    }
+    function getCtx() {
+      const c = (AmbientEngine && typeof AmbientEngine.getContext === "function")
+        ? AmbientEngine.getContext()
+        : null;
+      if (!c) {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        return AC ? new AC() : null;
+      }
+      return c;
+    }
+    let activeStop = null;
+    function stopActive() {
+      if (typeof activeStop === "function") {
+        try { activeStop(); } catch (_) {}
+        activeStop = null;
+      }
+    }
+
+    // --- Individual chime players (each returns stop fn + duration ms) ----
+    function playChime(ctx, master, when) {
+      // Two-note pleasant ding-dong (E5 → A4)
+      const dur = 1100;
+      const o1 = ctx.createOscillator(); const g1 = ctx.createGain();
+      o1.type = "sine"; o1.frequency.setValueAtTime(659.25, when);
+      g1.gain.setValueAtTime(0.0001, when);
+      g1.gain.exponentialRampToValueAtTime(0.28, when + 0.02);
+      g1.gain.exponentialRampToValueAtTime(0.0001, when + 0.45);
+      o1.connect(g1).connect(master);
+      o1.start(when); o1.stop(when + 0.5);
+
+      const o2 = ctx.createOscillator(); const g2 = ctx.createGain();
+      o2.type = "sine"; o2.frequency.setValueAtTime(440.0, when + 0.35);
+      g2.gain.setValueAtTime(0.0001, when + 0.35);
+      g2.gain.exponentialRampToValueAtTime(0.26, when + 0.37);
+      g2.gain.exponentialRampToValueAtTime(0.0001, when + 1.05);
+      o2.connect(g2).connect(master);
+      o2.start(when + 0.35); o2.stop(when + 1.1);
+      return dur;
+    }
+    function playBell(ctx, master, when) {
+      // Tubular bell-like: fundamental + harmonics
+      const dur = 1500;
+      const freqs = [523.25, 1046.5, 1569.75];
+      const gains = [0.25, 0.12, 0.07];
+      freqs.forEach((f, i) => {
+        const o = ctx.createOscillator(); const g = ctx.createGain();
+        o.type = "sine"; o.frequency.setValueAtTime(f, when);
+        g.gain.setValueAtTime(0.0001, when);
+        g.gain.exponentialRampToValueAtTime(gains[i], when + 0.015);
+        g.gain.exponentialRampToValueAtTime(0.0001, when + 1.45 - i * 0.1);
+        o.connect(g).connect(master);
+        o.start(when); o.stop(when + 1.5);
+      });
+      return dur;
+    }
+    function playZen(ctx, master, when) {
+      // Tibetan bowl: low fundamental + slow beating via two detuned oscs, long decay
+      const dur = 2600;
+      const f = 220;
+      const o1 = ctx.createOscillator(); const g = ctx.createGain();
+      const o2 = ctx.createOscillator();
+      o1.type = "sine"; o1.frequency.setValueAtTime(f, when);
+      o2.type = "sine"; o2.frequency.setValueAtTime(f * 1.006, when);
+      g.gain.setValueAtTime(0.0001, when);
+      g.gain.exponentialRampToValueAtTime(0.3, when + 0.2);
+      g.gain.exponentialRampToValueAtTime(0.0001, when + 2.55);
+      o1.connect(g); o2.connect(g); g.connect(master);
+      o1.start(when); o2.start(when);
+      o1.stop(when + 2.6); o2.stop(when + 2.6);
+      return dur;
+    }
+    function playDigital(ctx, master, when) {
+      // Microwave / digital: two short high beeps
+      const dur = 700;
+      const seqs = [0, 0.22];
+      seqs.forEach((off) => {
+        const o = ctx.createOscillator(); const g = ctx.createGain();
+        o.type = "square"; o.frequency.setValueAtTime(1760, when + off);
+        g.gain.setValueAtTime(0.0001, when + off);
+        g.gain.exponentialRampToValueAtTime(0.13, when + off + 0.01);
+        g.gain.exponentialRampToValueAtTime(0.0001, when + off + 0.13);
+        o.connect(g).connect(master);
+        o.start(when + off); o.stop(when + off + 0.15);
+      });
+      return dur;
+    }
+    function playNature(ctx, master, when) {
+      // Soft bird-chirp: two quick pitch-sweep sines
+      const dur = 900;
+      const chirps = [{ off: 0, fStart: 1600, fEnd: 2400 }, { off: 0.28, fStart: 1800, fEnd: 2700 }];
+      chirps.forEach((c) => {
+        const o = ctx.createOscillator(); const g = ctx.createGain();
+        o.type = "sine";
+        o.frequency.setValueAtTime(c.fStart, when + c.off);
+        o.frequency.exponentialRampToValueAtTime(c.fEnd, when + c.off + 0.18);
+        g.gain.setValueAtTime(0.0001, when + c.off);
+        g.gain.exponentialRampToValueAtTime(0.17, when + c.off + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, when + c.off + 0.22);
+        o.connect(g).connect(master);
+        o.start(when + c.off); o.stop(when + c.off + 0.25);
+      });
+      return dur;
+    }
+
+    function playOne(id, ctx, master, when) {
+      switch (normalize(id)) {
+        case "bell":    return playBell(ctx, master, when);
+        case "zen":     return playZen(ctx, master, when);
+        case "digital": return playDigital(ctx, master, when);
+        case "nature":  return playNature(ctx, master, when);
+        default:        return playChime(ctx, master, when);
+      }
+    }
+
+    function play(soundId, repeatOverride) {
+      stopActive();
+      const ctx = getCtx();
+      if (!ctx) return null;
+      try { unlockAudioIfNeeded(); } catch (_) {}
+      if (ctx.state === "suspended") { try { ctx.resume(); } catch (_) {} }
+      const master = ctx.createGain();
+      master.gain.value = 0.9;
+      master.connect(ctx.destination);
+      const id = normalize(soundId);
+      const reps = normRepeat(repeatOverride != null ? repeatOverride : (state.timerSettings && state.timerSettings.notifRepeat));
+      let totalDur = 0;
+      const gap = 0.22; // seconds between repeats
+      for (let i = 0; i < reps; i++) {
+        const w = ctx.currentTime + totalDur / 1000 + i * gap;
+        const oneDur = playOne(id, ctx, master, w) / 1000;
+        totalDur += (oneDur + gap) * 1000;
+      }
+      const stopAt = ctx.currentTime + totalDur / 1000 + 0.2;
+      const stopFn = () => {
+        try {
+          if (master) master.gain.cancelScheduledValues(stopAt - 1);
+          if (master) master.gain.setValueAtTime(master.gain.value, ctx.currentTime);
+          if (master) master.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.05);
+        } catch (_) {}
+      };
+      activeStop = stopFn;
+      setTimeout(() => { if (activeStop === stopFn) activeStop = null; }, totalDur + 400);
+      return stopFn;
+    }
+
+    function preview(id) { return play(id, 1); }
+    function playEndOfSession() {
+      const s = (state.timerSettings && state.timerSettings.notifSound) || "chime";
+      return play(s, state.timerSettings.notifRepeat);
+    }
+
+    return { play, preview, playEndOfSession, stop: stopActive, normalize, normRepeat, VALID };
+  })();
 
   function renderMixer() {
     const mx = state.mixer;
@@ -2117,6 +2312,10 @@
     document.getElementById("ts-long").value = s.longBreakMin;
     document.getElementById("ts-every").value = s.longBreakEvery;
     document.getElementById("ts-autostart").checked = !!s.autoStart;
+    const selSound = document.getElementById("ts-notif-sound");
+    if (selSound) selSound.value = NotificationSounds.normalize(s.notifSound);
+    const repEl = document.getElementById("ts-notif-repeat");
+    if (repEl) repEl.value = String(NotificationSounds.normRepeat(s.notifRepeat));
     // Also update "desc" that contains {n} placeholder
     const descEl = document.querySelector("#dialog-timer .desc");
     if (descEl) descEl.textContent = formatTpl(t("timerSettings.desc"), { n: s.longBreakEvery });
@@ -2166,6 +2365,9 @@
       state.timerSettings.longBreakMin = fm("ts-long", 1, 180, 15);
       state.timerSettings.longBreakEvery = fm("ts-every", 1, 12, 4);
       state.timerSettings.autoStart = !!document.getElementById("ts-autostart").checked;
+      const selSnd = document.getElementById("ts-notif-sound");
+      state.timerSettings.notifSound = selSnd ? NotificationSounds.normalize(selSnd.value) : "chime";
+      state.timerSettings.notifRepeat = NotificationSounds.normRepeat(fm("ts-notif-repeat", 1, 5, 2));
       // Reset remaining if not running
       if (!state.timer.running) {
         state.timer.remainingMs = durationMsFor(state.timer.mode);
@@ -2174,6 +2376,17 @@
       renderAll();
       closeDialog("dialog-timer");
     });
+    // Notification preview button (timer settings dialog)
+    const previewBtn = document.getElementById("btn-notif-preview");
+    if (previewBtn) {
+      previewBtn.addEventListener("click", () => {
+        try { unlockAudioIfNeeded(); } catch (_) {}
+        const selSnd = document.getElementById("ts-notif-sound");
+        const id = selSnd ? NotificationSounds.normalize(selSnd.value) : "chime";
+        const rep = NotificationSounds.normRepeat(Number(document.getElementById("ts-notif-repeat").value));
+        NotificationSounds.preview && NotificationSounds.preview(id);
+      });
+    }
     // Dock controls
     document.getElementById("dock-toggle-btn").addEventListener("click", () => {
       state.timer.running ? pauseTimer() : startTimer();

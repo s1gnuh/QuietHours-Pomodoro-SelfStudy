@@ -2582,13 +2582,72 @@ textarea {
 }
 .guide-body b { color: var(--color-fg); }
 
-/* -------- Bottom nav wider for 6 items (include guide) ------------------ */
+/* -------- Bottom nav fixes for 6 items (include guide) & mobile polish ------------------ */
 @media (max-width: 860px) {
   .bottom-nav ul {
     grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
   }
-  .bottom-nav .nav-btn span {
-    font-size: 10px;
+  .bottom-nav button span {
+    font-size: 0.6875rem;
+  }
+  .bottom-nav button {
+    height: 3.75rem;
+    padding-top: 0.5rem;
+    padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0));
+  }
+}
+
+/* =========================================================
+   MOBILE RESPONSIVE POLISH
+   ========================================================= */
+/* Notch / Dynamic Island safe area on top */
+header.top-nav {
+  padding-top: env(safe-area-inset-top, 0);
+}
+@media (max-width: 560px) {
+  .field-row {
+    grid-template-columns: 1fr;
+  }
+  .field-row-3 {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 480px) {
+  .dialog {
+    padding: 1.1rem 1rem;
+    border-radius: 1.1rem;
+    max-width: 100%;
+  }
+  .dialog .form-actions {
+    flex-direction: column-reverse;
+  }
+  .dialog .form-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+  main.content {
+    padding-left: 0.85rem;
+    padding-right: 0.85rem;
+  }
+  .top-nav-inner {
+    padding: 0.55rem 0.85rem 0.55rem;
+  }
+  .brand-text .brand-tagline {
+    display: none;
+  }
+  .top-actions .btn-icon-sm {
+    width: 2rem;
+    height: 2rem;
+  }
+}
+@media (max-width: 390px) {
+  .bottom-nav button span {
+    font-size: 0.625rem;
+    letter-spacing: -0.01em;
+  }
+  .bottom-nav button svg {
+    width: 1.05rem;
+    height: 1.05rem;
   }
 }
 
