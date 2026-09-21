@@ -707,8 +707,15 @@
     const BG_KEY = "quiethours-static-bg";
     const VALID_THEMES = ["sage", "sunset", "lavender", "ocean", "cyber"];
     const VALID_BGS = ["none", "rain", "lofi", "cyber"];
+    const VISIBLE_BGS = ["none", "rain"];
     let currentTheme = "sage";
     let currentBg = "none";
+
+    function sanitizeBg(id) {
+      if (!VALID_BGS.includes(id)) return "none";
+      if (VISIBLE_BGS.includes(id)) return id;
+      return "none";
+    }
 
     function applyClasses() {
       const body = document.body;
@@ -722,7 +729,10 @@
         const t = localStorage.getItem(THEME_KEY);
         if (VALID_THEMES.includes(t)) currentTheme = t;
         const b = localStorage.getItem(BG_KEY);
-        if (VALID_BGS.includes(b)) currentBg = b;
+        currentBg = sanitizeBg(b);
+        if (currentBg !== b) {
+          try { localStorage.setItem(BG_KEY, currentBg); } catch (_) {}
+        }
       } catch (_) {}
       applyClasses();
     }
@@ -734,7 +744,7 @@
       refreshActiveSwatches();
     }
     function setBackground(id) {
-      if (!VALID_BGS.includes(id)) return;
+      id = sanitizeBg(id);
       currentBg = id;
       try { localStorage.setItem(BG_KEY, id); } catch (_) {}
       applyClasses();

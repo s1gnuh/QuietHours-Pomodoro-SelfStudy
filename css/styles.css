@@ -1155,6 +1155,104 @@ textarea {
   color: var(--color-muted);
 }
 
+/* Stat-card variant: Quote (replaces old "Next session" card) */
+.stat-card.stat-card-quote {
+  grid-column: 1 / -1;
+  background: linear-gradient(160deg, color-mix(in oklab, var(--color-accent) 10%, var(--color-surface)) 0%, var(--color-surface) 55%);
+  position: relative;
+  overflow: hidden;
+  padding: 1rem;
+}
+@media (min-width: 640px) {
+  .stat-card.stat-card-quote {
+    grid-column: span 1;
+    padding: 1rem;
+  }
+}
+.stat-card.stat-card-quote::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  background:
+    radial-gradient(400px circle at 100% 0%, color-mix(in oklab, var(--color-accent) 18%, transparent) 0%, transparent 60%),
+    radial-gradient(500px circle at 0% 100%, color-mix(in oklab, var(--color-accent) 9%, transparent) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+.stat-card-quote-head,
+.stat-card-quote-body {
+  position: relative;
+  z-index: 1;
+}
+.stat-card-quote-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.stat-card-quote-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+}
+.stat-card-quote-left .stat-icon {
+  margin-bottom: 0;
+}
+.quote-subtitle-sm {
+  margin-top: 0.125rem;
+  color: var(--color-subtle);
+  font-size: 0.7rem;
+  line-height: 1.35;
+}
+.stat-card-quote .card-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+.stat-card-quote-body {
+  padding: 0.125rem 0.125rem 0.25rem;
+  display: flex;
+  gap: 0.625rem;
+  align-items: flex-start;
+}
+.quote-glyph-sm {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  color: var(--color-accent);
+  opacity: 0.72;
+  margin-top: 0.125rem;
+}
+.quote-text.quote-text-sm {
+  font-family: var(--font-display);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  letter-spacing: -0.005em;
+  color: var(--color-fg);
+  font-weight: 500;
+  min-height: 2.8em;
+  transition: opacity 0.2s ease;
+}
+@media (min-width: 1024px) {
+  .quote-text.quote-text-sm {
+    font-size: 0.95rem;
+  }
+}
+.quote-text.quote-text-sm .quote-loading-dots {
+  color: var(--color-subtle);
+  letter-spacing: 0.3em;
+}
+.stat-card-quote #quote-next {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.stat-card-quote #quote-copy {
+  opacity: 0.75;
+}
+
 /* Focus + Mixer 2-col grid */
 .focus-grid {
   display: grid;
