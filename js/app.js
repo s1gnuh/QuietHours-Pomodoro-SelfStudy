@@ -108,6 +108,14 @@
         mon: "Thứ 2", tue: "Thứ 3", wed: "Thứ 4", thu: "Thứ 5", fri: "Thứ 6", sat: "Thứ 7", sun: "Chủ nhật",
         todayShort: "Hôm nay"
       },
+      zen: {
+        openTitle: "Bật Chế độ Zen toàn màn hình",
+        buttonShort: "Zen Mode",
+        active: "Zen Mode đang bật",
+        escapeHint: "(nhấn ESC hoặc nút bên phải để thoát)",
+        exit: "Thoát Zen",
+        needGesture: "Trình duyệt yêu cầu thao tác để vào toàn màn hình - thử lại nhé."
+      },
       guide: {
         kicker: "Góc nhỏ",
         title: "Cảm ơn & Hướng dẫn sử dụng",
@@ -238,6 +246,14 @@
         mon: "Mon", tue: "Tue", wed: "Wed", thu: "Thu", fri: "Fri", sat: "Sat", sun: "Sun",
         todayShort: "Today"
       },
+      zen: {
+        openTitle: "Enter Zen fullscreen Mode",
+        buttonShort: "Zen Mode",
+        active: "Zen Mode is on",
+        escapeHint: "(press ESC or button on the right to exit)",
+        exit: "Exit Zen",
+        needGesture: "Browser requires a gesture to enter fullscreen — please try again."
+      },
       guide: {
         kicker: "A little corner",
         title: "Thank you & How to use",
@@ -327,6 +343,7 @@
     renderStats();
     renderCharts();
     renderQuote();
+    ZenMode.syncLabels();
   }
 
   // -------- Persistence (localStorage, mirror of PersistedData) --------------
@@ -734,6 +751,134 @@
       });
     }
     return { init, theme: setTheme, background: setBackground, getTheme, getBg, refreshActiveSwatches };
+  })();
+
+  // -------- Zen Mode (Ambient Fullscreen) ---------------------------------
+  const ZenMode = (function () {
+    let active = false;
+
+    function syncLabels() {
+      const openTitle = t("zen.openTitle");
+      ["btn-zen-mobile", "btn-zen-sidebar", "btn-zen-timer"].forEach((id) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.setAttribute("title", openTitle);
+        el.setAttribute("aria-label", openTitle);
+      });
+    }
+
+    function switchViewToFocusIfNeeded() {
+      if (document.getElementById("view-focus") && !document.getElementById("view-focus").classList.contains("active")) {
+        try { switchView("focus"); } catch (_) {
+          // graceful fallback: toggle active manually
+          document.querySelectorAll(".view").forEach((v) => v.classList.remove("active"));
+          const vf = document.getElementById("view-focus");
+          if (vf) vf.classList.add("active");
+        }
+      }
+    }
+
+    function applyClass(on) {
+      document.body.classList.toggle("zen-mode", !!on);
+      active = !!on;
+    }
+
+    async function requestFullscreenOrFallback() {
+      const el = document.documentElement;
+      const api =
+        el.requestFullscreen ||
+        el.webkitRequestFullscreen ||
+        el.webkitEnterFullscreen ||
+        el.mozRequestFullScreen ||
+        el.msRequestFullscreen;
+      try {
+        if (api) {
+          const p = api.call(el);
+          if (p && typeof p.catch === "function") {
+            // ignore fullscreen failure user-declined; but still enable zen visually?
+            p.catch((err) => {
+              // Only show warning if not a user gesture error, but browser already handles
+              if (err && /gesture|user/.test(String(err.message || ""))) {
+                // swallow, user will retry
+              }
+            });
+          }
+        }
+      } catch (_) {}
+    }
+
+    async function exitFullscreenIfAny() {
+      const fs =
+        document.exitFullscreen ||
+        document.webkitExitFullscreen ||
+        document.webkitCancelFullScreen ||
+        document.mozCancelFullScreen ||
+        document.msExitFullscreen;
+      if (!fs) return;
+      const isInFs =
+        document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        document.webkitCurrentFullScreenElement ||
+        document.mozFullScreenElement ||
+        document.msFullscreenElement;
+      if (!isInFs) return;
+      try { const p = fs.call(document); if (p && typeof p.catch === "function") p.catch(() => {}); } catch (_) {}
+    }
+
+    function open() {
+      switchViewToFocusIfNeeded();
+      applyClass(true);
+      // Audio unlock gesture (good time to unlock ambient audio too on gesture)
+      try { unlockAudioIfNeeded(); } catch (_) {}
+      // Request fullscreen inside the same click/user gesture stack:
+      requestFullscreenOrFallback();
+    }
+
+    function close() {
+      applyClass(false);
+      exitFullscreenIfAny();
+    }
+
+    function toggle() { active ? close() : open(); }
+
+    function isActive() { return active; }
+
+    // ESC: key "Escape" => if zen mode active, close first (even before fullscreen browser default)
+    function onKey(e) {
+      const k = (e.key || "").toLowerCase();
+      if (k === "escape" && active) {
+        e.preventDefault();
+        close();
+      }
+    }
+
+    // When user exits fullscreen via browser (eg ESC default fallback), also close Zen UI.
+    function onFullscreenChange() {
+      const inFs =
+        document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        document.webkitCurrentFullScreenElement ||
+        document.mozFullScreenElement ||
+        document.msFullscreenElement;
+      if (active && !inFs) {
+        applyClass(false);
+      } else if (!active && inFs) {
+        // User manually went fullscreen outside Zen? leave it.
+      }
+    }
+
+    function init() {
+      syncLabels();
+      window.addEventListener("keydown", onKey, true);
+      [
+        "fullscreenchange",
+        "webkitfullscreenchange",
+        "mozfullscreenchange",
+        "MSFullscreenChange"
+      ].forEach((evt) => document.addEventListener(evt, onFullscreenChange));
+    }
+
+    return { init, open, close, toggle, isActive, syncLabels };
   })();
 
   // -------- Reports (Weekly card + Story export PNG) ----------------------
@@ -2099,6 +2244,15 @@
     const bds = document.getElementById("btn-download-story");
     if (bds) bds.addEventListener("click", () => Reports.downloadStory());
 
+    // Zen Mode open buttons (mobile header, sidebar desktop, timer card-head)
+    const zenOpenIds = ["btn-zen-mobile", "btn-zen-sidebar", "btn-zen-timer"];
+    zenOpenIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener("click", () => ZenMode.open());
+    });
+    const bx = document.getElementById("btn-exit-zen");
+    if (bx) bx.addEventListener("click", () => ZenMode.close());
+
     // Schedule: view mode
     document.querySelectorAll("#schedule-view-seg button").forEach((b) => {
       b.addEventListener("click", () => {
@@ -2231,6 +2385,8 @@
     // Apply persisted theme/background ASAP (before paint) to avoid FOUC
     Appearance.init();
     applyTranslations();
+    // Sync Zen button tooltips after language is applied
+    ZenMode.init();
     wireUI();
     renderAll();
     // Sync swatch active states in Data panel
