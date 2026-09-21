@@ -78,6 +78,16 @@
         title: "Cảm hứng hôm nay", next: "Câu khác", copied: "Đã sao chép ✨",
         subtitle: "Lấy một chút động lực cho phiên học tập của bạn."
       },
+      appearance: {
+        title: "Giao diện",
+        desc: "Chọn màu nhấn Accent và hình nền động — được lưu tự động cho các lần sau.",
+        themes: "Màu nhấn",
+        backgrounds: "Hình nền",
+        bgNone: "Mặc định",
+        bgRain: "Cửa sổ mưa",
+        bgLofi: "Lofi Pixel",
+        bgCyber: "Cyber Neon"
+      },
       lang: { switch: "Chuyển ngôn ngữ" }
     },
     en: {
@@ -150,6 +160,16 @@
       quotes: {
         title: "Today's inspiration", next: "Next quote", copied: "Copied ✨",
         subtitle: "A small bit of fuel for your study session."
+      },
+      appearance: {
+        title: "Appearance",
+        desc: "Pick an accent color and a dynamic background — saved automatically for next time.",
+        themes: "Accent color",
+        backgrounds: "Background",
+        bgNone: "Default",
+        bgRain: "Rainy window",
+        bgLofi: "Lofi Pixel",
+        bgCyber: "Cyber Neon"
       },
       lang: { switch: "Switch language" }
     }
@@ -569,6 +589,58 @@
       nextBtn.onclick = () => renderQuote();
     }
   }
+
+  // -------- Appearance (Themes + Backgrounds) ----------------------------
+  const Appearance = (function () {
+    const THEME_KEY = "quiethours-static-theme";
+    const BG_KEY = "quiethours-static-bg";
+    const VALID_THEMES = ["sage", "sunset", "lavender", "ocean", "cyber"];
+    const VALID_BGS = ["none", "rain", "lofi", "cyber"];
+    let currentTheme = "sage";
+    let currentBg = "none";
+
+    function applyClasses() {
+      const body = document.body;
+      VALID_THEMES.forEach((t) => body.classList.remove("theme-" + t));
+      body.classList.add("theme-" + currentTheme);
+      VALID_BGS.forEach((b) => body.classList.remove("bg-" + b));
+      body.classList.add("bg-" + currentBg);
+    }
+    function init() {
+      try {
+        const t = localStorage.getItem(THEME_KEY);
+        if (VALID_THEMES.includes(t)) currentTheme = t;
+        const b = localStorage.getItem(BG_KEY);
+        if (VALID_BGS.includes(b)) currentBg = b;
+      } catch (_) {}
+      applyClasses();
+    }
+    function setTheme(id) {
+      if (!VALID_THEMES.includes(id)) return;
+      currentTheme = id;
+      try { localStorage.setItem(THEME_KEY, id); } catch (_) {}
+      applyClasses();
+      refreshActiveSwatches();
+    }
+    function setBackground(id) {
+      if (!VALID_BGS.includes(id)) return;
+      currentBg = id;
+      try { localStorage.setItem(BG_KEY, id); } catch (_) {}
+      applyClasses();
+      refreshActiveSwatches();
+    }
+    function getTheme() { return currentTheme; }
+    function getBg() { return currentBg; }
+    function refreshActiveSwatches() {
+      document.querySelectorAll(".theme-swatches .swatch[data-theme]").forEach((sw) => {
+        sw.classList.toggle("active", sw.getAttribute("data-theme") === currentTheme);
+      });
+      document.querySelectorAll(".bg-swatches .sw-bg[data-bg]").forEach((sw) => {
+        sw.classList.toggle("active", sw.getAttribute("data-bg") === currentBg);
+      });
+    }
+    return { init, theme: setTheme, background: setBackground, getTheme, getBg, refreshActiveSwatches };
+  })();
 
   // -------- View / navigation switching -------------------------------------
   function switchView(viewId) {
@@ -1726,6 +1798,28 @@
       window.addEventListener(evt, () => unlockAudioIfNeeded(), { once: true, passive: true, capture: true });
     });
 
+    // Appearance: Theme accent swatches
+    document.querySelectorAll(".theme-swatches .swatch[data-theme]").forEach((sw) => {
+      sw.addEventListener("click", () => {
+        Appearance.theme(sw.getAttribute("data-theme"));
+      });
+    });
+    // Appearance: Background swatches
+    document.querySelectorAll(".bg-swatches .sw-bg[data-bg]").forEach((sw) => {
+      sw.addEventListener("click", () => {
+        Appearance.background(sw.getAttribute("data-bg"));
+      });
+    });
+    // Appearance: open dialogs (desktop sidebar, mobile header)
+    const openAppearance = () => {
+      Appearance.refreshActiveSwatches();
+      openDialog("dialog-appearance");
+    };
+    const ba = document.getElementById("btn-open-appearance");
+    if (ba) ba.addEventListener("click", openAppearance);
+    const bam = document.getElementById("btn-open-appearance-mobile");
+    if (bam) bam.addEventListener("click", openAppearance);
+
     // Schedule: view mode
     document.querySelectorAll("#schedule-view-seg button").forEach((b) => {
       b.addEventListener("click", () => {
@@ -1855,9 +1949,13 @@
 
   // -------- Bootstrap --------------------------------------------------------
   document.addEventListener("DOMContentLoaded", () => {
+    // Apply persisted theme/background ASAP (before paint) to avoid FOUC
+    Appearance.init();
     applyTranslations();
     wireUI();
     renderAll();
+    // Sync swatch active states in Data panel
+    Appearance.refreshActiveSwatches();
     // Restore last view
     try {
       const saved = sessionStorage.getItem("quiethours-static-view");

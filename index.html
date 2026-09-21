@@ -84,6 +84,16 @@
               <div class="author-links">
                 <a
                   class="social-icon"
+                  href="https://github.com/s1gnuh"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="GitHub"
+                  title="GitHub"
+                >
+                  <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 .5C5.73.5.5 5.73.5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2.2c-3.2.7-3.87-1.37-3.87-1.37-.52-1.32-1.27-1.67-1.27-1.67-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.02 1.75 2.68 1.24 3.34.95.1-.74.4-1.24.72-1.53-2.55-.29-5.24-1.27-5.24-5.66 0-1.25.45-2.27 1.18-3.07-.12-.3-.51-1.48.11-3.08 0 0 .96-.31 3.15 1.17a10.9 10.9 0 0 1 5.74 0c2.19-1.48 3.15-1.17 3.15-1.17.62 1.6.23 2.78.11 3.08.73.8 1.18 1.82 1.18 3.07 0 4.4-2.69 5.37-5.25 5.65.41.36.78 1.06.78 2.14v3.18c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5Z"/></svg>
+                </a>
+                <a
+                  class="social-icon"
                   href="https://www.facebook.com/viet.hung.183615/"
                   target="_blank"
                   rel="noreferrer"
@@ -105,6 +115,12 @@
               </div>
             </div>
             <p class="local-only" data-i18n="brand.localOnly">Dữ liệu chỉ lưu ở trình duyệt của bạn.</p>
+
+            <!-- Desktop Theme/Appearance quick-open -->
+            <button type="button" class="appearance-quick-btn" id="btn-open-appearance" title="Giao diện">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
+              <span data-i18n="appearance.title">Giao diện</span>
+            </button>
           </div>
         </aside>
 
@@ -123,13 +139,18 @@
                 <p class="brand-tagline" data-i18n="brand.tagline">Phòng học tập cá nhân</p>
               </div>
             </div>
-            <label class="lang-switcher">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
-              <select id="lang-select-mobile" aria-label="Language">
-                <option value="vi">Tiếng Việt</option>
-                <option value="en">English</option>
-              </select>
-            </label>
+            <div style="display:flex; align-items:center; gap:0.375rem">
+              <button type="button" class="btn btn-ghost btn-icon-sm" id="btn-open-appearance-mobile" title="Giao diện" aria-label="Appearance">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
+              </button>
+              <label class="lang-switcher">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                <select id="lang-select-mobile" aria-label="Language">
+                  <option value="vi">Tiếng Việt</option>
+                  <option value="en">English</option>
+                </select>
+              </label>
+            </div>
           </header>
 
           <main class="content">
@@ -528,6 +549,44 @@
                 </div>
 
                 <div class="data-panel">
+                  <h3 data-i18n="appearance.title">Giao diện</h3>
+                  <p class="data-panel-desc" data-i18n="appearance.desc">Chọn màu nhấn Accent và hình nền động — được lưu tự động cho các lần sau.</p>
+
+                  <div class="swatch-group">
+                    <p class="swatch-label" data-i18n="appearance.themes">Màu nhấn</p>
+                    <div class="swatch-list theme-swatches" id="theme-swatches">
+                      <button type="button" class="swatch" data-theme="sage" title="Sage (mặc định)" style="--c:#8a9e8e"><span class="sw-dot" style="background:#8a9e8e"></span><span class="sw-name">Sage</span></button>
+                      <button type="button" class="swatch" data-theme="sunset" title="Sunset" style="--c:#c4856a"><span class="sw-dot" style="background:#c4856a"></span><span class="sw-name">Sunset</span></button>
+                      <button type="button" class="swatch" data-theme="lavender" title="Lavender" style="--c:#a094cf"><span class="sw-dot" style="background:#a094cf"></span><span class="sw-name">Lavender</span></button>
+                      <button type="button" class="swatch" data-theme="ocean" title="Ocean" style="--c:#6b99b8"><span class="sw-dot" style="background:#6b99b8"></span><span class="sw-name">Ocean</span></button>
+                      <button type="button" class="swatch" data-theme="cyber" title="Cyber" style="--c:#c871dd"><span class="sw-dot" style="background:#c871dd"></span><span class="sw-name">Cyber</span></button>
+                    </div>
+                  </div>
+
+                  <div class="swatch-group">
+                    <p class="swatch-label" data-i18n="appearance.backgrounds">Hình nền</p>
+                    <div class="swatch-list bg-swatches" id="bg-swatches">
+                      <button type="button" class="swatch sw-bg" data-bg="none" title="Mặc định (không nền)">
+                        <span class="sw-preview bg-prev-none"></span>
+                        <span class="sw-name" data-i18n="appearance.bgNone">Mặc định</span>
+                      </button>
+                      <button type="button" class="swatch sw-bg" data-bg="rain" title="Rainy Window">
+                        <span class="sw-preview bg-prev-rain"></span>
+                        <span class="sw-name" data-i18n="appearance.bgRain">Cửa sổ mưa</span>
+                      </button>
+                      <button type="button" class="swatch sw-bg" data-bg="lofi" title="Pixel Art Lofi">
+                        <span class="sw-preview bg-prev-lofi"></span>
+                        <span class="sw-name" data-i18n="appearance.bgLofi">Lofi Pixel</span>
+                      </button>
+                      <button type="button" class="swatch sw-bg" data-bg="cyber" title="Cyber Neon">
+                        <span class="sw-preview bg-prev-cyber"></span>
+                        <span class="sw-name" data-i18n="appearance.bgCyber">Cyber Neon</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="data-panel">
                   <h3 data-i18n="data.resetTitle">Đặt lại dữ liệu</h3>
                   <p class="data-panel-desc" data-i18n="data.resetDesc">Xóa toàn bộ lịch, công việc, thống kê — hành động không thể hoàn tác.</p>
                   <button class="btn btn-danger btn-sm" id="btn-reset">
@@ -542,6 +601,9 @@
           <!-- Mobile footer -->
           <footer class="mobile-footer">
             <div style="display: flex; align-items: center; gap: 0.5rem">
+              <a class="social-icon" href="https://github.com/s1gnuh" target="_blank" rel="noreferrer" aria-label="GitHub" title="GitHub">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 .5C5.73.5.5 5.73.5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2.2c-3.2.7-3.87-1.37-3.87-1.37-.52-1.32-1.27-1.67-1.27-1.67-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.02 1.75 2.68 1.24 3.34.95.1-.74.4-1.24.72-1.53-2.55-.29-5.24-1.27-5.24-5.66 0-1.25.45-2.27 1.18-3.07-.12-.3-.51-1.48.11-3.08 0 0 .96-.31 3.15 1.17a10.9 10.9 0 0 1 5.74 0c2.19-1.48 3.15-1.17 3.15-1.17.62 1.6.23 2.78.11 3.08.73.8 1.18 1.82 1.18 3.07 0 4.4-2.69 5.37-5.25 5.65.41.36.78 1.06.78 2.14v3.18c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5Z"/></svg>
+              </a>
               <a class="social-icon" href="https://www.facebook.com/viet.hung.183615/" target="_blank" rel="noreferrer" aria-label="Facebook" title="Facebook">
                 <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M13.5 21v-7.5h2.5l.375-3h-2.875V8.55c0-.87.24-1.46 1.488-1.46h1.56V4.47a21.6 21.6 0 0 0-2.275-.117c-2.251 0-3.792 1.375-3.792 3.896v2.25H8V13.5h2.496V21h3Z"/></svg>
               </a>
@@ -551,8 +613,6 @@
             </div>
             <p class="local-only" data-i18n="brand.localOnly">Dữ liệu chỉ lưu ở trình duyệt của bạn.</p>
           </footer>
-        </div>
-      </div>
 
       <!-- =====================================================
            FLOATING DOCK (timer pill)
@@ -749,6 +809,39 @@
             <button type="submit" class="btn btn-primary btn-sm" data-i18n="board.addToBoard">Thêm</button>
           </div>
         </form>
+      </div>
+    </div>
+
+    <!-- Appearance (Theme & Backgrounds) Dialog -->
+    <div class="dialog-backdrop" id="dialog-appearance">
+      <div class="dialog dialog-wide">
+        <h3 data-i18n="appearance.title">Giao diện</h3>
+        <p class="desc" data-i18n="appearance.desc">Chọn màu nhấn Accent và hình nền động — được lưu tự động cho các lần sau.</p>
+
+        <div class="swatch-group">
+          <p class="swatch-label" data-i18n="appearance.themes">Màu nhấn</p>
+          <div class="swatch-list theme-swatches" id="theme-swatches-dialog">
+            <button type="button" class="swatch" data-theme="sage" title="Sage"><span class="sw-dot" style="background:#8a9e8e"></span><span class="sw-name">Sage</span></button>
+            <button type="button" class="swatch" data-theme="sunset" title="Sunset"><span class="sw-dot" style="background:#c4856a"></span><span class="sw-name">Sunset</span></button>
+            <button type="button" class="swatch" data-theme="lavender" title="Lavender"><span class="sw-dot" style="background:#a094cf"></span><span class="sw-name">Lavender</span></button>
+            <button type="button" class="swatch" data-theme="ocean" title="Ocean"><span class="sw-dot" style="background:#6b99b8"></span><span class="sw-name">Ocean</span></button>
+            <button type="button" class="swatch" data-theme="cyber" title="Cyber"><span class="sw-dot" style="background:#c871dd"></span><span class="sw-name">Cyber</span></button>
+          </div>
+        </div>
+
+        <div class="swatch-group">
+          <p class="swatch-label" data-i18n="appearance.backgrounds">Hình nền</p>
+          <div class="swatch-list bg-swatches" id="bg-swatches-dialog">
+            <button type="button" class="swatch sw-bg" data-bg="none"><span class="sw-preview bg-prev-none"></span><span class="sw-name" data-i18n="appearance.bgNone">Mặc định</span></button>
+            <button type="button" class="swatch sw-bg" data-bg="rain"><span class="sw-preview bg-prev-rain"></span><span class="sw-name" data-i18n="appearance.bgRain">Cửa sổ mưa</span></button>
+            <button type="button" class="swatch sw-bg" data-bg="lofi"><span class="sw-preview bg-prev-lofi"></span><span class="sw-name" data-i18n="appearance.bgLofi">Lofi Pixel</span></button>
+            <button type="button" class="swatch sw-bg" data-bg="cyber"><span class="sw-preview bg-prev-cyber"></span><span class="sw-name" data-i18n="appearance.bgCyber">Cyber Neon</span></button>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-ghost btn-sm" data-dialog-close="dialog-appearance" data-i18n="common.done">Xong</button>
+        </div>
       </div>
     </div>
 
