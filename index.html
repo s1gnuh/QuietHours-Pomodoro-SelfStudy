@@ -1,0 +1,734 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>QuietHours · Static Port</title>
+    <meta name="theme-color" content="#0e0d0c" />
+    <meta
+      name="description"
+      content="QuietHours — phòng học tập private, local-first: pomodoro, nhạc nền, lịch học, bảng công việc, thống kê."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div class="grain" aria-hidden="true"></div>
+
+    <div class="app">
+      <div class="app-inner">
+        <!-- =====================================================
+             SIDEBAR (desktop)
+             ===================================================== -->
+        <aside class="sidebar">
+          <div class="flex items-start justify-between gap-2">
+            <div class="brand">
+              <span class="brand-icon" aria-hidden="true">
+                <!-- Moon icon -->
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+              </span>
+              <div>
+                <p class="brand-title">QuietHours</p>
+                <p class="brand-tagline" data-i18n="brand.tagline">Phòng học tập cá nhân</p>
+              </div>
+            </div>
+          </div>
+
+          <nav class="sidebar-nav" aria-label="Primary">
+            <button class="nav-btn active" data-view="focus">
+              <!-- Timer -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              <span data-i18n="nav.focus">Tập trung</span>
+            </button>
+            <button class="nav-btn" data-view="schedule">
+              <!-- CalendarDays -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              <span data-i18n="nav.schedule">Lịch học</span>
+            </button>
+            <button class="nav-btn" data-view="board">
+              <!-- LayoutGrid -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+              <span data-i18n="nav.board">Bảng việc</span>
+            </button>
+            <button class="nav-btn" data-view="insights">
+              <!-- BarChart3 -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M3 3v18h18"></path><path d="M18 17V9"></path><path d="M13 17V5"></path><path d="M8 17v-3"></path></svg>
+              <span data-i18n="nav.insights">Thống kê</span>
+            </button>
+            <button class="nav-btn" data-view="data">
+              <!-- Database -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+              <span data-i18n="nav.data">Dữ liệu</span>
+            </button>
+          </nav>
+
+          <div class="sidebar-footer">
+            <!-- Language Switcher -->
+            <label class="lang-switcher" title="Ngôn ngữ">
+              <!-- Globe -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+              <select id="lang-select" aria-label="Language">
+                <option value="vi">Tiếng Việt</option>
+                <option value="en">English</option>
+              </select>
+            </label>
+
+            <!-- Author block -->
+            <div class="author-box">
+              <p class="author-label" data-i18n="author.title">Tác giả</p>
+              <div class="author-links">
+                <a
+                  class="social-icon"
+                  href="https://www.facebook.com/viet.hung.183615/"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="Facebook"
+                  title="Facebook"
+                >
+                  <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M13.5 21v-7.5h2.5l.375-3h-2.875V8.55c0-.87.24-1.46 1.488-1.46h1.56V4.47a21.6 21.6 0 0 0-2.275-.117c-2.251 0-3.792 1.375-3.792 3.896v2.25H8V13.5h2.496V21h3Z"/></svg>
+                </a>
+                <a
+                  class="social-icon"
+                  href="https://www.instagram.com/s1gnuh/?hl=en"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="Instagram"
+                  title="Instagram"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                </a>
+              </div>
+            </div>
+            <p class="local-only" data-i18n="brand.localOnly">Dữ liệu chỉ lưu ở trình duyệt của bạn.</p>
+          </div>
+        </aside>
+
+        <!-- =====================================================
+             MAIN COLUMN
+             ===================================================== -->
+        <div class="main-col">
+          <!-- Mobile header -->
+          <header class="mobile-header">
+            <div class="brand">
+              <span class="brand-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+              </span>
+              <div>
+                <p class="brand-title">QuietHours</p>
+                <p class="brand-tagline" data-i18n="brand.tagline">Phòng học tập cá nhân</p>
+              </div>
+            </div>
+            <label class="lang-switcher">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+              <select id="lang-select-mobile" aria-label="Language">
+                <option value="vi">Tiếng Việt</option>
+                <option value="en">English</option>
+              </select>
+            </label>
+          </header>
+
+          <main class="content">
+            <!-- =============================================
+                 VIEW: FOCUS
+                 ============================================= -->
+            <section id="view-focus" class="view active" data-view="focus">
+              <!-- StatRow (3 cards) -->
+              <div class="stat-grid">
+                <div class="stat-card">
+                  <div class="stat-icon">
+                    <!-- CalendarClock -->
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                  </div>
+                  <p class="stat-kicker" data-i18n="focus.nextSession">Buổi tới</p>
+                  <p class="stat-value" id="stat-next-title">Không có lịch</p>
+                  <p class="stat-sub" id="stat-next-sub">&nbsp;</p>
+                </div>
+
+                <div class="stat-card">
+                  <div class="stat-icon">
+                    <!-- Flame -->
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>
+                  </div>
+                  <p class="stat-kicker" data-i18n="focus.studyStreak">Chuỗi ngày</p>
+                  <p class="stat-value numeric"><span id="stat-streak">0</span> <span data-i18n="focus.days">ngày</span></p>
+                  <p class="stat-sub" id="stat-streak-sub">Chưa tập trung hôm nay</p>
+                </div>
+
+                <div class="stat-card">
+                  <div class="stat-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                  </div>
+                  <p class="stat-kicker" data-i18n="focus.thisWeek">Tuần này</p>
+                  <p class="stat-value numeric" id="stat-week">0 giờ 0 phút</p>
+                  <div style="margin-top: 0.25rem">
+                    <span class="badge badge-sage" data-i18n="focus.focusHours">Giờ tập trung</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Pomodoro + Mixer grid -->
+              <div class="focus-grid">
+                <!-- POMODORO CARD -->
+                <div class="card">
+                  <div class="card-head">
+                    <div>
+                      <p class="section-kicker" data-i18n="focus.session">Buổi học</p>
+                      <h2 class="card-title" data-i18n="focus.pomodoro">Pomodoro</h2>
+                    </div>
+                    <button class="btn btn-ghost btn-icon" id="btn-open-timer-settings" aria-label="Settings" title="Settings">
+                      <!-- Settings2 -->
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                    </button>
+                  </div>
+
+                  <!-- Mode segmented -->
+                  <div class="segmented" style="margin-bottom: 1.5rem" id="timer-modes">
+                    <button data-mode="focus" class="active" data-i18n="focus.focus">Tập trung</button>
+                    <button data-mode="shortBreak" data-i18n="focus.shortBreak">Nghỉ ngắn</button>
+                    <button data-mode="longBreak" data-i18n="focus.longBreak">Nghỉ dài</button>
+                  </div>
+
+                  <!-- Dial -->
+                  <div class="dial-wrap">
+                    <svg class="dial-svg" viewBox="0 0 268 268" aria-hidden="true">
+                      <circle cx="134" cy="134" r="130" fill="none" stroke="var(--color-elevated)" stroke-width="8" />
+                      <circle
+                        id="dial-progress"
+                        cx="134"
+                        cy="134"
+                        r="130"
+                        fill="none"
+                        stroke="var(--color-accent)"
+                        stroke-width="8"
+                        stroke-linecap="round"
+                        stroke-dasharray="816.81"
+                        stroke-dashoffset="0"
+                        style="transition: stroke-dashoffset 0.2s linear"
+                      />
+                    </svg>
+                    <div class="dial-center">
+                      <p class="timer-text" id="timer-text">25:00</p>
+                      <p class="timer-mode-label" id="timer-mode-label" data-i18n="focus.focus">Tập trung</p>
+                    </div>
+                  </div>
+
+                  <div class="timer-actions">
+                    <button class="btn btn-primary btn-lg" id="btn-timer-toggle" style="min-width: 8rem">
+                      <span class="start-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                      </span>
+                      <span class="start-text" data-i18n="common.start">Bắt đầu</span>
+                    </button>
+                    <button class="btn btn-secondary btn-lg" id="btn-timer-reset" aria-label="Reset">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                      <span data-i18n="common.reset">Đặt lại</span>
+                    </button>
+                  </div>
+
+                  <p class="timer-meta">
+                    <span id="timer-focus-count">0</span>
+                    <span data-i18n="focus.focusSessions"> buổi tập trung</span>
+                    <span class="sep">·</span>
+                    <span data-i18n="focus.spaceToStart">Nhấn Space để bắt đầu</span>
+                  </p>
+                </div>
+
+                <!-- MIXER CARD -->
+                <div class="card" id="mixer-card">
+                  <div class="card-head">
+                    <div>
+                      <p class="section-kicker" data-i18n="mixer.atmosphere">Không gian</p>
+                      <h2 class="card-title" data-i18n="mixer.soundMixer">Trộn âm thanh</h2>
+                    </div>
+                  </div>
+
+                  <div class="mixer-master">
+                    <svg id="master-vol-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
+                    <input
+                      class="qh-slider"
+                      type="range"
+                      id="master-volume"
+                      min="0"
+                      max="100"
+                      value="70"
+                      step="1"
+                      aria-label="Master volume"
+                    />
+                    <span class="volume-val" id="master-volume-val">70</span>
+                  </div>
+
+                  <ul class="track-list">
+                    <li class="track-row" data-track="rain">
+                      <button class="icon-toggle" aria-label="Rain">
+                        <!-- CloudRain -->
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><line x1="16" y1="13" x2="16" y2="21"></line><line x1="8" y1="13" x2="8" y2="21"></line><line x1="12" y1="15" x2="12" y2="23"></line><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"></path></svg>
+                      </button>
+                      <div class="track-body">
+                        <div class="track-head">
+                          <p class="track-name" data-i18n="mixer.tracks.rain.label">Mưa</p>
+                          <p class="track-hint" data-i18n="mixer.tracks.rain.hint">Mưa nhẹ trên mái</p>
+                        </div>
+                        <input class="qh-slider track-volume" type="range" min="0" max="100" value="50" step="1" />
+                      </div>
+                    </li>
+                    <li class="track-row" data-track="cafe">
+                      <button class="icon-toggle" aria-label="Cafe">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>
+                      </button>
+                      <div class="track-body">
+                        <div class="track-head">
+                          <p class="track-name" data-i18n="mixer.tracks.cafe.label">Quán cà phê</p>
+                          <p class="track-hint" data-i18n="mixer.tracks.cafe.hint">Tiếng người nói & cốc chén</p>
+                        </div>
+                        <input class="qh-slider track-volume" type="range" min="0" max="100" value="40" step="1" />
+                      </div>
+                    </li>
+                    <li class="track-row" data-track="ocean">
+                      <button class="icon-toggle" aria-label="Ocean">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path></svg>
+                      </button>
+                      <div class="track-body">
+                        <div class="track-head">
+                          <p class="track-name" data-i18n="mixer.tracks.ocean.label">Biển</p>
+                          <p class="track-hint" data-i18n="mixer.tracks.ocean.hint">Sóng nhẹ dập bờ</p>
+                        </div>
+                        <input class="qh-slider track-volume" type="range" min="0" max="100" value="0" step="1" />
+                      </div>
+                    </li>
+                    <li class="track-row" data-track="fireplace">
+                      <button class="icon-toggle" aria-label="Fireplace">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>
+                      </button>
+                      <div class="track-body">
+                        <div class="track-head">
+                          <p class="track-name" data-i18n="mixer.tracks.fireplace.label">Lò sưởi</p>
+                          <p class="track-hint" data-i18n="mixer.tracks.fireplace.hint">Lửa kẹt nhẹ</p>
+                        </div>
+                        <input class="qh-slider track-volume" type="range" min="0" max="100" value="0" step="1" />
+                      </div>
+                    </li>
+                    <li class="track-row" data-track="lofi">
+                      <button class="icon-toggle" aria-label="Lofi">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+                      </button>
+                      <div class="track-body">
+                        <div class="track-head">
+                          <p class="track-name" data-i18n="mixer.tracks.lofi.label">Lofi</p>
+                          <p class="track-hint" data-i18n="mixer.tracks.lofi.hint">Hợp âm & beat nhẹ</p>
+                        </div>
+                        <input class="qh-slider track-volume" type="range" min="0" max="100" value="0" step="1" />
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </section>
+
+            <!-- =============================================
+                 VIEW: SCHEDULE
+                 ============================================= -->
+            <section id="view-schedule" class="view" data-view="schedule">
+              <div class="section-head">
+                <div>
+                  <p class="section-kicker" data-i18n="schedule.calendar">Lịch</p>
+                  <h2 class="section-title" data-i18n="schedule.studySchedule">Lịch học tập</h2>
+                </div>
+                <div class="schedule-head-actions">
+                  <div class="segmented" id="schedule-view-seg" style="padding: 0.25rem; height: auto">
+                    <button data-sched="daily" class="active" data-i18n="schedule.timeline">Theo ngày</button>
+                    <button data-sched="weekly" data-i18n="schedule.week">Theo tuần</button>
+                  </div>
+                  <button class="btn btn-primary btn-sm" id="btn-add-session">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    <span data-i18n="common.add">Thêm</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Week strip -->
+              <div class="week-strip" id="week-strip" aria-label="Week"></div>
+
+              <!-- Daily list -->
+              <div id="schedule-daily-view">
+                <ol class="task-list" id="task-list" data-empty="Không có buổi học nào trong ngày"></ol>
+              </div>
+
+              <!-- Weekly grid -->
+              <div id="schedule-weekly-view" style="display: none">
+                <div class="week-grid" id="week-grid"></div>
+              </div>
+            </section>
+
+            <!-- =============================================
+                 VIEW: BOARD (Kanban)
+                 ============================================= -->
+            <section id="view-board" class="view" data-view="board">
+              <div class="section-head">
+                <div>
+                  <p class="section-kicker" data-i18n="board.tasks">Công việc</p>
+                  <h2 class="section-title" data-i18n="board.board">Bảng Kanban</h2>
+                </div>
+                <button class="btn btn-primary btn-sm" id="btn-add-card">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                  <span data-i18n="common.add">Thêm</span>
+                </button>
+              </div>
+
+              <div class="board-grid" id="board-grid">
+                <!-- To Do -->
+                <div class="board-col" data-col="todo">
+                  <div class="board-col-head">
+                    <h3 class="board-col-name" data-i18n="board.toDo">Cần làm</h3>
+                    <span class="board-col-count" id="count-todo">0</span>
+                  </div>
+                  <ul class="board-col-body" data-col="todo">
+                    <li class="drop-hint" data-i18n="board.dropHere">Kéo thả vào đây</li>
+                  </ul>
+                </div>
+                <!-- Doing -->
+                <div class="board-col" data-col="doing">
+                  <div class="board-col-head">
+                    <h3 class="board-col-name" data-i18n="board.inProgress">Đang làm</h3>
+                    <span class="board-col-count" id="count-doing">0</span>
+                  </div>
+                  <ul class="board-col-body" data-col="doing">
+                    <li class="drop-hint" data-i18n="board.dropHere">Kéo thả vào đây</li>
+                  </ul>
+                </div>
+                <!-- Done -->
+                <div class="board-col" data-col="done">
+                  <div class="board-col-head">
+                    <h3 class="board-col-name" data-i18n="board.done">Hoàn thành</h3>
+                    <span class="board-col-count" id="count-done">0</span>
+                  </div>
+                  <ul class="board-col-body" data-col="done">
+                    <li class="drop-hint" data-i18n="board.dropHere">Kéo thả vào đây</li>
+                  </ul>
+                </div>
+              </div>
+            </section>
+
+            <!-- =============================================
+                 VIEW: INSIGHTS
+                 ============================================= -->
+            <section id="view-insights" class="view" data-view="insights">
+              <div style="margin-bottom: 1rem">
+                <p class="section-kicker" data-i18n="insights.insights">Phân tích</p>
+                <h2 class="section-title" data-i18n="insights.productivity">Năng suất</h2>
+              </div>
+
+              <div class="insight-summary">
+                <div class="insight-card">
+                  <p class="insight-kicker" data-i18n="insights.dailyStreak">Chuỗi ngày</p>
+                  <p class="insight-number" id="insight-streak">0</p>
+                  <p class="insight-sub" data-i18n="insights.consecutiveDays">ngày liên tục có hoạt động</p>
+                </div>
+                <div class="insight-card">
+                  <p class="insight-kicker" data-i18n="insights.today">Hôm nay</p>
+                  <p class="insight-number" id="insight-today">0 phút</p>
+                  <p class="insight-sub" data-i18n="insights.loggedTime">thời gian đã ghi nhận</p>
+                </div>
+                <div class="insight-card">
+                  <p class="insight-kicker" data-i18n="insights.thisWeek">Tuần này</p>
+                  <p class="insight-number" id="insight-week">0 giờ</p>
+                  <p class="insight-sub" data-i18n="insights.acrossSubjects">trên các môn học</p>
+                </div>
+              </div>
+
+              <div class="insight-grid">
+                <div class="chart-card">
+                  <h3 class="chart-title" data-i18n="insights.dailyHours">Giờ tập trung / ngày</h3>
+                  <div class="chart-wrap">
+                    <canvas id="chart-bar" aria-label="Daily hours"></canvas>
+                  </div>
+                </div>
+                <div class="chart-card">
+                  <h3 class="chart-title" data-i18n="insights.timeBySubject">Thời gian theo môn</h3>
+                  <div class="chart-wrap">
+                    <canvas id="chart-donut" aria-label="Time by subject"></canvas>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- =============================================
+                 VIEW: DATA (Backup panel)
+                 ============================================= -->
+            <section id="view-data" class="view" data-view="data">
+              <div style="margin-bottom: 1rem">
+                <p class="section-kicker" data-i18n="data.privacy">Quyền riêng tư</p>
+                <h2 class="section-title" data-i18n="data.data">Dữ liệu</h2>
+                <p class="data-desc">
+                  <span data-i18n="data.dataDesc">Tất cả dữ liệu (lịch, task, thống kê) được lưu trữ hoàn toàn trên trình duyệt của bạn dưới khóa </span>
+                  <code style="font-family: var(--font-mono); color: var(--color-fg); background: var(--color-elevated); padding: 2px 6px; border-radius: 4px; font-size: 0.8em">quiethours-static-v1</code>.
+                </p>
+              </div>
+
+              <div class="data-grid">
+                <div class="data-panel">
+                  <h3 data-i18n="data.backupTitle">Sao lưu &amp; khôi phục</h3>
+                  <p class="data-panel-desc" data-i18n="data.backupDesc">Xuất file JSON để sao lưu, hoặc nhập file đã xuất trước đó để khôi phục.</p>
+                  <div class="data-actions">
+                    <button class="btn btn-primary btn-sm" id="btn-export">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                      <span data-i18n="common.exportData">Xuất dữ liệu</span>
+                    </button>
+                    <label class="btn btn-secondary btn-sm" style="cursor: pointer">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                      <span data-i18n="common.importData">Nhập dữ liệu</span>
+                      <input id="file-import" type="file" accept="application/json,.json" style="display: none" />
+                    </label>
+                  </div>
+                  <p class="error-text" id="import-error" style="display:none"></p>
+                </div>
+
+                <div class="data-panel">
+                  <h3 data-i18n="data.subjects">Môn học</h3>
+                  <p class="data-panel-desc" data-i18n="data.subjectsDesc">Tạo môn học để gắn vào lịch và công việc — giúp thống kê chính xác hơn.</p>
+                  <ul class="subject-chips" id="subject-chips"></ul>
+                  <form class="subject-form" id="subject-form" onsubmit="return false">
+                    <div class="field">
+                      <label for="subject-name" data-i18n="data.newSubject">Thêm môn học</label>
+                      <input id="subject-name" type="text" placeholder="Ví dụ: Toán cao cấp" maxlength="40" />
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                      <span data-i18n="common.add">Thêm</span>
+                    </button>
+                  </form>
+                </div>
+
+                <div class="data-panel">
+                  <h3 data-i18n="data.resetTitle">Đặt lại dữ liệu</h3>
+                  <p class="data-panel-desc" data-i18n="data.resetDesc">Xóa toàn bộ lịch, công việc, thống kê — hành động không thể hoàn tác.</p>
+                  <button class="btn btn-danger btn-sm" id="btn-reset">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                    <span data-i18n="common.reset">Đặt lại</span>
+                  </button>
+                </div>
+              </div>
+            </section>
+          </main>
+
+          <!-- Mobile footer -->
+          <footer class="mobile-footer">
+            <div style="display: flex; align-items: center; gap: 0.5rem">
+              <a class="social-icon" href="https://www.facebook.com/viet.hung.183615/" target="_blank" rel="noreferrer" aria-label="Facebook" title="Facebook">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M13.5 21v-7.5h2.5l.375-3h-2.875V8.55c0-.87.24-1.46 1.488-1.46h1.56V4.47a21.6 21.6 0 0 0-2.275-.117c-2.251 0-3.792 1.375-3.792 3.896v2.25H8V13.5h2.496V21h3Z"/></svg>
+              </a>
+              <a class="social-icon" href="https://www.instagram.com/s1gnuh/?hl=en" target="_blank" rel="noreferrer" aria-label="Instagram" title="Instagram">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+              </a>
+            </div>
+            <p class="local-only" data-i18n="brand.localOnly">Dữ liệu chỉ lưu ở trình duyệt của bạn.</p>
+          </footer>
+        </div>
+      </div>
+
+      <!-- =====================================================
+           FLOATING DOCK (timer pill)
+           ===================================================== -->
+      <div class="dock" id="dock">
+        <div class="dock-inner">
+          <button type="button" id="dock-open-focus" style="min-width: 0; text-align: left; padding: 0; color: inherit; cursor: pointer">
+            <p class="dock-time" id="dock-timer">25:00</p>
+            <p class="dock-mode" id="dock-mode" data-i18n="focus.focus">Tập trung</p>
+          </button>
+          <button class="btn btn-secondary btn-icon-sm" id="dock-toggle-btn" aria-label="Toggle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- =====================================================
+           BOTTOM NAV (mobile)
+           ===================================================== -->
+      <nav class="bottom-nav">
+        <ul>
+          <li>
+            <button data-view="focus" class="active">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              <span data-i18n="nav.focus">Tập trung</span>
+            </button>
+          </li>
+          <li>
+            <button data-view="schedule">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              <span data-i18n="nav.schedule">Lịch</span>
+            </button>
+          </li>
+          <li>
+            <button data-view="board">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+              <span data-i18n="nav.board">Việc</span>
+            </button>
+          </li>
+          <li>
+            <button data-view="insights">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M3 3v18h18"></path><path d="M18 17V9"></path><path d="M13 17V5"></path><path d="M8 17v-3"></path></svg>
+              <span data-i18n="nav.insights">Thống kê</span>
+            </button>
+          </li>
+          <li>
+            <button data-view="data">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+              <span data-i18n="nav.data">Dữ liệu</span>
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+    <!-- =========================================================
+         DIALOGS
+         ========================================================= -->
+    <!-- Timer Settings Dialog -->
+    <div class="dialog-backdrop" id="dialog-timer">
+      <div class="dialog">
+        <h3 data-i18n="timerSettings.title">Cài đặt bộ đếm</h3>
+        <p class="desc" data-i18n="timerSettings.desc">Độ dài các phiên. Một phiên nghỉ dài sẽ xuất hiện sau mỗi {n} phiên tập trung.</p>
+        <div class="field-row">
+          <div class="field">
+            <label data-i18n="timerSettings.focus">Tập trung (phút)</label>
+            <input type="number" min="1" max="180" id="ts-focus" value="25" />
+          </div>
+          <div class="field">
+            <label data-i18n="timerSettings.shortBreak">Nghỉ ngắn (phút)</label>
+            <input type="number" min="1" max="180" id="ts-short" value="5" />
+          </div>
+          <div class="field">
+            <label data-i18n="timerSettings.longBreak">Nghỉ dài (phút)</label>
+            <input type="number" min="1" max="180" id="ts-long" value="15" />
+          </div>
+          <div class="field">
+            <label data-i18n="timerSettings.longBreakEvery">Nghỉ dài sau (phiên)</label>
+            <input type="number" min="1" max="12" id="ts-every" value="4" />
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.625rem 0.75rem; background: var(--color-elevated); border-radius: 0.375rem">
+          <div>
+            <p class="text-sm font-medium" data-i18n="timerSettings.autoStart" style="font-size: 0.875rem; font-weight: 500">Tự động bắt đầu phiên tiếp theo</p>
+            <p style="font-size: 0.75rem; color: var(--color-muted)" data-i18n="timerSettings.autoStartDesc">Không cần nhấn Bắt đầu sau mỗi chu kỳ.</p>
+          </div>
+          <label style="display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer">
+            <span style="font-size: 0.75rem; color: var(--color-muted)">OFF</span>
+            <input type="checkbox" id="ts-autostart" style="width: auto; box-shadow: none" />
+          </label>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-ghost btn-sm" data-dialog-close="dialog-timer" data-i18n="common.cancel">Hủy</button>
+          <button class="btn btn-primary btn-sm" id="btn-save-timer-settings" data-i18n="common.save">Lưu</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- New Schedule Dialog -->
+    <div class="dialog-backdrop" id="dialog-schedule">
+      <div class="dialog">
+        <h3 data-i18n="schedule.newSession">Buổi học mới</h3>
+        <p class="desc" data-i18n="schedule.newSessionDesc">Thêm một mục vào lịch học — có thể đính kèm môn học hoặc link buổi học.</p>
+        <form onsubmit="return false" id="form-schedule">
+          <div class="field">
+            <label data-i18n="schedule.name">Tên buổi học</label>
+            <input type="text" id="sched-name" required maxlength="120" placeholder="Ví dụ: Luyện tập đại số tuyến tính" />
+          </div>
+          <div class="field-row-3">
+            <div class="field">
+              <label data-i18n="schedule.date">Ngày</label>
+              <input type="date" id="sched-date" />
+            </div>
+            <div class="field">
+              <label data-i18n="schedule.startTime">Bắt đầu</label>
+              <input type="time" id="sched-start" value="09:00" />
+            </div>
+            <div class="field">
+              <label data-i18n="schedule.endTime">Kết thúc</label>
+              <input type="time" id="sched-end" value="10:00" />
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label data-i18n="schedule.type">Loại</label>
+              <select id="sched-type">
+                <option value="study" data-i18n="schedule.types.study">Học bài</option>
+                <option value="lecture" data-i18n="schedule.types.lecture">Lý thuyết</option>
+                <option value="review" data-i18n="schedule.types.review">Ôn tập</option>
+                <option value="break" data-i18n="schedule.types.break">Nghỉ giải lao</option>
+                <option value="other" data-i18n="schedule.types.other">Khác</option>
+              </select>
+            </div>
+            <div class="field">
+              <label data-i18n="schedule.subject">Môn học</label>
+              <select id="sched-subject"><option value="">— Không chọn —</option></select>
+            </div>
+          </div>
+          <div class="field">
+            <label data-i18n="schedule.link">Liên kết</label>
+            <input type="url" id="sched-link" placeholder="https://meet.google.com/..." />
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-ghost btn-sm" data-dialog-close="dialog-schedule" data-i18n="common.cancel">Hủy</button>
+            <button type="submit" class="btn btn-primary btn-sm" data-i18n="schedule.saveSession">Lưu</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- New Kanban Card Dialog -->
+    <div class="dialog-backdrop" id="dialog-card">
+      <div class="dialog">
+        <h3 data-i18n="board.newCard">Thẻ mới</h3>
+        <p class="desc" data-i18n="board.newCardDesc">Thêm một công việc vào bảng Kanban.</p>
+        <form onsubmit="return false" id="form-card">
+          <div class="field">
+            <label data-i18n="board.title">Tiêu đề</label>
+            <input type="text" id="card-title" required maxlength="160" placeholder="Ví dụ: Hoàn thành Bài tập 3" />
+          </div>
+          <div class="field">
+            <label data-i18n="board.notes">Ghi chú</label>
+            <textarea id="card-notes" maxlength="400" placeholder="Không bắt buộc"></textarea>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label data-i18n="board.priority">Ưu tiên</label>
+              <select id="card-priority">
+                <option value="low" data-i18n="board.priorityLabel.low">Thấp</option>
+                <option value="medium" selected data-i18n="board.priorityLabel.medium">Trung bình</option>
+                <option value="high" data-i18n="board.priorityLabel.high">Cao</option>
+              </select>
+            </div>
+            <div class="field">
+              <label data-i18n="board.column">Cột</label>
+              <select id="card-column">
+                <option value="todo" data-i18n="board.toDo">Cần làm</option>
+                <option value="doing" data-i18n="board.inProgress">Đang làm</option>
+                <option value="done" data-i18n="board.done">Hoàn thành</option>
+              </select>
+            </div>
+            <div class="field">
+              <label data-i18n="board.deadline">Hạn</label>
+              <input type="date" id="card-deadline" />
+            </div>
+            <div class="field">
+              <label data-i18n="schedule.subject">Môn học</label>
+              <select id="card-subject"><option value="">— Không chọn —</option></select>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-ghost btn-sm" data-dialog-close="dialog-card" data-i18n="common.cancel">Hủy</button>
+            <button type="submit" class="btn btn-primary btn-sm" data-i18n="board.addToBoard">Thêm</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Chart.js (we use vanilla canvas but include Chart.js for nice Insight graphs) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="js/app.js" defer></script>
+  </body>
+</html>
