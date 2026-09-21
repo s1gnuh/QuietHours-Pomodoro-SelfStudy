@@ -74,6 +74,10 @@
         resetTitle: "Đặt lại dữ liệu", resetDesc: "Xóa toàn bộ lịch, công việc, thống kê — hành động không thể hoàn tác."
       },
       dock: { start: "Bắt đầu", pause: "Tạm dừng" },
+      quotes: {
+        title: "Cảm hứng hôm nay", next: "Câu khác", copied: "Đã sao chép ✨",
+        subtitle: "Lấy một chút động lực cho phiên học tập của bạn."
+      },
       lang: { switch: "Chuyển ngôn ngữ" }
     },
     en: {
@@ -143,6 +147,10 @@
         resetTitle: "Reset data", resetDesc: "Delete schedule, tasks, analytics — this can't be undone."
       },
       dock: { start: "Start", pause: "Pause" },
+      quotes: {
+        title: "Today's inspiration", next: "Next quote", copied: "Copied ✨",
+        subtitle: "A small bit of fuel for your study session."
+      },
       lang: { switch: "Switch language" }
     }
   };
@@ -204,6 +212,7 @@
     renderSubjectChips();
     renderStats();
     renderCharts();
+    renderQuote();
   }
 
   // -------- Persistence (localStorage, mirror of PersistedData) --------------
@@ -456,6 +465,109 @@
     const [y, m, d] = isoString.split("-").map(Number);
     const jd = _jdFromDate(d, m, y);
     return `${CAN[(jd + 9) % 10]} ${CHI[(jd + 1) % 12]}`;
+  }
+
+  // -------- Quotes module ---------------------------------------------------
+  const Quotes = (function () {
+    const STORAGE_URL = "data/quotes.json";
+    const QUOTE_LAST_ID_KEY = "quiethours-static-last-quote-id";
+    let cache = null;
+    let lastShownId = null;
+    let isLoading = false;
+    const pending = [];
+    async function load() {
+      if (cache) return cache;
+      if (isLoading) {
+        return new Promise((res) => pending.push(res));
+      }
+      isLoading = true;
+      try {
+        const resp = await fetch(STORAGE_URL, { cache: "no-cache" });
+        if (!resp.ok) throw new Error("HTTP " + resp.status);
+        const arr = await resp.json();
+        if (Array.isArray(arr) && arr.length > 0) {
+          cache = arr;
+        }
+      } catch (_) {
+        // Fallback mini quotes if fetch fails (e.g. file://)
+        cache = getFallbackQuotes();
+      } finally {
+        isLoading = false;
+        while (pending.length) pending.shift()(cache);
+      }
+      return cache;
+    }
+    function getFallbackQuotes() {
+      return [
+        { id: "fb01", vi: "Bắt đầu từ nơi bạn đang đứng, dùng những gì bạn có, làm điều gì đó bạn có thể.", en: "Start where you are. Use what you have. Do what you can." },
+        { id: "fb02", vi: "Không có ai trở nên giỏi bằng cách chần chừ, chỉ có hành động mới rèn luyện kỹ năng.", en: "Nobody gets good by postponing things — only practice sharpens skill." },
+        { id: "fb03", vi: "Sự khác biệt giữa người giỏi và người xuất sắc là tần suất luyện tập những gì họ biết.", en: "The gap between good and excellent is how often you practice what you already know." },
+        { id: "fb04", vi: "Đừng đợi cảm hứng đến. Hãy hành động như thể nó đã ở đó.", en: "Do not wait for inspiration. Act as if it were already here." },
+        { id: "fb05", vi: "Một pomodoro 25 phút hôm nay vẫn hơn một toàn bộ ngày hoàn hảo mà không bao giờ đến.", en: "One messy 25-minute pomodoro today beats a perfect day that never comes." }
+      ];
+    }
+    function pick(list, lang) {
+      if (!list || list.length === 0) return null;
+      const fallbackText = (q) => (lang === "vi" ? q.vi : q.en) || q.vi || q.en;
+      let maxTries = Math.min(8, list.length);
+      while (maxTries-- > 0) {
+        const q = list[Math.floor(Math.random() * list.length)];
+        if (q && q.id !== lastShownId && fallbackText(q)) {
+          lastShownId = q.id;
+          try { localStorage.setItem(QUOTE_LAST_ID_KEY, String(q.id)); } catch (_) {}
+          return { id: q.id, text: fallbackText(q), vi: q.vi, en: q.en };
+        }
+      }
+      const q = list[Math.floor(Math.random() * list.length)];
+      lastShownId = q.id;
+      return { id: q.id, text: fallbackText(q), vi: q.vi, en: q.en };
+    }
+    async function random(langOverride) {
+      const list = await load();
+      return pick(list, langOverride || currentLang || "vi");
+    }
+    function allLoaded() { return cache; }
+    // Seed last seen id to avoid repeat on page reload
+    try {
+      const s = localStorage.getItem(QUOTE_LAST_ID_KEY);
+      if (s) lastShownId = s;
+    } catch (_) {}
+    return { load, random, allLoaded };
+  })();
+
+  async function renderQuote() {
+    const root = document.getElementById("quote-card");
+    if (!root) return;
+    const textEl = document.getElementById("quote-text");
+    const nextBtn = document.getElementById("quote-next");
+    const copyBtn = document.getElementById("quote-copy");
+    if (!textEl) return;
+    textEl.textContent = "";
+    const loader = document.createElement("span");
+    loader.className = "quote-loading-dots";
+    loader.textContent = "…";
+    textEl.appendChild(loader);
+    const q = await Quotes.random(currentLang);
+    if (q) textEl.textContent = q.text;
+    if (copyBtn) {
+      copyBtn.onclick = async () => {
+        if (!q) return;
+        const txt = q.text || q.vi || q.en;
+        try {
+          await navigator.clipboard.writeText(txt);
+          const prev = copyBtn.textContent;
+          copyBtn.textContent = t("quotes.copied");
+          copyBtn.classList.add("quote-copied-flash");
+          setTimeout(() => {
+            copyBtn.textContent = prev;
+            copyBtn.classList.remove("quote-copied-flash");
+          }, 1200);
+        } catch (_) {}
+      };
+    }
+    if (nextBtn) {
+      nextBtn.onclick = () => renderQuote();
+    }
   }
 
   // -------- View / navigation switching -------------------------------------
@@ -1491,6 +1603,7 @@
   function renderAll() {
     renderTimer();
     renderMixer();
+    renderQuote();
     renderWeekStrip();
     renderSchedule();
     renderKanban();
