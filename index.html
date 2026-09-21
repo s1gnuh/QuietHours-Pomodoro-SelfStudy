@@ -355,6 +355,7 @@
 
               <!-- Daily list -->
               <div id="schedule-daily-view">
+                <div id="selected-day-banner" class="selected-day-banner"></div>
                 <ol class="task-list" id="task-list" data-empty="Không có buổi học nào trong ngày"></ol>
               </div>
 
@@ -641,6 +642,7 @@
             <div class="field">
               <label data-i18n="schedule.date">Ngày</label>
               <input type="date" id="sched-date" />
+              <p id="sched-date-lunar" class="lunar-date-hint"></p>
             </div>
             <div class="field">
               <label data-i18n="schedule.startTime">Bắt đầu</label>

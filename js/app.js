@@ -219,14 +219,8 @@
     return `${y}-${m}-${dd}`;
   }
   function seedSampleData() {
-    const today = todayISO();
-    const tomorrow = todayISO(new Date(Date.now() + 86400000));
     return {
-      subjects: [
-        { id: "sub-1", name: "Toán cao cấp", tone: "sage" },
-        { id: "sub-2", name: "Vật lý đại cương", tone: "sand" },
-        { id: "sub-3", name: "Tiếng Anh", tone: "clay" }
-      ],
+      subjects: [],
       timerSettings: { focusMin: 25, shortBreakMin: 5, longBreakMin: 15, longBreakEvery: 4, autoStart: false },
       timer: { mode: "focus", running: false, endAt: null, remainingMs: 25 * 60 * 1000, focusCount: 0 },
       mixer: {
@@ -239,36 +233,9 @@
           lofi: { on: false, volume: 0 }
         }
       },
-      schedule: [
-        { id: uid(), name: "Học Lý thuyết Toán", date: today, start: "08:00", end: "09:30", type: "study", completed: false, subjectId: "sub-1" },
-        { id: uid(), name: "Làm bài tập Vật lý", date: today, start: "10:00", end: "11:00", type: "review", completed: false, subjectId: "sub-2" },
-        { id: uid(), name: "Học từ vựng Anh", date: tomorrow, start: "19:00", end: "19:45", type: "study", completed: false, subjectId: "sub-3" }
-      ],
-      kanban: [
-        { id: uid(), title: "Đọc Chương 3 Đại số tuyến tính", notes: "Trang 80-95", column: "todo", priority: "high", order: 0, subjectId: "sub-1" },
-        { id: uid(), title: "Làm Bài tập tuần này", column: "doing", priority: "medium", order: 0 },
-        { id: uid(), title: "Ôn tập từ vựng Unit 5", column: "done", priority: "low", order: 0, subjectId: "sub-3" }
-      ],
-      logs: (function () {
-        const arr = [];
-        const now = new Date();
-        for (let i = 13; i >= 0; i--) {
-          const d = new Date(now.getTime() - i * 86400000);
-          if (i === 0) continue;
-          // Skip 1-2 days to have a natural streak
-          if (i === 6) continue;
-          const mins = 30 + Math.floor(Math.random() * 180);
-          arr.push({
-            id: uid(),
-            date: todayISO(d),
-            minutes: mins,
-            subjectId: ["sub-1", "sub-2", "sub-3", undefined][Math.floor(Math.random() * 4)],
-            mode: "focus",
-            completedAt: d.getTime()
-          });
-        }
-        return arr;
-      })()
+      schedule: [],
+      kanban: [],
+      logs: []
     };
   }
   let state = (function load() {
@@ -367,6 +334,128 @@
       m.set(k, (m.get(k) || 0) + (l.minutes || 0));
     });
     return m;
+  }
+
+  // -------- Vietnamese Lunar Calendar (Lịch Vạn niên) -----------------------
+  // Thuật toán Hồ Ngọc Đức - convert Gregorian ↔ Vietnamese Lunar (UTC+7)
+  function _lunarInt(d) { return Math.floor(d); }
+  function _jdFromDate(dd, mm, yy) {
+    const a = _lunarInt((14 - mm) / 12);
+    const y = yy + 4800 - a;
+    const m = mm + 12 * a - 3;
+    return dd + _lunarInt((153 * m + 2) / 5) + 365 * y + _lunarInt(y / 4) - _lunarInt(y / 100) + _lunarInt(y / 400) - 32045;
+  }
+  function _jdToDate(jd) {
+    const a = jd + 32044;
+    const b = _lunarInt((4 * a + 3) / 146097);
+    const c = a - _lunarInt(146097 * b / 4);
+    const d = _lunarInt((4 * c + 3) / 1461);
+    const e = c - _lunarInt(1461 * d / 4);
+    const m = _lunarInt((5 * e + 2) / 153);
+    const day = e - _lunarInt((153 * m + 2) / 5) + 1;
+    const month = m + 3 - 12 * _lunarInt(m / 10);
+    const year = 100 * b + d - 4800 + _lunarInt(m / 10);
+    return { day, month, year };
+  }
+  function _getNewMoonDay(k, timeZone) {
+    const T = k / 1236.85;
+    const T2 = T * T;
+    const T3 = T2 * T;
+    let dr = Math.PI / 180;
+    let Jd1 = 2415020.75933 + 29.53058868 * k + 0.0001178 * T2 - 0.000000155 * T3;
+    Jd1 += 0.00033 * Math.sin((166.56 + 132.87 * T - 0.009173 * T2) * dr);
+    const M = 359.2242 + 29.10535608 * k - 0.0000333 * T2 - 0.00000347 * T3;
+    const Mpr = 306.0253 + 385.81691806 * k + 0.0107306 * T2 + 0.00001236 * T3;
+    const F = 21.2964 + 390.67050646 * k - 0.0016528 * T2 - 0.00000239 * T3;
+    let C1 = (0.1734 - 0.000393 * T) * Math.sin(M * dr);
+    C1 += 0.0021 * Math.sin(2 * dr * M);
+    C1 -= 0.4068 * Math.sin(Mpr * dr);
+    C1 += 0.0161 * Math.sin(dr * 2 * Mpr);
+    C1 -= 0.0004 * Math.sin(dr * 3 * Mpr);
+    C1 += 0.0104 * Math.sin(dr * 2 * F) - 0.0051 * Math.sin(dr * (M + Mpr));
+    C1 -= 0.0074 * Math.sin(dr * (M - Mpr)) + 0.0004 * Math.sin(dr * (2 * F + M));
+    C1 -= 0.0004 * Math.sin(dr * (2 * F - M)) - 0.0006 * Math.sin(dr * (2 * F + Mpr));
+    C1 += 0.0010 * Math.sin(dr * (2 * F - Mpr)) + 0.0005 * Math.sin(dr * (2 * Mpr + M));
+    let deltat;
+    if (T < -11) {
+      deltat = 0.001 + 0.000839 * T + 0.0002261 * T2 - 0.00000845 * T3 - 0.000000081 * T * T3;
+    } else {
+      deltat = -0.000278 + 0.000265 * T + 0.000262 * T2;
+    }
+    return _lunarInt(Jd1 + C1 - deltat + 0.5 + timeZone / 24);
+  }
+  function _getLunarMonth11(yy, timeZone) {
+    const off = _lunarInt((_jdFromDate(31, 12, yy) - 2415021.076998695) / 29.530588853);
+    let k = off;
+    let nm = _getNewMoonDay(k, timeZone);
+    let y1 = _jdToDate(nm).year;
+    if (y1 < yy) k++;
+    else if (y1 > yy) k--;
+    return _getNewMoonDay(k, timeZone);
+  }
+  function _getLeapMonthOffset(a11, timeZone) {
+    const k = _lunarInt((a11 - 2415021.076998695) / 29.530588853 + 0.5);
+    let last = 0, i = 1, arc = _getNewMoonDay(k + i, timeZone);
+    do {
+      last = arc;
+      i++;
+      arc = _getNewMoonDay(k + i, timeZone);
+    } while (arc - last < 365);
+    return Math.round((_getNewMoonDay(k + 12, timeZone) - _getNewMoonDay(k + 1, timeZone)) / 29);
+  }
+  function _leapBias(lunarYear, timeZone) {
+    const x = _getNewMoonDay(_lunarInt((12 * (lunarYear - 1900) + 10.5) / 29.530588853), timeZone);
+    return (_getNewMoonDay(_lunarInt((12 * (lunarYear - 1900) + 10.5) / 29.530588853) + 13, timeZone) - x) > 365 ? 1 : 0;
+  }
+  function convertSolar2Lunar(dd, mm, yy, timeZone) {
+    const dayNumber = _jdFromDate(dd, mm, yy);
+    const k = _lunarInt((dayNumber - 2415021.076998695) / 29.530588853);
+    let monthStart = _getNewMoonDay(k + 1, timeZone);
+    if (monthStart > dayNumber) monthStart = _getNewMoonDay(k, timeZone);
+    let a11 = _getLunarMonth11(yy, timeZone);
+    let b11 = a11;
+    if (a11 >= monthStart) {
+      b11 = _getLunarMonth11(yy - 1, timeZone);
+    }
+    const lunarYear = a11 >= monthStart ? yy : yy - 1;
+    const lunarDay = dayNumber - monthStart + 1;
+    const diff = _lunarInt((monthStart - b11) / 29);
+    let lunarLeap = 0;
+    let lunarMonth = diff + 11;
+    if (b11 - a11 > 365) {
+      const leapMonthDiff = _getLeapMonthOffset(b11, timeZone);
+      if (diff >= leapMonthDiff) {
+        lunarMonth = diff + 11;
+        if (diff === leapMonthDiff) lunarLeap = 1;
+      }
+    }
+    if (lunarMonth > 12) lunarMonth = lunarMonth - 12;
+    if (lunarMonth >= 11 && diff < 4) lunarYear += 1;
+    return { day: lunarDay, month: lunarMonth, year: lunarYear, leap: !!lunarLeap };
+  }
+  function solarToLunar(isoString) {
+    const [y, m, d] = isoString.split("-").map(Number);
+    return convertSolar2Lunar(d, m, y, 7);
+  }
+  function formatLunarShort(isoString) {
+    const l = solarToLunar(isoString);
+    const leap = l.leap ? " N" : "";
+    return `${String(l.day).padStart(2, "0")}/${String(l.month).padStart(2, "0")}${leap}`;
+  }
+  function formatLunarFull(isoString) {
+    const l = solarToLunar(isoString);
+    const leap = l.leap ? " (nhuận)" : "";
+    return `Ngày ${l.day} tháng ${l.month} năm ${l.year}${leap}`;
+  }
+  const CAN = ["Giáp", "Ất", "Bính", "Đinh", "Mậu", "Kỷ", "Canh", "Tân", "Nhâm", "Quý"];
+  const CHI = ["Tý", "Sửu", "Dần", "Mão", "Thìn", "Tỵ", "Ngọ", "Mùi", "Thân", "Dậu", "Tuất", "Hợi"];
+  function canChiYear(year) {
+    return `${CAN[(year + 6) % 10]} ${CHI[(year + 8) % 12]}`;
+  }
+  function canChiDay(isoString) {
+    const [y, m, d] = isoString.split("-").map(Number);
+    const jd = _jdFromDate(d, m, y);
+    return `${CAN[(jd + 9) % 10]} ${CHI[(jd + 1) % 12]}`;
   }
 
   // -------- View / navigation switching -------------------------------------
@@ -630,7 +719,11 @@
       btn.type = "button";
       btn.className = "day-chip" + (iso === selectedDay ? " active" : "");
       btn.setAttribute("data-iso", iso);
-      btn.innerHTML = `<span class="dow">${formatDayHeading(d)}</span><span class="count">${count}</span>`;
+      btn.innerHTML = `
+        <span class="dow">${formatDayHeading(d)}</span>
+        <span class="dom">${d.getDate()}</span>
+        <span class="lunar">${formatLunarShort(iso)}</span>
+        <span class="count">${count > 0 ? count + (count === 1 ? (currentLang === "vi" ? " buổi" : " sess") : (currentLang === "vi" ? " buổi" : " sess")) : ""}</span>`;
       btn.addEventListener("click", () => {
         selectedDay = iso;
         renderWeekStrip();
@@ -646,6 +739,24 @@
     segBtns.forEach((b) => b.classList.toggle("active", b.getAttribute("data-sched") === scheduleViewMode));
     if (dailyView) dailyView.style.display = scheduleViewMode === "daily" ? "" : "none";
     if (weeklyView) weeklyView.style.display = scheduleViewMode === "weekly" ? "" : "none";
+
+    // Selected date banner (solar + lunar + can chi)
+    const banner = document.getElementById("selected-day-banner");
+    if (banner) {
+      const d = new Date(selectedDay + "T00:00:00");
+      const solarFull = d.toLocaleDateString(currentLang === "vi" ? "vi-VN" : "en-US", {
+        weekday: "long", year: "numeric", month: "long", day: "numeric"
+      });
+      const lunarObj = solarToLunar(selectedDay);
+      const ccDay = canChiDay(selectedDay);
+      const ccYear = canChiYear(lunarObj.year);
+      const lunarFull = (currentLang === "vi")
+        ? `Âm ${String(lunarObj.day).padStart(2, "0")}/${String(lunarObj.month).padStart(2, "0")}${lunarObj.leap ? " N" : ""} năm ${ccYear} · Ngày ${ccDay}`
+        : `Lunar ${String(lunarObj.day).padStart(2, "0")}/${String(lunarObj.month).padStart(2, "0")}${lunarObj.leap ? " (leap)" : ""}, ${ccYear} · ${ccDay}`;
+      banner.innerHTML = `
+        <p class="solar">${solarFull}</p>
+        <p class="lunar">${lunarFull}</p>`;
+    }
 
     // Daily
     const list = document.getElementById("task-list");
@@ -716,7 +827,13 @@
           .sort((a, b) => a.start.localeCompare(b.start));
         const col = document.createElement("div");
         col.className = "week-day";
-        col.innerHTML = `<p class="week-day-title">${d.toLocaleDateString(currentLang === "vi" ? "vi-VN" : "en-US", { weekday: "short", day: "numeric" })}</p><ul class="week-day-list"></ul>`;
+        const lunarShort = formatLunarShort(iso);
+        col.innerHTML = `
+          <p class="week-day-title">
+            <span>${d.toLocaleDateString(currentLang === "vi" ? "vi-VN" : "en-US", { weekday: "short", day: "numeric" })}</span>
+            <span class="week-day-lunar">${lunarShort}</span>
+          </p>
+          <ul class="week-day-list"></ul>`;
         const ul = col.querySelector("ul");
         if (items.length === 0) {
           const li = document.createElement("li");
@@ -746,6 +863,20 @@
         sel.options[i + 1].textContent = s.name;
       });
     }
+    // Update sched-date lunar label when dialog opens
+    updateSchedDateLunar();
+  }
+  function updateSchedDateLunar() {
+    const dateInput = document.getElementById("sched-date");
+    const lunarLabel = document.getElementById("sched-date-lunar");
+    if (!dateInput || !lunarLabel) return;
+    const iso = dateInput.value || selectedDay;
+    const lunar = solarToLunar(iso);
+    const ccYear = canChiYear(lunar.year);
+    const ccDay = canChiDay(iso);
+    lunarLabel.textContent = (currentLang === "vi")
+      ? `Âm ${String(lunar.day).padStart(2, "0")}/${String(lunar.month).padStart(2, "0")}${lunar.leap ? " N" : ""} (${ccYear}) · ${ccDay}`
+      : `Lunar ${String(lunar.day).padStart(2, "0")}/${String(lunar.month).padStart(2, "0")}${lunar.leap ? " (leap)" : ""} (${ccYear}) · ${ccDay}`;
   }
 
   // -------- Kanban -----------------------------------------------------------
@@ -1181,7 +1312,9 @@
       document.getElementById("sched-subject").value = "";
       document.getElementById("sched-link").value = "";
       openDialog("dialog-schedule");
+      updateSchedDateLunar();
     });
+    document.getElementById("sched-date").addEventListener("input", updateSchedDateLunar);
     document.getElementById("form-schedule").addEventListener("submit", () => {
       const name = document.getElementById("sched-name").value.trim();
       const date = document.getElementById("sched-date").value || selectedDay;
