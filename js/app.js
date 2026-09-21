@@ -631,7 +631,305 @@
     }
   }, 250);
 
-  // -------- Mixer UI (visual only — audio engine omitted in static port) -----
+  // -------- Ambient Mixer — Web Audio procedural engine ----------------------
+  // Generates all 5 ambient tracks procedurally using AudioNodes (no audio files needed)
+  const AmbientEngine = (function () {
+    let ctx = null;
+    let masterGain = null;
+    const tracks = {};
+    let unlocked = false;
+
+    function ensureCtx() {
+      if (!ctx) {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return null;
+        ctx = new AC();
+        masterGain = ctx.createGain();
+        masterGain.gain.value = 0;
+        masterGain.connect(ctx.destination);
+      }
+      if (ctx && !unlocked && ctx.state === "suspended") {
+        ctx.resume().then(() => { unlocked = true; }).catch(() => {});
+      }
+      return ctx;
+    }
+    function unlock() {
+      const c = ensureCtx();
+      if (c && c.state === "suspended") c.resume();
+    }
+
+    // Noise buffer generators ------------------------------------------
+    function makeNoiseBuffer(seconds, type) {
+      const c = ensureCtx(); if (!c) return null;
+      const length = Math.floor(c.sampleRate * seconds);
+      const buffer = c.createBuffer(1, length, c.sampleRate);
+      const data = buffer.getChannelData(0);
+      let lastOut = 0, lastOut2 = 0;
+      for (let i = 0; i < length; i++) {
+        const white = Math.random() * 2 - 1;
+        if (type === "white") {
+          data[i] = white;
+        } else if (type === "pink") {
+          // Paul Kellet pink noise approximation
+          lastOut = 0.99765 * lastOut + white * 0.0990460;
+          lastOut2 = 0.96300 * lastOut2 + white * 0.2965164;
+          data[i] = (lastOut + lastOut2 + white * 1.0526913) * 0.11;
+        } else if (type === "brown") {
+          lastOut = (lastOut + (0.02 * white)) / 1.02;
+          data[i] = lastOut * 3.5;
+        }
+      }
+      return buffer;
+    }
+    function playLoopBuffer(buf) {
+      const c = ensureCtx(); if (!c || !buf) return null;
+      const src = c.createBufferSource();
+      src.buffer = buf; src.loop = true;
+      src.start(0);
+      return src;
+    }
+
+    // Track builders ---------------------------------------------------
+    function buildRain() {
+      const c = ensureCtx(); if (!c) return null;
+      const buf = makeNoiseBuffer(8, "white");
+      const src = playLoopBuffer(buf);
+      const hp = c.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 600;
+      const lp = c.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 4800;
+      const gain = c.createGain(); gain.gain.value = 0;
+      // Second layer: low rumbles
+      const buf2 = makeNoiseBuffer(10, "pink");
+      const src2 = playLoopBuffer(buf2);
+      const lp2 = c.createBiquadFilter(); lp2.type = "lowpass"; lp2.frequency.value = 600;
+      const g2 = c.createGain(); g2.gain.value = 0.5;
+      src.connect(hp); hp.connect(lp); lp.connect(gain);
+      src2.connect(lp2); lp2.connect(g2); g2.connect(gain);
+      // Occasional droplet pops using scheduled noise bursts
+      function drop() {
+        if (!c) return;
+        const t = c.currentTime;
+        const popBuf = c.createBuffer(1, Math.floor(c.sampleRate * 0.08), c.sampleRate);
+        const d = popBuf.getChannelData(0);
+        for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / d.length) * 0.6;
+        const s = c.createBufferSource(); s.buffer = popBuf;
+        const pg = c.createGain(); pg.gain.value = 0.08;
+        const pf = c.createBiquadFilter(); pf.type = "bandpass"; pf.frequency.value = 1800 + Math.random() * 1600;
+        s.connect(pf); pf.connect(pg); pg.connect(gain);
+        s.start(t);
+        setTimeout(drop, 120 + Math.random() * 1500);
+      }
+      drop();
+      return { node: gain, srcs: [src, src2] };
+    }
+    function buildCafe() {
+      const c = ensureCtx(); if (!c) return null;
+      // Brown noise base (room tone)
+      const buf = makeNoiseBuffer(8, "brown");
+      const src = playLoopBuffer(buf);
+      const bp = c.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = 500; bp.Q.value = 0.6;
+      const gain = c.createGain(); gain.gain.value = 0;
+      const tone = c.createGain(); tone.gain.value = 0.7;
+      src.connect(bp); bp.connect(tone); tone.connect(gain);
+      // Muffled speech murmur: slow AM modulation of filtered noise
+      const buf2 = makeNoiseBuffer(6, "pink");
+      const src2 = playLoopBuffer(buf2);
+      const bp2 = c.createBiquadFilter(); bp2.type = "bandpass"; bp2.frequency.value = 800; bp2.Q.value = 0.8;
+      const lfo = c.createOscillator(); lfo.frequency.value = 0.25;
+      const lfoG = c.createGain(); lfoG.gain.value = 0.5;
+      const am = c.createGain(); am.gain.value = 0.3;
+      lfo.connect(lfoG); lfoG.connect(am.gain);
+      src2.connect(bp2); bp2.connect(am); am.connect(gain);
+      lfo.start(0);
+      // Occasional clinks (cup/china)
+      function clink() {
+        if (!c) return;
+        const t = c.currentTime;
+        const freqA = 1800 + Math.random() * 600;
+        const freqB = freqA * 1.03;
+        const o1 = c.createOscillator(); o1.type = "sine"; o1.frequency.value = freqA;
+        const o2 = c.createOscillator(); o2.type = "sine"; o2.frequency.value = freqB;
+        const g = c.createGain(); g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(0.06, t + 0.005);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.4);
+        o1.connect(g); o2.connect(g); g.connect(gain);
+        o1.start(t); o2.start(t);
+        o1.stop(t + 0.5); o2.stop(t + 0.5);
+        setTimeout(clink, 2500 + Math.random() * 5000);
+      }
+      clink();
+      return { node: gain, srcs: [src, src2, lfo] };
+    }
+    function buildOcean() {
+      const c = ensureCtx(); if (!c) return null;
+      const buf = makeNoiseBuffer(10, "pink");
+      const src = playLoopBuffer(buf);
+      const lp = c.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 900;
+      const gain = c.createGain(); gain.gain.value = 0;
+      // Wave amplitude modulation — slow swell and fade
+      const lfo1 = c.createOscillator(); lfo1.type = "sine"; lfo1.frequency.value = 0.09;
+      const lfo1Gain = c.createGain(); lfo1Gain.gain.value = 0.55;
+      const modGain = c.createGain(); modGain.gain.value = 0.45;
+      lfo1.connect(lfo1Gain); lfo1Gain.connect(modGain.gain);
+      src.connect(lp); lp.connect(modGain); modGain.connect(gain);
+      // Second wave layer slightly out of phase
+      const buf2 = makeNoiseBuffer(12, "pink");
+      const src2 = playLoopBuffer(buf2);
+      const lp2 = c.createBiquadFilter(); lp2.type = "lowpass"; lp2.frequency.value = 600;
+      const lfo2 = c.createOscillator(); lfo2.type = "sine"; lfo2.frequency.value = 0.13;
+      const lfo2Gain = c.createGain(); lfo2Gain.gain.value = 0.35;
+      const modGain2 = c.createGain(); modGain2.gain.value = 0.35;
+      lfo2.connect(lfo2Gain); lfo2Gain.connect(modGain2.gain);
+      src2.connect(lp2); lp2.connect(modGain2); modGain2.connect(gain);
+      lfo1.start(0); lfo2.start(0);
+      return { node: gain, srcs: [src, src2, lfo1, lfo2] };
+    }
+    function buildFireplace() {
+      const c = ensureCtx(); if (!c) return null;
+      // Base: brown noise rumble
+      const buf = makeNoiseBuffer(8, "brown");
+      const src = playLoopBuffer(buf);
+      const lp = c.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 450;
+      const base = c.createGain(); base.gain.value = 0.7;
+      const gain = c.createGain(); gain.gain.value = 0;
+      src.connect(lp); lp.connect(base); base.connect(gain);
+      // Higher-frequency hiss (flame breath)
+      const buf2 = makeNoiseBuffer(6, "white");
+      const src2 = playLoopBuffer(buf2);
+      const bp = c.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = 2200; bp.Q.value = 0.4;
+      const hiss = c.createGain(); hiss.gain.value = 0.12;
+      // Hiss AM
+      const lfo = c.createOscillator(); lfo.type = "triangle"; lfo.frequency.value = 3.2;
+      const lfoG = c.createGain(); lfoG.gain.value = 0.07;
+      lfo.connect(lfoG); lfoG.connect(hiss.gain);
+      src2.connect(bp); bp.connect(hiss); hiss.connect(gain);
+      lfo.start(0);
+      // Crackles: random short high-pass bursts with rapid decay
+      function crackle() {
+        if (!c) return;
+        const t = c.currentTime;
+        const count = 2 + Math.floor(Math.random() * 4);
+        for (let i = 0; i < count; i++) {
+          const tt = t + i * (0.005 + Math.random() * 0.01);
+          const dur = 0.008 + Math.random() * 0.015;
+          const b = c.createBuffer(1, Math.ceil(c.sampleRate * dur), c.sampleRate);
+          const d = b.getChannelData(0);
+          for (let j = 0; j < d.length; j++) d[j] = (Math.random() * 2 - 1) * (1 - j / d.length);
+          const s = c.createBufferSource(); s.buffer = b;
+          const hp = c.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 3200;
+          const g = c.createGain();
+          const amp = 0.05 + Math.random() * 0.08;
+          g.gain.setValueAtTime(0.0001, tt);
+          g.gain.exponentialRampToValueAtTime(amp, tt + 0.001);
+          g.gain.exponentialRampToValueAtTime(0.0001, tt + dur);
+          s.connect(hp); hp.connect(g); g.connect(gain);
+          s.start(tt); s.stop(tt + dur + 0.01);
+        }
+        setTimeout(crackle, 150 + Math.random() * 1200);
+      }
+      crackle();
+      return { node: gain, srcs: [src, src2, lfo] };
+    }
+    function buildLofi() {
+      const c = ensureCtx(); if (!c) return null;
+      const gain = c.createGain(); gain.gain.value = 0;
+      // Ambient dust: very slow low-pass noise pad
+      const buf = makeNoiseBuffer(20, "pink");
+      const src = playLoopBuffer(buf);
+      const lpNoise = c.createBiquadFilter(); lpNoise.type = "lowpass"; lpNoise.frequency.value = 550;
+      const noiseG = c.createGain(); noiseG.gain.value = 0.08;
+      src.connect(lpNoise); lpNoise.connect(noiseG); noiseG.connect(gain);
+      // Soft Lofi chord progression (vi–IV–I–V in C-ish, detuned to feel dusty)
+      const chords = [
+        [220.00, 261.63, 329.63, 392.00], // Am
+        [174.61, 220.00, 261.63, 329.63], // F
+        [196.00, 246.94, 293.66, 392.00], // G
+        [261.63, 329.63, 392.00, 493.88]  // C
+      ];
+      const chordLen = 4.2;
+      let step = 0;
+      function scheduleChord(startAt) {
+        if (!c) return;
+        const notes = chords[step % chords.length];
+        step++;
+        notes.forEach((f, idx) => {
+          const o1 = c.createOscillator(); o1.type = "triangle";
+          o1.frequency.value = f * (0.996 + Math.random() * 0.008);
+          const o2 = c.createOscillator(); o2.type = "sine";
+          o2.frequency.value = (f * 2) * (0.994 + Math.random() * 0.012);
+          const g = c.createGain();
+          const vel = 0.055 + idx * 0.008;
+          g.gain.setValueAtTime(0.0001, startAt);
+          g.gain.exponentialRampToValueAtTime(vel, startAt + 0.7);
+          g.gain.setValueAtTime(vel, startAt + chordLen - 1.2);
+          g.gain.exponentialRampToValueAtTime(0.0001, startAt + chordLen - 0.1);
+          const lp = c.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 1300;
+          o1.connect(lp); o2.connect(lp); lp.connect(g); g.connect(gain);
+          o1.start(startAt); o2.start(startAt);
+          o1.stop(startAt + chordLen); o2.stop(startAt + chordLen);
+        });
+      }
+      function loopChords() {
+        const t0 = (c ? c.currentTime : 0) + 0.1;
+        scheduleChord(t0 + 0 * chordLen);
+        scheduleChord(t0 + 1 * chordLen);
+        scheduleChord(t0 + 2 * chordLen);
+        scheduleChord(t0 + 3 * chordLen);
+        setTimeout(loopChords, chordLen * 4 * 1000 - 50);
+      }
+      loopChords();
+      // Slow tape warble via a chorus-like LFO on a master filter
+      const lp = c.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 1800;
+      const warble = c.createOscillator(); warble.type = "sine"; warble.frequency.value = 0.4;
+      const wg = c.createGain(); wg.gain.value = 0.5;
+      warble.connect(wg); wg.connect(lp.frequency);
+      warble.start(0);
+      gain.connect(lp); lp.connect(gain);
+      // Re-route: split noise into warble chain too is messy; simpler: keep output clean
+      // Actually rewire properly: disconnect noise then go through lp to destination.
+      // Build a clean pre-master.
+      lp.disconnect();
+      lp.connect(c.destination); // bypass masterGain temporarily — we'll fix below
+      // To honor master gain properly, use a separate chain below.
+      return { node: gain, srcs: [src, warble], _lp: lp };
+    }
+
+    // Public: build all tracks and connect to master
+    function buildAll() {
+      if (!ensureCtx()) return;
+      if (Object.keys(tracks).length) return;
+      const builders = { rain: buildRain, cafe: buildCafe, ocean: buildOcean, fireplace: buildFireplace, lofi: buildLofi };
+      Object.keys(builders).forEach((k) => {
+        try {
+          const t = builders[k]();
+          if (!t) return;
+          // Reconnect track to master
+          try { t.node.disconnect(); } catch (_) {}
+          t.node.connect(masterGain);
+          // Lofi: also reconnect its lp through master
+          if (t._lp) { try { t._lp.disconnect(); t._lp.connect(masterGain); } catch (_) {} }
+          tracks[k] = { built: t, gain: t.node };
+        } catch (_) {}
+      });
+    }
+    function setMaster(vol) {
+      buildAll();
+      ensureCtx();
+      if (masterGain) masterGain.gain.setTargetAtTime(Math.max(0, vol), ctx.currentTime, 0.05);
+    }
+    function setTrack(id, on, vol) {
+      buildAll();
+      ensureCtx();
+      const t = tracks[id];
+      if (!t) return;
+      const target = on ? Math.max(0, Math.min(1, vol)) : 0;
+      if (t.gain) t.gain.gain.setTargetAtTime(target, ctx.currentTime, 0.08);
+    }
+    function getContext() { ensureCtx(); return ctx; }
+
+    return { unlock, setMaster, setTrack, getContext };
+  })();
+  function unlockAudioIfNeeded() { try { AmbientEngine.unlock(); } catch (_) {} }
+
   function renderMixer() {
     const mx = state.mixer;
     const mv = document.getElementById("master-volume");
@@ -642,8 +940,20 @@
     if (icon) {
       if (mx.master < 0.01) {
         icon.innerHTML = `<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line>`;
+      } else if (mx.master < 0.35) {
+        icon.innerHTML = `<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>`;
+      } else {
+        icon.innerHTML = `<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>`;
       }
     }
+    // Push state to audio engine (builds nodes lazily on first user gesture)
+    try {
+      AmbientEngine.setMaster(mx.master);
+      Object.keys(mx.tracks).forEach((k) => {
+        const t = mx.tracks[k];
+        AmbientEngine.setTrack(k, !!t.on, Number(t.volume) || 0);
+      });
+    } catch (_) {}
     document.querySelectorAll(".track-row").forEach((row) => {
       const id = row.getAttribute("data-track");
       const tr = mx.tracks[id];
@@ -1274,6 +1584,7 @@
 
     // Mixer UI
     document.getElementById("master-volume").addEventListener("input", (e) => {
+      unlockAudioIfNeeded();
       state.mixer.master = Number(e.target.value) / 100;
       persist();
       renderMixer();
@@ -1283,17 +1594,23 @@
       const btn = row.querySelector(".icon-toggle");
       const slider = row.querySelector(".track-volume");
       btn.addEventListener("click", () => {
+        unlockAudioIfNeeded();
         state.mixer.tracks[id].on = !state.mixer.tracks[id].on;
         persist();
         renderMixer();
       });
       slider.addEventListener("input", (e) => {
+        unlockAudioIfNeeded();
         const v = Number(e.target.value) / 100;
         state.mixer.tracks[id].volume = v;
         if (v > 0 && !state.mixer.tracks[id].on) state.mixer.tracks[id].on = true;
         persist();
         renderMixer();
       });
+    });
+    // Global user gesture: unlock audio on first click/tap/key anywhere on page (covers autoplay policy)
+    ["click", "keydown", "touchstart"].forEach((evt) => {
+      window.addEventListener(evt, () => unlockAudioIfNeeded(), { once: true, passive: true, capture: true });
     });
 
     // Schedule: view mode
