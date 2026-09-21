@@ -122,7 +122,9 @@
         subtitle: "Những điều nhỏ xinh bạn nên biết để đồng hành cùng QuietHours thật hiệu quả.",
         letterTitle: "Thư gửi bạn - người sử dụng QuietHours",
         letterFrom: "Tác giả · s1gnuh · một người luôn tin vào sức mạnh của thói quen nhỏ.",
+        letterBody: "<p>Chào bạn,</p><p>Đầu tiên, mình cảm ơn bạn rất nhiều vì đã dành thời gian mở QuietHours, lựa chọn nó làm \"không gian riêng\" để bạn ngồi lại, tạm gác những tiếng xô bồ bên ngoài và dành thời gian trân quý cho chính sự phát triển của bạn.</p><p>Mỗi ứng dụng đều được sinh ra từ một lý do: mình cũng từng là sinh viên hay người đi làm bị ngợp trong hàng loạt lịch trình, không gian làm việc lung tung, thiếu động lực. QuietHours không phải công cụ kì diệu thay bạn làm việc, nó chỉ là một người bạn nhỏ ở bên cạnh — hứa sẽ giữ gìn không gian yên tĩnh, đếm những phút bạn cố gắng, phát lại màn mưa nhẹ khi bạn mệt, và mở thẻ báo cáo cuối tuần để bạn nhìn lại mình: \"Tôi đã làm được nhiều thế này\".</p><p>Dù bạn chỉ mở ứng dụng 1 phút mỗi ngày hay hàng giờ đồng hồ — sự hiện diện của bạn đã làm cho dự án nhỏ bé này trở nên có ý nghĩa hơn rất nhiều.</p><p>Hãy giữ thói quen tốt, nghỉ ngơi khi mệt, biết thưởng thức những phút tĩnh lặng. Và nhớ rằng: tiến bộ nhỏ mỗi ngày, là một kiệt tác.</p><p>Cảm ơn bạn một lần nữa 💚</p>",
         dataTitle: "Về dữ liệu của bạn - Lưu ý quan trọng",
+        dataBody: "Tất cả dữ liệu của bạn (lịch học, bảng việc, thống kê, cài đặt, theme & background) được lưu an toàn <b>100% trên Trình duyệt này (Local Storage)</b>, không gửi lên máy chủ, không chia sẻ với bất kỳ ai (kể cả tác giả). Vì vậy, nếu bạn dọn Cache trình duyệt, chuyển máy, chuyển trình duyệt hoặc gỡ profile — dữ liệu sẽ mất. Đừng quên chủ động <b>sao lưu định kỳ</b> tại mục <b>Dữ liệu → Xuất file JSON</b> nhé!",
         h1Title: "Duy trì Streak và quy tắc đứt chuỗi",
         h1Sub: "Chuỗi ngày học tập liên tục - nguồn động lực vô hình đáng giá nhất.",
         h1p1: "✅ <b>Cách tính Streak:</b> Tính từ hôm nay (hoặc hôm qua nếu hôm nay chưa học), lùi về phía trước đếm số ngày liên tiếp bạn đã hoàn thành <b>ít nhất 1 phiên Pomodoro Tập trung</b> (log ghi nhận).",
@@ -140,7 +142,7 @@
         h3Sub: "Tập trung cực sâu + khoe thành tích tuần 1 cách đẹp mắt lên MXH.",
         h3p1: "🧘 <b>Zen Mode (tối giản toàn màn hình):</b> Tìm nút \"Chuyển sang chế độ toàn màn hình / Chế độ Zen\" trên thanh công cụ. Các thanh điều hướng, thẻ phụ sẽ ẩn đi, chỉ giữ lại Đồng hồ Pomodoro nghệ thuật + câu Quote truyền cảm hứng. Nhấn <code>ESC</code> hoặc nút \"Thoát Zen\" để về giao diện bình thường.",
         h3p2: "📊 <b>Thẻ Tổng Kết Tuần:</b> Mở tab <b>Thống kê</b>, bấm nút <b>Thẻ tổng kết tuần</b>. Một Modal hiện ra với: tổng giờ học, Streak, Môn học nhiều nhất, Ngày năng suất nhất, biểu đồ ngày trong tuần và 1 câu quote ngẫu nhiên.",
-        h3p3: "📸 <b>Tải ảnh Story 9:16:</b> Trong Modal Tổng kết tuần, bấm nút <b>Tải ảnh Story</b>. Ứng dụng sẽ dựng một thẻ tỉ lệ <b>9:16</b> (chuẩn Instagram / Facebook Story) với gradient hiện đại, chụp bằng thư viện <code>html2canvas</code> và tự động tải về máy. Bạn chỉ cần đăng tải lên MXH thôi!",
+        h3p3: "📸 <b>Tải ảnh Story 9:16:</b> Trong Modal Tổng kết tuần, bấm nút <b>Tải ảnh Story</b>. Ứng dụng sẽ dựng một thẻ tỉ lệ <b>9:16</b> (chuẩn Instagram / Facebook Story) với gradient hiện đại, chụp bằng thư viện <code>html2canvas</code> và tự động tải về máy với tên <code>quiethours-story-TuầnDD-MM.png</code>. Bạn chỉ cần đăng tải lên MXH thôi!",
         h3p4: "💡 <b>Chia sẻ hay nói gì?</b> Đừng quên tag <code>@quiethours</code> / hashtag <code>#quiethours</code> / <code>#s1gnuh</code> để mình có thể thấy và vui cùng bạn 💚"
       },
       lang: { switch: "Chuyển ngôn ngữ" }
@@ -260,7 +262,9 @@
         subtitle: "Small things worth knowing to make the most of QuietHours.",
         letterTitle: "A letter to you — the QuietHours user",
         letterFrom: "Author · s1gnuh · someone who always believes in the power of small habits.",
+        letterBody: "<p>Hi there,</p><p>First of all, thank you so much for opening QuietHours — for choosing it as your \"little private room\" where you can slow down, step away from the noise outside, and spend some quality time on your own growth.</p><p>Every app is born for a reason: I've also been that student or office worker overwhelmed by endless schedules, a messy workspace, and zero motivation. QuietHours is not a magic tool that does the work for you. It's just a small friend by your side — promising to guard your quiet space, count the minutes you put in, replay a soft rain when you're tired, and open a weekly report card so you can look back and say: \"Wow, I actually got all this done.\"</p><p>Whether you open the app for just one minute a day or spend hours with it — your presence already makes this tiny project mean a whole lot more.</p><p>Keep your good habits, rest when you're tired, and learn to savor the quiet moments. And remember: small daily progress is a masterpiece in itself.</p><p>Thank you, once again 💚</p>",
         dataTitle: "About your data — important notice",
+        dataBody: "All of your data (schedule, tasks, analytics, settings, themes & backgrounds) is stored safely <b>100% in this Browser (Local Storage)</b>. Nothing is sent to a server, nothing is shared with anyone — including the author. So if you clear your browser cache, switch computers, switch browsers, or remove your profile — your data will be gone. Please remember to make a <b>regular backup</b> under <b>Data → Export JSON</b>!",
         h1Title: "Keep your Streak & how streak resets",
         h1Sub: "Consecutive study days — the most valuable invisible motivator.",
         h1p1: "✅ <b>How Streak is counted:</b> starting from today (or yesterday if you haven't studied yet today), go backwards and count consecutive days with <b>at least 1 completed Focus Pomodoro session</b> (logged).",
@@ -278,7 +282,7 @@
         h3Sub: "Go ultra-deep focused + show off weekly wins beautifully on social media.",
         h3p1: "🧘 <b>Zen Mode (distraction-free fullscreen):</b> look for the \"Go fullscreen / Zen Mode\" button on the toolbar. Sidebars and extra cards hide, leaving only the artistic Pomodoro clock + the inspiring quote. Press <code>ESC</code> or the \"Exit Zen\" button to return.",
         h3p2: "📊 <b>Weekly report card:</b> open the <b>Insights</b> tab, click <b>Weekly report card</b>. A modal reveals total hours, Streak, top subject, best day, per-day mini bars, plus a random quote.",
-        h3p3: "📸 <b>Download 9:16 Story:</b> inside the Weekly modal, click <b>Download Story</b>. The app renders a <b>9:16</b> Instagram/Facebook Story-sized card with a modern gradient, captures it with <code>html2canvas</code>, and auto-downloads a PNG. Just share!",
+        h3p3: "📸 <b>Download 9:16 Story:</b> inside the Weekly modal, click <b>Download Story</b>. The app renders a <b>9:16</b> Instagram/Facebook Story-sized card with a modern gradient, captures it with <code>html2canvas</code>, and auto-downloads a PNG named <code>quiethours-story-WeekDD-MM.png</code>. Just share!",
         h3p4: "💡 <b>What to say when sharing:</b> tag <code>@quiethours</code> / use <code>#quiethours</code> / <code>#s1gnuh</code> so I can celebrate with you 💚"
       },
       lang: { switch: "Switch language" }
@@ -313,15 +317,12 @@
     document.querySelectorAll("[data-i18n]").forEach((el) => {
       const path = el.getAttribute("data-i18n");
       const txt = t(path);
-      if (path === "data.dataDesc") {
-        // Special case: needs to insert key *after* text because HTML has <code> sibling
-        el.textContent = txt;
+      if (typeof txt === "string" && txt.indexOf("<") !== -1) {
+        el.innerHTML = txt;
       } else {
         el.textContent = txt;
       }
     });
-    // Option <option data-i18n> (nested) already handled above via querySelectorAll
-    // Input placeholders
     document.querySelectorAll("input[data-i18n-placeholder]").forEach((el) => {
       el.placeholder = t(el.getAttribute("data-i18n-placeholder"));
     });
