@@ -611,18 +611,9 @@ textarea {
   min-width: 0;
 }
 
-/* Mobile header (< md) */
+/* Mobile header — LEGACY: removed entirely (replaced by sticky top-nav + mobile bottom-nav) */
 .mobile-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  padding: 1.25rem 1rem 0.75rem;
-}
-@media (min-width: 768px) {
-  .mobile-header {
-    display: none;
-  }
+  display: none !important;
 }
 
 main.content {
@@ -2603,6 +2594,20 @@ textarea {
 /* Notch / Dynamic Island safe area on top */
 header.top-nav {
   padding-top: env(safe-area-inset-top, 0);
+}
+/* Compact top-nav-right / lang-switcher on narrow screens to avoid clipped label */
+@media (max-width: 620px) {
+  .top-nav-right { gap: 0.35rem; }
+  .top-nav-links { display: none; }
+  .top-actions { gap: 0.2rem; }
+  .top-actions .lang-switcher { padding: 0.2rem 0.3rem; gap: 0.3rem; }
+  .top-actions .lang-switcher > svg { display: none; }
+  .top-actions .lang-switcher select { font-size: 0.725rem; padding-inline: 0; }
+}
+@media (max-width: 520px) {
+  .top-nav-right .top-socials { display: none; }
+  .top-nav-inner { padding-inline: 0.7rem; }
+  .top-nav-left .brand-title { letter-spacing: -0.01em; }
 }
 @media (max-width: 560px) {
   .field-row {
