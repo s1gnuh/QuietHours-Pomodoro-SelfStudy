@@ -21,7 +21,9 @@
         nextSession: "Buổi tới", nothingScheduled: "Không có lịch nào", happeningNow: "Đang diễn ra",
         inX: "Còn {label}", studyStreak: "Chuỗi ngày", day: "ngày", days: "ngày",
         today: "hôm nay", noFocusToday: "Chưa tập trung hôm nay", thisWeek: "Tuần này",
-        focusHours: "Giờ tập trung", focusSessions: "buổi tập trung", spaceToStart: "Nhấn Space để bắt đầu / dừng"
+        focusHours: "Giờ tập trung", focusSessions: "buổi tập trung", spaceToStart: "Nhấn Space để bắt đầu / dừng",
+        subjectLabel: "Môn học", subjectNone: "Không gắn môn", subjectHint: "Chọn môn học trước khi bắt đầu để ghi nhận thống kê chính xác.",
+        addSubjectQuick: "Thêm môn", addSubjectPlace: "Tên môn..."
       },
       timerSettings: {
         title: "Cài đặt bộ đếm",
@@ -73,7 +75,9 @@
         today: "Hôm nay", loggedTime: "thời gian đã ghi nhận",
         thisWeek: "Tuần này", acrossSubjects: "trên các môn học",
         dailyHours: "Giờ tập trung / ngày", timeBySubject: "Thời gian theo môn",
-        hours: "Giờ"
+        hours: "Giờ", history: "Lịch sử phiên", historyDesc: "Nhấn Sửa để đổi môn học của phiên đã ghi nhận.",
+        editSubject: "Sửa môn", changeSubjectTo: "Đổi môn", saveChange: "Lưu",
+        session: "phiên", subject: "Môn học"
       },
       data: {
         privacy: "Quyền riêng tư", data: "Dữ liệu",
@@ -82,6 +86,8 @@
         couldNotImport: "Không thể nhập file này.", restored: "Đã khôi phục dữ liệu gốc.",
         subjects: "Môn học", subjectsDesc: "Tạo môn học để gắn vào lịch và công việc — giúp thống kê chính xác hơn.",
         newSubject: "Thêm môn học", subjectPlaceholder: "Ví dụ: Toán cao cấp",
+        deleteSubjectConfirm: "Xóa môn học \"{name}\"? Các lịch/thẻ/thống kê dùng môn này sẽ được chuyển sang Không gắn môn.",
+        deletedSubject: "Đã xóa môn học.",
         resetTitle: "Đặt lại dữ liệu", resetDesc: "Xóa toàn bộ lịch, công việc, thống kê — hành động không thể hoàn tác."
       },
       dock: { start: "Bắt đầu", pause: "Tạm dừng" },
@@ -172,7 +178,9 @@
         nextSession: "Next session", nothingScheduled: "Nothing scheduled", happeningNow: "Happening now",
         inX: "In {label}", studyStreak: "Study streak", day: "day", days: "days",
         today: "today", noFocusToday: "No focus logged today", thisWeek: "This week",
-        focusHours: "Focus hours", focusSessions: "focus sessions", spaceToStart: "Press Space to start / pause"
+        focusHours: "Focus hours", focusSessions: "focus sessions", spaceToStart: "Press Space to start / pause",
+        subjectLabel: "Subject", subjectNone: "No subject", subjectHint: "Pick a subject before starting for accurate analytics.",
+        addSubjectQuick: "Add subject", addSubjectPlace: "Subject name..."
       },
       timerSettings: {
         title: "Timer settings",
@@ -224,7 +232,9 @@
         today: "Today", loggedTime: "logged time",
         thisWeek: "This week", acrossSubjects: "across subjects",
         dailyHours: "Daily hours", timeBySubject: "Time by subject",
-        hours: "Hours"
+        hours: "Hours", history: "Session history", historyDesc: "Click Edit to change the subject of a logged session.",
+        editSubject: "Edit subject", changeSubjectTo: "Change to", saveChange: "Save",
+        session: "session", subject: "Subject"
       },
       data: {
         privacy: "Privacy", data: "Data",
@@ -233,6 +243,8 @@
         couldNotImport: "Could not import this file.", restored: "All data has been reset.",
         subjects: "Subjects", subjectsDesc: "Create subjects to tag schedule and tasks — makes analytics more useful.",
         newSubject: "New subject", subjectPlaceholder: "e.g. Linear Algebra",
+        deleteSubjectConfirm: "Delete subject \"{name}\"? Schedule, cards, and logs tagged with this subject will become unassigned (No subject).",
+        deletedSubject: "Subject deleted.",
         resetTitle: "Reset data", resetDesc: "Delete schedule, tasks, analytics — this can't be undone."
       },
       dock: { start: "Start", pause: "Pause" },
@@ -382,9 +394,24 @@
     return `${y}-${m}-${dd}`;
   }
   function seedSampleData() {
+    const defaultSubjects = (langOverride) => {
+      const vi = ["Toán học", "Vật lý", "Tiếng Anh", "Ngữ văn", "Lịch sử"];
+      const en = ["Mathematics", "Physics", "English", "Literature", "History"];
+      const list = langOverride === "en" ? en : vi;
+      return list.map((n, i) => ({ id: uid(), name: n, tone: TONES[i % TONES.length] }));
+    };
     return {
-      subjects: [],
-      timerSettings: { focusMin: 25, shortBreakMin: 5, longBreakMin: 15, longBreakEvery: 4, autoStart: false, notifSound: "chime", notifRepeat: 2 },
+      subjects: defaultSubjects(
+        (function () {
+          try {
+            const saved = localStorage.getItem("quiethours-static-lang");
+            if (saved === "en" || saved === "vi") return saved;
+          } catch (_) {}
+          const nav = (navigator.language || "vi").toLowerCase();
+          return nav.startsWith("vi") ? "vi" : "en";
+        })()
+      ),
+      timerSettings: { focusMin: 25, shortBreakMin: 5, longBreakMin: 15, longBreakEvery: 4, autoStart: false, notifSound: "chime", notifRepeat: 2, lastSubjectId: null },
       timer: { mode: "focus", running: false, endAt: null, remainingMs: 25 * 60 * 1000, focusCount: 0 },
       mixer: {
         master: 0.7,
@@ -412,6 +439,14 @@
           const df = seedSampleData().timerSettings;
           if (typeof parsed.timerSettings.notifSound !== "string") parsed.timerSettings.notifSound = df.notifSound;
           if (!Number.isFinite(parsed.timerSettings.notifRepeat)) parsed.timerSettings.notifRepeat = df.notifRepeat;
+          if (typeof parsed.timerSettings.lastSubjectId !== "string") parsed.timerSettings.lastSubjectId = null;
+          if (!Array.isArray(parsed.subjects) || parsed.subjects.length === 0) parsed.subjects = seedSampleData().subjects;
+          // Ensure every log has subjectId shape (never throw)
+          if (Array.isArray(parsed.logs)) {
+            parsed.logs.forEach((l) => {
+              if (!("subjectId" in l)) l.subjectId = undefined;
+            });
+          }
           return parsed;
         }
       }
@@ -1145,16 +1180,134 @@
     return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
   }
   let completingRef = false;
+  function subjectNameFor(subjectId) {
+    if (!subjectId) return t("focus.subjectNone");
+    const s = state.subjects.find((x) => x.id === subjectId);
+    return s ? s.name : t("focus.subjectNone");
+  }
+  function rebuildSubjectOptions(selectEl, {
+    value = "",
+    noneLabel = null,
+    includeNone = true
+  } = {}) {
+    if (!selectEl) return;
+    selectEl.innerHTML = "";
+    if (includeNone) {
+      const oNone = document.createElement("option");
+      oNone.value = "";
+      oNone.textContent = noneLabel || t("focus.subjectNone");
+      if (value === "") oNone.selected = true;
+      selectEl.appendChild(oNone);
+    }
+    state.subjects.forEach((s) => {
+      const o = document.createElement("option");
+      o.value = s.id;
+      o.textContent = s.name;
+      if (value === s.id) o.selected = true;
+      selectEl.appendChild(o);
+    });
+  }
+  function renderFocusSubjectPicker() {
+    const sel = document.getElementById("focus-subject-select");
+    if (!sel) return;
+    const cur = (state.timer && state.timer.subjectId) || state.timerSettings.lastSubjectId || "";
+    rebuildSubjectOptions(sel, { value: cur });
+    try { sel.setAttribute("title", subjectNameFor(cur)); } catch (_) {}
+  }
+  function renderInsightsHistory() {
+    const host = document.getElementById("insights-history-list");
+    if (!host) return;
+    host.innerHTML = "";
+    const logs = [...state.logs].sort((a, b) => (b.completedAt || 0) - (a.completedAt || 0));
+    if (!logs.length) {
+      const p = document.createElement("p");
+      p.style.cssText = "margin:0; font-size:0.8rem; color: var(--color-muted); padding: 0.6rem 0.2rem";
+      p.textContent = currentLang === "vi" ? "Chưa có phiên nào được ghi nhận. Hãy bắt đầu một buổi Pomodoro!" : "No sessions logged yet. Start a Pomodoro to see them here.";
+      host.appendChild(p);
+      return;
+    }
+    const wrap = document.createElement("div");
+    wrap.style.cssText = "display:flex; flex-direction:column; gap:0.45rem";
+    const now = new Date();
+    logs.slice(0, 40).forEach((log) => {
+      const row = document.createElement("div");
+      row.style.cssText = "display:grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.3fr) auto; align-items:center; gap:0.55rem; padding:0.55rem 0.65rem; border-radius:0.55rem; background: var(--color-elevated); border:1px solid var(--color-border)";
+      row.dataset.logId = log.id;
+
+      const left = document.createElement("div");
+      left.style.cssText = "min-width:0; display:flex; flex-direction:column; gap:0.12rem";
+      const d = new Date(log.completedAt || now.getTime());
+      const timeStr = d.toLocaleTimeString(currentLang === "vi" ? "vi-VN" : "en-US", { hour: "2-digit", minute: "2-digit" });
+      const dateStr = d.toLocaleDateString(currentLang === "vi" ? "vi-VN" : "en-US", { month: "short", day: "numeric" });
+      const time = document.createElement("span");
+      time.style.cssText = "font-weight:600; font-size:0.82rem";
+      time.textContent = `${timeStr} · ${dateStr}`;
+      const mins = document.createElement("span");
+      mins.style.cssText = "color: var(--color-muted); font-size:0.72rem";
+      mins.textContent = `${log.minutes || 0} ${currentLang === "vi" ? "phút" : "min"} · ${currentLang === "vi" ? "phiên " + (String(log.mode || "focus").charAt(0).toUpperCase() + String(log.mode || "focus").slice(1)) : String(log.mode || "focus").charAt(0).toUpperCase() + String(log.mode || "focus").slice(1)}`;
+      left.appendChild(time);
+      left.appendChild(mins);
+
+      const mid = document.createElement("div");
+      mid.style.cssText = "min-width:0; display:flex; align-items:center; gap:0.35rem";
+      const midLabel = document.createElement("span");
+      midLabel.className = "subject-chip";
+      midLabel.style.cssText = "max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap";
+      midLabel.textContent = subjectNameFor(log.subjectId);
+      mid.appendChild(midLabel);
+
+      const actions = document.createElement("div");
+      actions.style.cssText = "display:flex; align-items:center; gap:0.3rem";
+      const editBtn = document.createElement("button");
+      editBtn.type = "button";
+      editBtn.className = "btn btn-ghost btn-icon-sm";
+      editBtn.title = t("insights.editSubject");
+      editBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg><span style="font-size:0.74rem; margin-left:0.25rem">${t("insights.editSubject")}</span>`;
+      editBtn.addEventListener("click", () => {
+        if (row.dataset.editing === "1") return;
+        row.dataset.editing = "1";
+        mid.innerHTML = "";
+        const sel = document.createElement("select");
+        sel.style.cssText = "flex:1; min-width:150px; padding:0.32rem 0.5rem; background: var(--color-surface); border:1px solid var(--color-border); border-radius:0.5rem; color: var(--color-fg); font-family:inherit; font-size:0.8rem";
+        rebuildSubjectOptions(sel, { value: log.subjectId || "" });
+        const saveBtn = document.createElement("button");
+        saveBtn.type = "button";
+        saveBtn.className = "btn btn-primary btn-sm";
+        saveBtn.style.cssText = "padding-inline:0.55rem";
+        saveBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><polyline points="20 6 9 17 4 12"></polyline></svg><span style="font-size:0.72rem; margin-left:0.22rem">${t("insights.saveChange")}</span>`;
+        saveBtn.addEventListener("click", () => {
+          const next = sel.value || undefined;
+          const target = state.logs.find((l) => l.id === log.id);
+          if (target) target.subjectId = next;
+          persist();
+          row.dataset.editing = "0";
+          renderInsightsHistory();
+          renderCharts();
+          renderStats();
+        });
+        mid.appendChild(sel);
+        mid.appendChild(saveBtn);
+      });
+      actions.appendChild(editBtn);
+
+      row.appendChild(left);
+      row.appendChild(mid);
+      row.appendChild(actions);
+      wrap.appendChild(row);
+    });
+    host.appendChild(wrap);
+  }
   function completeSession() {
     const tm = state.timer;
     const completedMode = tm.mode;
     // Log
     if (completedMode === "focus") {
+      const sid = tm.subjectId || state.timerSettings.lastSubjectId || null;
       state.logs.push({
         id: uid(),
         date: todayISO(),
         minutes: Math.round(durationMsFor(completedMode) / 60000),
-        subjectId: undefined,
+        subjectId: sid || undefined,
         mode: completedMode,
         completedAt: Date.now()
       });
@@ -1174,6 +1327,10 @@
     state.timer.endAt = null;
     state.timer.running = !!state.timerSettings.autoStart;
     if (state.timer.running) state.timer.endAt = Date.now() + state.timer.remainingMs;
+    // Retain subject selection across sessions for convenience
+    const lastSub = tm.subjectId || state.timerSettings.lastSubjectId || null;
+    state.timerSettings.lastSubjectId = lastSub || null;
+    state.timer.subjectId = null;
     persist();
     // Chime notification
     try { unlockAudioIfNeeded(); } catch (_) {}
@@ -1183,17 +1340,26 @@
       `[QuietHours] ${t(modeLabelKey(completedMode))} ${t("focus.complete")} — ${t("focus.next")}: ${t(modeLabelKey(nextMode))}`
     );
     renderTimer();
+    renderFocusSubjectPicker();
     renderStats();
     renderCharts();
+    renderInsightsHistory();
   }
   function startTimer() {
     const tm = state.timer;
+    const sel = document.getElementById("focus-subject-select");
+    if (sel) {
+      const v = sel.value || null;
+      tm.subjectId = v || undefined;
+      if (v) state.timerSettings.lastSubjectId = v;
+    }
     const ms = tm.remainingMs > 0 ? tm.remainingMs : durationMsFor(tm.mode);
     tm.remainingMs = ms;
     tm.endAt = Date.now() + ms;
     tm.running = true;
     persist();
     renderTimer();
+    renderFocusSubjectPicker();
   }
   function pauseTimer() {
     state.timer.running = false;
@@ -2118,6 +2284,37 @@
   }
 
   // -------- Subjects (Data view) --------------------------------------------
+  function deleteSubject(id) {
+    const subj = state.subjects.find((s) => s.id === id);
+    if (!subj) return;
+    const ok = window.confirm(formatTpl(t("data.deleteSubjectConfirm"), { name: subj.name }));
+    if (!ok) return;
+    state.subjects = state.subjects.filter((s) => s.id !== id);
+    // Unassign from all references (replace id -> undefined)
+    const unassign = (obj) => {
+      if (!obj || typeof obj !== "object") return;
+      if (obj.subjectId === id) {
+        delete obj.subjectId;
+      }
+    };
+    (state.logs || []).forEach(unassign);
+    (state.schedule || []).forEach(unassign);
+    (state.kanban || []).forEach(unassign);
+    // Remembered selections
+    if (state.timer && state.timer.subjectId === id) {
+      delete state.timer.subjectId;
+    }
+    if (state.timerSettings && state.timerSettings.lastSubjectId === id) {
+      state.timerSettings.lastSubjectId = null;
+    }
+    persist();
+    renderAll();
+    try {
+      const msg = t("data.deletedSubject");
+      if (typeof window.toast === "function") window.toast(msg);
+      else if (msg) setTimeout(() => window.alert(msg), 0);
+    } catch (_) {}
+  }
   function renderSubjectChips() {
     const ul = document.getElementById("subject-chips");
     if (!ul) return;
@@ -2125,7 +2322,19 @@
     state.subjects.forEach((s) => {
       const li = document.createElement("li");
       li.className = "subject-chip";
-      li.textContent = s.name;
+      li.dataset.subjectId = s.id;
+      const label = document.createElement("span");
+      label.className = "chip-label";
+      label.textContent = s.name;
+      li.appendChild(label);
+      const del = document.createElement("button");
+      del.type = "button";
+      del.className = "chip-delete";
+      del.setAttribute("aria-label", t("common.delete"));
+      del.title = t("common.delete");
+      del.dataset.deleteSubject = s.id;
+      del.innerHTML = '&times;';
+      li.appendChild(del);
       ul.appendChild(li);
     });
   }
@@ -2304,6 +2513,8 @@
     renderSchedule();
     renderKanban();
     renderSubjectChips();
+    renderFocusSubjectPicker();
+    renderInsightsHistory();
     renderStats();
     // Update timer-settings dialog previews
     const s = state.timerSettings;
@@ -2570,14 +2781,78 @@
       const name = document.getElementById("subject-name").value.trim();
       if (!name) return;
       const tone = TONES[state.subjects.length % TONES.length];
-      state.subjects.push({ id: uid(), name, tone });
+      const newId = uid();
+      state.subjects.push({ id: newId, name, tone });
       persist();
       document.getElementById("subject-name").value = "";
       renderSubjectChips();
       renderSchedule();
       renderKanban();
       renderCharts();
+      renderFocusSubjectPicker();
+      renderInsightsHistory();
     });
+    // Data view: delete subject (event delegation)
+    const chipsUl = document.getElementById("subject-chips");
+    if (chipsUl) {
+      chipsUl.addEventListener("click", (e) => {
+        const btn = (e.target && (e.target.closest ? e.target.closest("[data-delete-subject]") : null)) || null;
+        if (!btn) return;
+        e.stopPropagation();
+        e.preventDefault();
+        const id = btn.getAttribute("data-delete-subject");
+        if (id) deleteSubject(id);
+      });
+    }
+    // Focus view: subject picker change (instantly remember selection)
+    const fss = document.getElementById("focus-subject-select");
+    if (fss) {
+      fss.addEventListener("change", () => {
+        const v = fss.value || null;
+        state.timer.subjectId = v || undefined;
+        if (v) state.timerSettings.lastSubjectId = v;
+        persist();
+        renderFocusSubjectPicker();
+      });
+    }
+    // Focus view: quick add subject toggle
+    const openQa = document.getElementById("focus-btn-open-quick-add");
+    const qaForm = document.getElementById("focus-quick-add-subject-form");
+    const qaInput = document.getElementById("focus-quick-add-subject-input");
+    const qaCancel = document.getElementById("focus-quick-add-cancel");
+    if (openQa && qaForm && qaInput) {
+      openQa.addEventListener("click", () => {
+        qaForm.style.display = qaForm.style.display === "flex" ? "none" : "flex";
+        if (qaForm.style.display === "flex") setTimeout(() => qaInput.focus(), 0);
+      });
+    }
+    if (qaCancel && qaForm) {
+      qaCancel.addEventListener("click", () => {
+        qaForm.style.display = "none";
+        if (qaInput) qaInput.value = "";
+      });
+    }
+    if (qaForm && qaInput) {
+      qaForm.addEventListener("submit", (e) => {
+        if (e && e.preventDefault) e.preventDefault();
+        const name = qaInput.value.trim();
+        if (!name) return;
+        const tone = TONES[state.subjects.length % TONES.length];
+        const newId = uid();
+        state.subjects.push({ id: newId, name, tone });
+        state.timerSettings.lastSubjectId = newId;
+        state.timer.subjectId = newId;
+        persist();
+        qaInput.value = "";
+        qaForm.style.display = "none";
+        renderSubjectChips();
+        renderSchedule();
+        renderKanban();
+        renderCharts();
+        renderFocusSubjectPicker();
+        renderInsightsHistory();
+      });
+    }
     document.getElementById("btn-export").addEventListener("click", exportBackup);
     document.getElementById("file-import").addEventListener("change", (e) => {
       const f = e.target.files && e.target.files[0];

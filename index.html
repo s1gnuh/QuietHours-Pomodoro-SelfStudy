@@ -113,7 +113,13 @@
             </div>
           </div>
         </header>
+<<<<<<< HEAD
          <header class="mobile-header">
+=======
+
+        <!-- Mobile compact header (below top-nav on small screens, shows brand+lang when nav collapses) -->
+        <header class="mobile-header">
+>>>>>>> ab5c4bf (feat(focus,insights,data): subject picker before pomodoro start; edit logged sessions inline; delete subject with unassign refs; default 5 subjects VI/EN by locale; donut/weekly auto-refresh)
           <div class="brand">
             <span class="brand-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
@@ -249,6 +255,35 @@
                       <p class="timer-text" id="timer-text">25:00</p>
                       <p class="timer-mode-label" id="timer-mode-label" data-i18n="focus.focus">Tập trung</p>
                     </div>
+                  </div>
+
+                  <!-- SUBJECT PICKER (before start) -->
+                  <div class="card" id="subject-picker-card" style="margin-bottom: 0.875rem; padding: 0.85rem 1rem">
+                    <div style="display:flex; align-items:center; justify-content:space-between; gap:0.75rem; flex-wrap:wrap">
+                      <div style="display:flex; align-items:center; gap:0.55rem; min-width:0">
+                        <span style="display:inline-flex; width:1.75rem; height:1.75rem; align-items:center; justify-content:center; border-radius:999px; background: color-mix(in oklab, var(--color-accent) 18%, transparent); color: var(--color-accent); flex-shrink:0">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path></svg>
+                        </span>
+                        <div style="min-width:0">
+                          <p style="margin:0; font-size:0.78rem; font-weight:600" data-i18n="focus.subjectLabel">Môn học</p>
+                          <p style="margin:0.08rem 0 0; font-size:0.72rem; color: var(--color-muted)" data-i18n="focus.subjectHint">Chọn môn học trước khi bắt đầu để ghi nhận thống kê chính xác.</p>
+                        </div>
+                      </div>
+                      <div style="display:flex; align-items:center; gap:0.4rem; flex:1; justify-content:flex-end; min-width:220px">
+                        <select id="focus-subject-select" aria-label="Subject" style="flex:1; min-width:150px; max-width:260px; padding:0.42rem 0.55rem; background: var(--color-elevated); border:1px solid var(--color-border); border-radius:0.5rem; color: var(--color-fg); font-family: inherit; font-size:0.82rem">
+                          <option value="">—</option>
+                        </select>
+                        <button type="button" class="btn btn-ghost btn-sm" id="focus-btn-open-quick-add" title="Thêm môn nhanh" style="padding-inline:0.5rem">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                          <span data-i18n="focus.addSubjectQuick" style="font-size:0.74rem">Thêm môn</span>
+                        </button>
+                      </div>
+                    </div>
+                    <form id="focus-quick-add-subject-form" onsubmit="return false" style="margin-top:0.55rem; display:none; gap:0.35rem; align-items:center">
+                      <input id="focus-quick-add-subject-input" type="text" maxlength="40" data-i18n-attr="placeholder:focus.addSubjectPlace" placeholder="Tên môn..." style="flex:1; padding:0.4rem 0.55rem; background: var(--color-surface); border:1px solid var(--color-border); border-radius:0.5rem; color: var(--color-fg); font-family: inherit; font-size:0.8rem" />
+                      <button type="submit" class="btn btn-primary btn-sm" data-i18n="common.add">Thêm</button>
+                      <button type="button" class="btn btn-secondary btn-sm" id="focus-quick-add-cancel" data-i18n="common.cancel">Hủy</button>
+                    </form>
                   </div>
 
                   <div class="timer-actions">
@@ -495,6 +530,17 @@
                     <canvas id="chart-donut" aria-label="Time by subject"></canvas>
                   </div>
                 </div>
+              </div>
+
+              <div class="chart-card" style="margin-top: 1rem">
+                <div class="card-head" style="margin-bottom: 0.6rem; display:flex; align-items:flex-end; justify-content:space-between; gap:0.6rem; flex-wrap:wrap">
+                  <div>
+                    <p class="section-kicker" style="margin:0 0 0.15rem 0" data-i18n="insights.insights">Phân tích</p>
+                    <h3 class="card-title" data-i18n="insights.history">Lịch sử phiên</h3>
+                    <p style="margin:0.15rem 0 0; font-size:0.74rem; color: var(--color-muted)" data-i18n="insights.historyDesc">Nhấn Sửa để đổi môn học của phiên đã ghi nhận.</p>
+                  </div>
+                </div>
+                <div id="insights-history-list" data-empty-style="opacity:.6"></div>
               </div>
             </section>
 
@@ -799,7 +845,7 @@
             <input type="checkbox" id="ts-autostart" style="width: auto; box-shadow: none" />
           </label>
         </div>
-        <div style="margin-top: 0.75rem; padding: 0.75rem; background: var(--color-elevated); border-radius: 0.5rem; border: 1px dashed color-mix(in oklab, var(--color-accent) 30%, transparent))">
+        <div style="margin-top: 0.75rem; padding: 0.75rem; background: var(--color-elevated); border-radius: 0.5rem; border: 1px dashed color-mix(in oklab, var(--color-accent) 30%, transparent)">
           <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 0.75rem; margin-bottom: 0.6rem">
             <div>
               <p style="font-size: 0.875rem; font-weight: 600; margin: 0" data-i18n="timerSettings.notifTitle">Chuông thông báo khi kết thúc phiên</p>
@@ -813,7 +859,7 @@
             <div class="field" style="margin: 0">
               <label data-i18n="timerSettings.notifSound">Loại chuông</label>
               <select id="ts-notif-sound">
-                <option value="chime" data-i18n="timerSettings.sounds.chime">Chime </option>
+                <option value="chime" data-i18n="timerSettings.sounds.chime">Chime (Ding-Dong)</option>
                 <option value="bell" data-i18n="timerSettings.sounds.bell">Chuông tháp</option>
                 <option value="zen" data-i18n="timerSettings.sounds.zen">Tibetan Bowl</option>
                 <option value="digital" data-i18n="timerSettings.sounds.digital">Digital Beep</option>

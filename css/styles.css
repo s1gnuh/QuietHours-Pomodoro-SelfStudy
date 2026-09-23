@@ -1947,12 +1947,41 @@ textarea {
   margin-bottom: 1rem;
 }
 .subject-chip {
-  padding: 0.25rem 0.75rem;
+  padding: 0.2rem 0.35rem 0.2rem 0.8rem;
   border-radius: 999px;
   background: var(--color-elevated);
   color: var(--color-fg);
   font-size: 0.75rem;
   box-shadow: var(--shadow-border);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.subject-chip .chip-label {
+  line-height: 1.5;
+}
+.subject-chip .chip-delete {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--color-muted);
+  width: 1.2rem;
+  height: 1.2rem;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.subject-chip .chip-delete:hover,
+.subject-chip .chip-delete:focus-visible {
+  background: color-mix(in srgb, var(--color-danger) 14%, transparent);
+  color: var(--color-danger);
+  outline: 0;
 }
 .subject-form {
   display: flex;
