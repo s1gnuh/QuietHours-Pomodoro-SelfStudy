@@ -472,6 +472,7 @@
       timer: { mode: "focus", running: false, endAt: null, remainingMs: 25 * 60 * 1000, focusCount: 0 },
       mixer: {
         master: 0.7,
+        tone: 0.6,
         tracks: {
           rain: { on: false, volume: 0.5 },
           cafe: { on: false, volume: 0.4 },
@@ -497,6 +498,7 @@
     if (!s.timer || typeof s.timer !== "object") s.timer = df.timer;
     if (!s.mixer || typeof s.mixer !== "object") s.mixer = df.mixer;
     if (!Number.isFinite(s.mixer.master)) s.mixer.master = df.mixer.master;
+    if (!Number.isFinite(s.mixer.tone)) s.mixer.tone = df.mixer.tone;
     if (!s.mixer.tracks || typeof s.mixer.tracks !== "object") s.mixer.tracks = {};
     Object.keys(df.mixer.tracks).forEach((k) => {
       const tr = s.mixer.tracks[k];
@@ -1708,6 +1710,9 @@
     let ctx = null;
     let masterGain = null;
     let reverbSend = null;
+    let toneLp = null;
+    let toneLevel = 0.6; // 0 = warm/dark, 1 = bright
+    const toneToHz = (v) => 800 * Math.pow(15, Math.max(0, Math.min(1, v))); // 800 Hz .. 12 kHz
     const tracks = {};   // id -> { gain }
     const desired = {};  // id -> target volume (0..1)
     const bufCache = {};
@@ -1718,18 +1723,29 @@
       if (!ctx) {
         const AC = window.AudioContext || window.webkitAudioContext;
         if (!AC) return null;
-        ctx = new AC();
+        try { ctx = new AC({ latencyHint: "playback" }); } catch (_) { ctx = new AC(); }
         masterGain = ctx.createGain();
         masterGain.gain.value = 0;
+        // Tone control: low-pass that tames hiss / high frequencies (Warm <-> Bright slider)
+        toneLp = ctx.createBiquadFilter();
+        toneLp.type = "lowpass"; toneLp.Q.value = 0.5;
+        toneLp.frequency.value = toneToHz(toneLevel);
         // Gentle glue compressor so stacked tracks never clip
         const comp = ctx.createDynamicsCompressor();
         comp.threshold.value = -14; comp.knee.value = 12; comp.ratio.value = 3;
         comp.attack.value = 0.02; comp.release.value = 0.4;
-        masterGain.connect(comp);
-        comp.connect(ctx.destination);
+        // Brick-wall-ish limiter as the last stage: no hard clipping on the speakers
+        const limiter = ctx.createDynamicsCompressor();
+        limiter.threshold.value = -2; limiter.knee.value = 0; limiter.ratio.value = 20;
+        limiter.attack.value = 0.003; limiter.release.value = 0.1;
+        masterGain.connect(toneLp);
+        toneLp.connect(comp);
+        comp.connect(limiter);
+        limiter.connect(ctx.destination);
+        startTicker();
         // Shared room reverb (generated impulse response)
         const conv = ctx.createConvolver();
-        conv.buffer = makeImpulse(2.4, 2.6);
+        conv.buffer = makeImpulse(1.6, 3);
         reverbSend = ctx.createGain();
         reverbSend.gain.value = 1;
         reverbSend.connect(conv);
@@ -1801,12 +1817,43 @@
     function rand(a, b) { return a + Math.random() * (b - a); }
     function isOn(id) { return (desired[id] || 0) > 0.0005; }
     // Run fn at random intervals, but only do the work while the track is audible
+    //
+    // Background-safe scheduler. Browsers throttle setTimeout/setInterval in hidden tabs
+    // (to ~1 s, later ~1/min), which starved the event scheduling and caused crackling when
+    // switching tabs. Timers inside a Worker are not throttled, so one Worker ticks every
+    // 25 ms and all random sound events / the lo-fi sequencer run from those ticks.
+    const tasks = [];
+    let ticker = null;
+    function runTasks() {
+      const now = performance.now();
+      for (let i = 0; i < tasks.length; i++) {
+        const t = tasks[i];
+        if (now < t.at) continue;
+        try { t.fn(); } catch (_) {}
+        t.at = now + t.delay(); // from "now": never replay a backlog after a long pause
+      }
+    }
+    function startTicker() {
+      if (ticker) return;
+      try {
+        const src = "setInterval(function(){postMessage(0)},25)";
+        const url = URL.createObjectURL(new Blob([src], { type: "text/javascript" }));
+        const w = new Worker(url);
+        w.onmessage = runTasks;
+        ticker = w;
+      } catch (_) {
+        ticker = setInterval(runTasks, 25); // fallback (e.g. strict CSP)
+      }
+    }
+    function addTask(fn, delay, firstDelay) {
+      tasks.push({ fn, delay, at: performance.now() + (firstDelay == null ? delay() : firstDelay) });
+    }
     function every(id, minMs, maxMs, fn) {
-      const loop = () => {
-        if (isOn(id) && ctx.state === "running") { try { fn(); } catch (_) {} }
-        setTimeout(loop, rand(minMs, maxMs));
-      };
-      setTimeout(loop, rand(0, minMs));
+      addTask(
+        () => { if (isOn(id) && ctx.state === "running") fn(); },
+        () => rand(minMs, maxMs),
+        rand(0, minMs)
+      );
     }
     // Slow random drift of an AudioParam (gusts, flicker, wandering filters)
     function drift(id, param, min, max, minMs, maxMs, tc) {
@@ -2050,17 +2097,17 @@
         if (s % 2 === 0) hat(t, s % 4 === 0 ? 0.035 : 0.022);
         else if (Math.random() < 0.15) hat(t, 0.012);
       }
-      setInterval(() => {
-        if (!isOn("lofi") || ctx.state !== "running") { nextTime = 0; return; }
-        if (nextTime < ctx.currentTime) { nextTime = ctx.currentTime + 0.05; step = 0; }
-        while (nextTime < ctx.currentTime + 0.25) {
+      addTask(() => {
+        if (!isOn("lofi") || ctx.state !== "running") { nextTime = 0; step = 0; return; }
+        if (nextTime < ctx.currentTime) nextTime = ctx.currentTime + 0.05; // catch up without restarting the bar
+        while (nextTime < ctx.currentTime + 1.2) { // generous look-ahead
           const swingOffset = step % 4 === 2 ? swing : 0;
           scheduleStep(step, nextTime + swingOffset);
           nextTime += six;
           step = (step + 1) % 16;
           if (step === 0) bar++;
         }
-      }, 60);
+      }, () => 50, 0);
       return 0.12;
     }
     const BUILDERS = { rain: buildRain, cafe: buildCafe, ocean: buildOcean, fireplace: buildFireplace, lofi: buildLofi, forest: buildForest, brown: buildBrown };
@@ -2097,9 +2144,13 @@
       masterGain.gain.setValueAtTime(masterGain.gain.value, now);
       masterGain.gain.linearRampToValueAtTime(0, now + seconds);
     }
+    function setTone(v) {
+      toneLevel = Math.max(0, Math.min(1, Number.isFinite(v) ? v : 0.6));
+      if (toneLp && ctx) toneLp.frequency.setTargetAtTime(toneToHz(toneLevel), ctx.currentTime, 0.05);
+    }
     function getContext() { ensureCtx(); return ctx; }
 
-    return { unlock, setMaster, setTrack, fadeOut, getContext, TRACKS: Object.keys(BUILDERS) };
+    return { unlock, setMaster, setTone, setTrack, fadeOut, getContext, TRACKS: Object.keys(BUILDERS) };
   })();
   function unlockAudioIfNeeded() { try { AmbientEngine.unlock(); } catch (_) {} }
 
@@ -2285,6 +2336,7 @@
     // Push state to audio engine (builds nodes lazily on first user gesture)
     try {
       AmbientEngine.setMaster(mx.master);
+      AmbientEngine.setTone(mx.tone);
       Object.keys(mx.tracks).forEach((k) => {
         const t = mx.tracks[k];
         AmbientEngine.setTrack(k, !!t.on, Number(t.volume) || 0);
@@ -2760,11 +2812,25 @@
   // -------- Charts (Chart.js UMD) -------------------------------------------
   let barChartInstance = null;
   let donutChartInstance = null;
+  let chartSig = "";
   function renderCharts() {
     if (typeof Chart === "undefined") return;
     const barCanvas = document.getElementById("chart-bar");
     const donutCanvas = document.getElementById("chart-donut");
     if (!barCanvas || !donutCanvas) return;
+    // Rebuilding two Chart.js charts blocks the main thread for a few hundred ms. Skip it when
+    // nothing they show has changed (e.g. just switching tabs) and only let them re-measure.
+    const sig = [
+      currentLang, todayISO(),
+      getComputedStyle(document.body).getPropertyValue("--color-accent").trim(),
+      state.subjects.map((x) => x.id + x.name + x.tone).join("|"),
+      state.logs.map((l) => l.date + ":" + l.minutes + ":" + (l.subjectId || "")).join(",")
+    ].join("#");
+    if (sig === chartSig && barChartInstance && donutChartInstance) {
+      try { barChartInstance.resize(); donutChartInstance.resize(); } catch (_) {}
+      return;
+    }
+    chartSig = sig;
 
     const TONE_HEX = { sage: "#8a9e8e", sand: "#c4a574", clay: "#c47a6a", mist: "#8e9aa3", foam: "#7d9a7e" };
 
@@ -2800,6 +2866,7 @@
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        animation: { duration: 250 },
         plugins: {
           legend: { display: false },
           tooltip: {
@@ -2847,6 +2914,7 @@
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        animation: { duration: 250 },
         cutout: "68%",
         plugins: {
           legend: { position: "bottom", labels: { boxWidth: 10, padding: 16 } },
@@ -2962,6 +3030,8 @@
         if (!Number.isFinite(raw) || raw < mn) return df;
         return Math.min(mx, raw);
       };
+      // Remember how long the current session was meant to be BEFORE the settings change
+      const oldTotal = state.timer.plannedMs || durationMsFor(state.timer.mode);
       state.timerSettings.focusMin = fm("ts-focus", 1, 180, 25);
       state.timerSettings.shortBreakMin = fm("ts-short", 1, 180, 5);
       state.timerSettings.longBreakMin = fm("ts-long", 1, 180, 15);
@@ -2970,10 +3040,19 @@
       const selSnd = document.getElementById("ts-notif-sound");
       state.timerSettings.notifSound = selSnd ? NotificationSounds.normalize(selSnd.value) : "chime";
       state.timerSettings.notifRepeat = NotificationSounds.normRepeat(fm("ts-notif-repeat", 1, 5, 2));
-      // Reset remaining if not running
+      // Apply a new session length without throwing away progress made before pausing.
       if (!state.timer.running) {
-        state.timer.remainingMs = durationMsFor(state.timer.mode);
-        state.timer.plannedMs = null;
+        const newTotal = durationMsFor(state.timer.mode);
+        const elapsed = Math.max(0, oldTotal - state.timer.remainingMs);
+        if (elapsed < 1000) {
+          // Untouched timer: just show the new full length
+          state.timer.remainingMs = newTotal;
+          state.timer.plannedMs = null;
+        } else {
+          // Paused mid-session: keep the time already studied, change only the target
+          state.timer.remainingMs = Math.max(1000, newTotal - elapsed);
+          state.timer.plannedMs = newTotal;
+        }
       }
       persist();
       renderAll();
@@ -3268,6 +3347,7 @@
     subjectNameFor, rebuildSubjectOptions, openDialog, closeDialog, switchView,
     renderMixer, unlockAudio: unlockAudioIfNeeded,
     fadeOutAmbient: (s) => AmbientEngine.fadeOut(s),
+    setTone: (v, save) => { state.mixer.tone = v; AmbientEngine.setTone(v); if (save) persist(); },
     TONES
   };
 

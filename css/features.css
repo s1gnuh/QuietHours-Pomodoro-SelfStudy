@@ -352,6 +352,8 @@ body.zen-mode .focus-extras { display: none; }
 .mx-custom .mx-del:hover { color: var(--color-danger); }
 .mx-save { border: 1px dashed color-mix(in oklab, var(--color-accent) 50%, transparent); background: transparent; }
 .mx-save-form { display: flex; gap: 0.4rem; margin-top: 0.5rem; }
+.mx-tone { display: flex; align-items: center; gap: 0.6rem; font-size: 0.72rem; color: var(--color-muted); }
+.mx-tone .qh-slider { flex: 1; }
 .mx-save-form[hidden] { display: none; }
 .mx-save-form input {
   flex: 1;

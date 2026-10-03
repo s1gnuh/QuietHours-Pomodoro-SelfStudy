@@ -67,7 +67,7 @@
         needName: "Hãy nhập tên kỳ thi.", needDate: "Hãy chọn ngày thi.", hours: "giờ", hidden: "Ẩn"
       },
       mix: {
-        presets: "Preset", save: "Lưu mix", namePh: "Tên preset...", saved: "Đã lưu preset",
+        tone: "Âm sắc", warm: "Ấm", bright: "Sáng", presets: "Preset", save: "Lưu mix", namePh: "Tên preset...", saved: "Đã lưu preset",
         sleep: "Hẹn giờ tắt", off: "Tắt", endSession: "Hết phiên", min: "p",
         sleepIn: "Tắt sau {t}", sleepAtEnd: "Tắt khi hết phiên", sleeping: "Đã tắt nhạc nền 🌙",
         nothingOn: "Hãy bật ít nhất một âm thanh trước khi lưu.",
@@ -127,7 +127,7 @@
         needName: "Please enter an exam name.", needDate: "Please pick an exam date.", hours: "h", hidden: "Hide"
       },
       mix: {
-        presets: "Presets", save: "Save mix", namePh: "Preset name...", saved: "Preset saved",
+        tone: "Tone", warm: "Warm", bright: "Bright", presets: "Presets", save: "Save mix", namePh: "Preset name...", saved: "Preset saved",
         sleep: "Sleep timer", off: "Off", endSession: "End of session", min: "m",
         sleepIn: "Stops in {t}", sleepAtEnd: "Stops when session ends", sleeping: "Ambient sound stopped 🌙",
         nothingOn: "Turn on at least one sound before saving.",
@@ -734,6 +734,14 @@
         </form>
       </div>
       <div class="mx-section">
+        <p class="mx-label">🎚️ ${ft("mix.tone")}</p>
+        <div class="mx-tone">
+          <span>${ft("mix.warm")}</span>
+          <input class="qh-slider" type="range" id="mx-tone" min="0" max="100" step="1" value="${Math.round((QH.state.mixer.tone ?? 0.6) * 100)}" aria-label="${esc(ft("mix.tone"))}" />
+          <span>${ft("mix.bright")}</span>
+        </div>
+      </div>
+      <div class="mx-section">
         <p class="mx-label">🌙 ${ft("mix.sleep")} <span class="mx-sleep-status" id="mx-sleep-status"></span></p>
         <div class="mx-chips">${sleepOpts.map(([v, l]) => {
           const active = (v === "off" && curSleep === "off") || (v === "end" && curSleep === "end");
@@ -754,6 +762,10 @@
       const v = b.dataset.sleep;
       setSleep(v === "off" ? 0 : v === "end" ? "end" : Number(v));
     }));
+    const toneEl = $("mx-tone");
+    // Live while dragging (engine only, so the slider isn't re-rendered); persist on release
+    toneEl.addEventListener("input", () => { QH.unlockAudio(); QH.setTone(Number(toneEl.value) / 100, false); });
+    toneEl.addEventListener("change", () => QH.setTone(Number(toneEl.value) / 100, true));
     const form = $("mx-save-form");
     $("mx-save-btn").addEventListener("click", () => {
       form.hidden = !form.hidden;

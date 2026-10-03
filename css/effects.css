@@ -21,25 +21,24 @@ body:not([class*="bg-"]) .aurora {
   width: 46vmax;
   height: 46vmax;
   border-radius: 50%;
-  filter: blur(90px);
-  opacity: 0.16;
-  background: var(--color-accent);
+  opacity: 0.2;
+  background: radial-gradient(closest-side, var(--orb, var(--color-accent)), transparent 100%);
   will-change: transform;
   animation: aurora-float 26s ease-in-out infinite alternate;
 }
 .aurora i:nth-child(1) { top: -18vmax; left: -12vmax; }
 .aurora i:nth-child(2) {
   bottom: -22vmax; right: -14vmax;
-  background: var(--color-mist);
-  opacity: 0.12;
+  --orb: var(--color-mist);
+  opacity: 0.16;
   animation-duration: 34s;
   animation-delay: -9s;
 }
 .aurora i:nth-child(3) {
   top: 35%; left: 45%;
   width: 28vmax; height: 28vmax;
-  background: var(--color-clay);
-  opacity: 0.07;
+  --orb: var(--color-clay);
+  opacity: 0.1;
   animation-duration: 40s;
   animation-delay: -18s;
 }
@@ -49,7 +48,7 @@ body:not([class*="bg-"]) .aurora {
   100% { transform: translate3d(-4vmax, 8vmax, 0) scale(0.95); }
 }
 /* Aurora breathes a little stronger while the timer is running */
-body.timer-running .aurora i { opacity: 0.22; transition: opacity 1.2s ease; }
+body.timer-running .aurora i { opacity: 0.28; transition: opacity 1.2s ease; }
 
 /* ---------- Cards: spotlight + soft lift ---------- */
 .card,
@@ -117,10 +116,11 @@ body.zen-mode .stat-card::before { display: none; }
   filter: drop-shadow(0 0 7px var(--color-accent));
   transition: opacity 0.3s ease;
 }
+.dial-knob { transform-box: fill-box; transform-origin: center; }
 body.timer-running .dial-knob { animation: knob-pulse 2s ease-in-out infinite; }
 @keyframes knob-pulse {
-  0%, 100% { r: 5; }
-  50%      { r: 7; }
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.4); }
 }
 body.timer-running .dial-wrap::after {
   content: "";
@@ -172,10 +172,7 @@ body.timer-running .timer-text {
 }
 
 /* ---------- Dialogs ---------- */
-.dialog-backdrop {
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-}
+.dialog-backdrop { background: rgba(0, 0, 0, 0.78); }
 .dialog { animation: popIn 0.28s cubic-bezier(0.2, 0.8, 0.2, 1); }
 
 /* ---------- Focus ring + scrollbar ---------- */
