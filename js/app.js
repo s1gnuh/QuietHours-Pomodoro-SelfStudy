@@ -1620,8 +1620,11 @@
     renderFocusSubjectPicker();
   }
   function pauseTimer() {
+    // Read the remaining time BEFORE clearing "running": remainingMsNow() only derives it
+    // from endAt while the timer is running, otherwise it returns the stale stored value.
+    const remaining = remainingMsNow();
     state.timer.running = false;
-    state.timer.remainingMs = remainingMsNow();
+    state.timer.remainingMs = remaining;
     state.timer.endAt = null;
     persist();
     renderTimer();
