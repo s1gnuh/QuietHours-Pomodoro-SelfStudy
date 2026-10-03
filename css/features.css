@@ -1,0 +1,407 @@
+/* ==========================================================
+   QuietHours - Feature add-ons (heatmap, XP/ranks, exams,
+   mixer presets, time-of-day sky). Pairs with js/features.js
+   ========================================================== */
+
+/* ---------- Focus extras: exam card + XP card ---------- */
+.focus-extras {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+@media (min-width: 900px) {
+  .focus-extras.has-exam { grid-template-columns: 1.6fr 1fr; align-items: stretch; }
+}
+.focus-extras:empty { display: none; }
+body.zen-mode .focus-extras { display: none; }
+
+/* ---------- XP card ---------- */
+.xp-card {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.85rem 1rem;
+  text-align: left;
+  border-radius: var(--radius-xl);
+  background:
+    radial-gradient(120% 140% at 0% 0%, color-mix(in oklab, var(--rk1) 16%, transparent), transparent 55%),
+    var(--color-surface);
+  box-shadow: var(--shadow-border);
+  transition: box-shadow 0.25s, transform 0.25s;
+  position: relative;
+  isolation: isolate;
+}
+.xp-card:hover { box-shadow: var(--shadow-border-hover), 0 10px 30px -16px var(--rk2); transform: translateY(-1px); }
+.xp-emblem { flex-shrink: 0; filter: drop-shadow(0 4px 12px color-mix(in oklab, var(--rk2) 60%, transparent)); }
+.xp-emblem .rank-emblem { display: block; animation: emblem-float 5s ease-in-out infinite; }
+@keyframes emblem-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+.xp-body { flex: 1; min-width: 0; }
+.xp-top { display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.45rem; }
+.xp-rank {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  background: linear-gradient(90deg, var(--rk1), color-mix(in oklab, var(--rk1) 50%, var(--rk2)));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.xp-level { font-size: 0.75rem; color: var(--color-muted); font-weight: 600; white-space: nowrap; }
+.xp-bar {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--color-elevated);
+  overflow: hidden;
+  position: relative;
+}
+.xp-bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--rk2), var(--rk1));
+  box-shadow: 0 0 10px color-mix(in oklab, var(--rk1) 60%, transparent);
+  transition: width 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+.xp-bar span::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+  transform: translateX(-100%);
+  animation: xp-shine 3.2s ease-in-out infinite;
+}
+@keyframes xp-shine { 60%, 100% { transform: translateX(100%); } }
+.xp-meta { display: flex; justify-content: space-between; gap: 0.5rem; margin-top: 0.35rem; font-size: 0.7rem; color: var(--color-muted); font-variant-numeric: tabular-nums; }
+
+/* ---------- Exam card ---------- */
+.exam-card {
+  --ex: var(--color-accent);
+  padding: 1rem 1.15rem;
+  border-radius: var(--radius-xl);
+  background:
+    radial-gradient(120% 120% at 100% 0%, color-mix(in oklab, var(--ex) 18%, transparent), transparent 55%),
+    var(--color-surface);
+  box-shadow: var(--shadow-border), inset 0 0 0 1px color-mix(in oklab, var(--ex) 22%, transparent);
+  position: relative;
+  isolation: isolate;
+}
+.exam-card.soon { --ex: var(--color-warn); }
+.exam-card.urgent { --ex: var(--color-danger); }
+.exam-head { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+.exam-head .section-kicker { color: var(--ex); margin: 0; }
+.exam-name { font-family: var(--font-display); font-size: 1.3rem; margin: 0.15rem 0 0.15rem; line-height: 1.2; }
+.exam-when { font-size: 0.78rem; color: var(--color-muted); }
+.exam-subj { color: var(--color-fg); }
+.exam-count { display: flex; align-items: flex-end; gap: 1rem; margin: 0.7rem 0 0.4rem; flex-wrap: wrap; }
+.exam-days { display: flex; align-items: baseline; gap: 0.35rem; }
+.exam-d {
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 7vw, 3.2rem);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  color: var(--ex);
+  text-shadow: 0 0 24px color-mix(in oklab, var(--ex) 40%, transparent);
+  font-variant-numeric: tabular-nums;
+}
+.exam-d-lbl { font-size: 0.85rem; color: var(--color-muted); }
+.exam-hms {
+  font-family: var(--font-mono);
+  font-size: 1.15rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 0.5rem;
+  background: var(--color-elevated);
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 0.2rem;
+}
+.exam-card.urgent .exam-hms { animation: exam-pulse 2s ease-in-out infinite; }
+@keyframes exam-pulse { 50% { box-shadow: 0 0 0 4px color-mix(in oklab, var(--ex) 25%, transparent); } }
+.exam-goal { margin-top: 0.6rem; }
+.exam-goal-top { display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 0.3rem; }
+.exam-bar { height: 7px; border-radius: 999px; background: var(--color-elevated); overflow: hidden; }
+.exam-bar span { display: block; height: 100%; border-radius: inherit; background: var(--ex); transition: width 0.8s ease; }
+.exam-hint { font-size: 0.72rem; color: var(--color-muted); margin-top: 0.35rem; }
+.exam-others { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem; margin-top: 0.65rem; font-size: 0.72rem; color: var(--color-muted); }
+.exam-chip { padding: 0.12rem 0.55rem; border-radius: 999px; background: var(--color-elevated); color: var(--color-fg); }
+
+.exam-cta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: var(--radius-xl);
+  border: 1px dashed color-mix(in oklab, var(--color-accent) 45%, var(--color-border));
+  background: color-mix(in oklab, var(--color-accent) 5%, var(--color-surface));
+}
+.exam-cta-ic { font-size: 1.4rem; }
+.exam-cta-body { flex: 1; min-width: 0; }
+.exam-cta-title { font-weight: 600; font-size: 0.9rem; }
+.exam-cta-text { font-size: 0.75rem; color: var(--color-muted); }
+@media (max-width: 560px) {
+  .exam-cta { flex-wrap: wrap; }
+  .exam-cta-body { flex-basis: calc(100% - 4rem); }
+}
+
+/* ---------- Exam dialog ---------- */
+.exam-dialog { max-width: 40rem; }
+.exam-list { list-style: none; display: grid; gap: 0.45rem; margin-bottom: 1rem; max-height: 15rem; overflow-y: auto; }
+.exam-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.7rem;
+  border-radius: 0.75rem;
+  background: var(--color-elevated);
+  border: 1px solid var(--color-border);
+}
+.exam-row.past { opacity: 0.55; }
+.exam-row-d {
+  min-width: 3.6rem;
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: var(--color-accent);
+  font-variant-numeric: tabular-nums;
+}
+.exam-row-body { flex: 1; min-width: 0; }
+.exam-row-name { font-weight: 600; font-size: 0.88rem; }
+.exam-row-meta, .exam-row-note { font-size: 0.72rem; color: var(--color-muted); }
+.exam-row-actions { display: flex; gap: 0.2rem; flex-shrink: 0; }
+.exam-del:hover { color: var(--color-danger); }
+.exam-empty { font-size: 0.8rem; color: var(--color-muted); padding: 0.4rem 0; }
+.exam-form { border-top: 1px solid var(--color-border); padding-top: 1rem; }
+@media (max-width: 560px) {
+  .exam-dialog .field-row-3 { grid-template-columns: 1fr 1fr; }
+  .exam-dialog .field-row-3 .field:last-child { grid-column: 1 / -1; }
+  .exam-row { flex-wrap: wrap; }
+}
+
+/* ---------- Heatmap ---------- */
+#qh-heatmap, #qh-achievements { margin-bottom: 1rem; }
+.hm-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 0.5rem 1rem; flex-wrap: wrap; margin-bottom: 0.8rem; }
+.hm-head .section-kicker { margin: 0 0 0.1rem; }
+.hm-summary { font-size: 0.75rem; color: var(--color-muted); max-width: 32rem; }
+.hm-scroll { overflow-x: auto; padding-bottom: 0.25rem; scrollbar-width: thin; }
+.hm-wrap {
+  --cell: 12px;
+  --gap: 3px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  column-gap: 6px;
+  row-gap: 4px;
+  width: max-content;
+}
+.hm-months {
+  grid-column: 2;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), var(--cell));
+  column-gap: var(--gap);
+  font-size: 0.65rem;
+  color: var(--color-muted);
+  height: 0.9rem;
+}
+.hm-months span { white-space: nowrap; }
+.hm-dow {
+  grid-column: 1;
+  grid-row: 2;
+  display: grid;
+  grid-template-rows: repeat(7, var(--cell));
+  row-gap: var(--gap);
+  font-size: 0.6rem;
+  color: var(--color-muted);
+  line-height: var(--cell);
+}
+.hm-grid {
+  grid-column: 2;
+  grid-row: 2;
+  display: grid;
+  grid-template-rows: repeat(7, var(--cell));
+  grid-auto-flow: column;
+  grid-auto-columns: var(--cell);
+  gap: var(--gap);
+}
+.hm-cell {
+  display: block;
+  width: var(--cell, 12px);
+  height: var(--cell, 12px);
+  border-radius: 3px;
+  background: var(--color-elevated);
+  transition: transform 0.15s;
+}
+.hm-l1 { background: color-mix(in oklab, var(--color-accent) 35%, var(--color-elevated)); }
+.hm-l2 { background: color-mix(in oklab, var(--color-accent) 60%, var(--color-elevated)); }
+.hm-l3 { background: color-mix(in oklab, var(--color-accent) 85%, var(--color-elevated)); }
+.hm-l4 { background: var(--color-accent); box-shadow: 0 0 6px color-mix(in oklab, var(--color-accent) 60%, transparent); }
+.hm-future { visibility: hidden; }
+.hm-today { outline: 1.5px solid var(--color-fg); outline-offset: 1px; }
+.hm-grid .hm-cell:hover { transform: scale(1.35); position: relative; z-index: 1; }
+.hm-legend { display: flex; align-items: center; justify-content: flex-end; gap: 4px; margin-top: 0.6rem; font-size: 0.68rem; color: var(--color-muted); }
+.hm-legend span { margin: 0 4px; }
+.hm-legend .hm-cell { --cell: 11px; }
+.hm-tooltip {
+  position: fixed;
+  z-index: 90;
+  pointer-events: none;
+  transform: translate(-50%, -100%);
+  padding: 0.3rem 0.55rem;
+  border-radius: 0.4rem;
+  font-size: 0.72rem;
+  white-space: nowrap;
+  background: var(--color-fg);
+  color: var(--color-bg);
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+.hm-tooltip.show { opacity: 1; }
+
+/* ---------- Achievements ---------- */
+.ach-hero .xp-card { padding: 1rem 1.1rem; }
+.ach-hero .xp-card .rank-emblem { width: 72px; height: 72px; }
+.ach-sub { font-size: 0.78rem; font-weight: 600; margin: 1.1rem 0 0.6rem; }
+.ach-sub .muted { color: var(--color-muted); font-weight: 400; }
+.rk-ladder {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(4.6rem, 1fr);
+  gap: 0.4rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+}
+.rk-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.5rem 0.25rem;
+  border-radius: 0.75rem;
+  text-align: center;
+  opacity: 0.38;
+  filter: grayscale(0.85);
+  transition: opacity 0.2s, filter 0.2s;
+}
+.rk-step.done { opacity: 0.85; filter: none; }
+.rk-step.current {
+  opacity: 1;
+  filter: none;
+  background: color-mix(in oklab, var(--color-accent) 12%, var(--color-elevated));
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-accent) 40%, transparent);
+}
+.rk-name { font-size: 0.72rem; font-weight: 600; white-space: nowrap; }
+.rk-lvl { font-size: 0.6rem; color: var(--color-muted); white-space: nowrap; }
+.badge-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
+  gap: 0.5rem;
+}
+.badge-tile {
+  padding: 0.7rem 0.65rem;
+  border-radius: 0.9rem;
+  background: var(--color-elevated);
+  border: 1px solid var(--color-border);
+  text-align: center;
+  opacity: 0.6;
+  transition: transform 0.2s, opacity 0.2s, box-shadow 0.2s;
+}
+.badge-tile .badge-ic { font-size: 1.6rem; filter: grayscale(1); opacity: 0.55; }
+.badge-tile.unlocked {
+  opacity: 1;
+  border-color: color-mix(in oklab, var(--color-accent) 45%, var(--color-border));
+  background: radial-gradient(100% 80% at 50% 0%, color-mix(in oklab, var(--color-accent) 18%, transparent), transparent 70%), var(--color-elevated);
+  box-shadow: 0 8px 22px -14px var(--color-accent);
+}
+.badge-tile.unlocked .badge-ic { filter: none; opacity: 1; animation: badge-pop 0.6s cubic-bezier(0.2, 1.6, 0.4, 1) backwards; }
+@keyframes badge-pop { from { transform: scale(0.4); } }
+@media (hover: hover) { .badge-tile:hover { transform: translateY(-2px); opacity: 1; } }
+.badge-name { font-size: 0.78rem; font-weight: 600; margin-top: 0.25rem; }
+.badge-desc { font-size: 0.66rem; color: var(--color-muted); line-height: 1.35; margin-top: 0.1rem; }
+.badge-prog { height: 4px; border-radius: 999px; background: var(--color-border); margin-top: 0.45rem; overflow: hidden; }
+.badge-prog span { display: block; height: 100%; background: var(--color-accent); border-radius: inherit; }
+.badge-num { font-size: 0.6rem; color: var(--color-muted); margin-top: 0.2rem; font-variant-numeric: tabular-nums; }
+
+/* ---------- Mixer: presets + sleep timer ---------- */
+#mixer-extras { margin: 0.9rem 0 1.1rem; display: grid; gap: 0.8rem; }
+.mx-label { font-size: 0.72rem; font-weight: 600; color: var(--color-muted); margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.06em; }
+.mx-sleep-status { text-transform: none; letter-spacing: 0; color: var(--color-accent); margin-left: 0.35rem; font-variant-numeric: tabular-nums; }
+.mx-chips { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.mx-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.28rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  background: var(--color-elevated);
+  color: var(--color-fg);
+  border: 1px solid transparent;
+  transition: background-color 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+.mx-chip:hover { border-color: color-mix(in oklab, var(--color-accent) 45%, transparent); }
+.mx-chip.active {
+  background: color-mix(in oklab, var(--color-accent) 22%, var(--color-elevated));
+  border-color: color-mix(in oklab, var(--color-accent) 60%, transparent);
+  box-shadow: 0 4px 14px -8px var(--color-accent);
+}
+.mx-custom { padding: 0; overflow: hidden; }
+.mx-custom > button { padding: 0.28rem 0.15rem 0.28rem 0.65rem; font-size: inherit; }
+.mx-custom .mx-del { padding: 0.28rem 0.55rem 0.28rem 0.3rem; color: var(--color-muted); }
+.mx-custom .mx-del:hover { color: var(--color-danger); }
+.mx-save { border: 1px dashed color-mix(in oklab, var(--color-accent) 50%, transparent); background: transparent; }
+.mx-save-form { display: flex; gap: 0.4rem; margin-top: 0.5rem; }
+.mx-save-form[hidden] { display: none; }
+.mx-save-form input {
+  flex: 1;
+  min-width: 0;
+  height: 2rem;
+  padding: 0 0.6rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-border);
+  background: var(--color-elevated);
+}
+body.zen-mode #mixer-extras { display: none; }
+
+/* ---------- Time-of-day sky (Appearance → "Theo giờ") ---------- */
+body.bg-auto::before {
+  opacity: 1;
+  transition: opacity 0.6s ease, background 2s ease;
+  background:
+    radial-gradient(520px 380px at var(--sky-x, 70%) var(--sky-y, 18%), var(--sky-glow), transparent 70%),
+    linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 45%, #0e0d0c 100%);
+}
+body.bg-auto::after {
+  opacity: 0;
+  background-image:
+    radial-gradient(1px 1px at 8% 12%, rgba(255,255,255,0.8) 50%, transparent 51%),
+    radial-gradient(1px 1px at 18% 30%, rgba(255,255,255,0.55) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 27% 8%, rgba(255,255,255,0.9) 50%, transparent 51%),
+    radial-gradient(1px 1px at 38% 22%, rgba(255,255,255,0.6) 50%, transparent 51%),
+    radial-gradient(1px 1px at 52% 6%, rgba(255,255,255,0.7) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 63% 26%, rgba(255,255,255,0.8) 50%, transparent 51%),
+    radial-gradient(1px 1px at 74% 12%, rgba(255,255,255,0.6) 50%, transparent 51%),
+    radial-gradient(1px 1px at 86% 32%, rgba(255,255,255,0.7) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 93% 9%, rgba(255,255,255,0.85) 50%, transparent 51%),
+    radial-gradient(1px 1px at 45% 38%, rgba(255,255,255,0.45) 50%, transparent 51%);
+  animation: sky-twinkle 6s ease-in-out infinite alternate;
+}
+body.bg-auto[data-daypart="night"]::after { opacity: 1; }
+body.bg-auto[data-daypart="dusk"]::after,
+body.bg-auto[data-daypart="dawn"]::after { opacity: 0.45; }
+@keyframes sky-twinkle { from { filter: brightness(0.8); } to { filter: brightness(1.25); } }
+
+body.bg-auto[data-daypart="dawn"]    { --sky-top: #2a1f3d; --sky-mid: #3b2a3a; --sky-glow: rgba(255, 170, 140, 0.30); }
+body.bg-auto[data-daypart="morning"] { --sky-top: #1c2a3a; --sky-mid: #1a2228; --sky-glow: rgba(255, 228, 170, 0.22); }
+body.bg-auto[data-daypart="day"]     { --sky-top: #18293a; --sky-mid: #151d24; --sky-glow: rgba(255, 245, 210, 0.18); }
+body.bg-auto[data-daypart="golden"]  { --sky-top: #2d2418; --sky-mid: #261c16; --sky-glow: rgba(255, 180, 90, 0.30); }
+body.bg-auto[data-daypart="dusk"]    { --sky-top: #2b1733; --sky-mid: #22162a; --sky-glow: rgba(240, 110, 120, 0.26); }
+body.bg-auto[data-daypart="night"]   { --sky-top: #0a0f1f; --sky-mid: #0c0f18; --sky-glow: rgba(200, 215, 255, 0.16); }
+body.bg-auto:not([data-daypart])     { --sky-top: #0a0f1f; --sky-mid: #0c0f18; --sky-glow: rgba(200, 215, 255, 0.14); }
+
+.bg-prev-auto {
+  background:
+    radial-gradient(circle at 75% 30%, rgba(255, 200, 120, 0.9) 3px, transparent 5px),
+    linear-gradient(90deg, #2a1f3d 0%, #18293a 35%, #2d2418 65%, #0a0f1f 100%);
+}

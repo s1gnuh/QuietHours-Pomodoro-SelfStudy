@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>QuietHours · Self-Study</title>
     <meta name="theme-color" content="#0e0d0c" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2040%2040'%3E%3Cdefs%3E%3ClinearGradient%20id%3D'g'%20x1%3D'0'%20y1%3D'0'%20x2%3D'1'%20y2%3D'1'%3E%3Cstop%20offset%3D'0'%20stop-color%3D'%23a9bdac'%2F%3E%3Cstop%20offset%3D'1'%20stop-color%3D'%235e7564'%2F%3E%3C%2FlinearGradient%3E%3Cmask%20id%3D'm'%3E%3Crect%20width%3D'40'%20height%3D'40'%20fill%3D'%23fff'%2F%3E%3Ccircle%20cx%3D'23.5'%20cy%3D'16.5'%20r%3D'8.6'%20fill%3D'%23000'%2F%3E%3C%2Fmask%3E%3C%2Fdefs%3E%3Crect%20x%3D'1'%20y%3D'1'%20width%3D'38'%20height%3D'38'%20rx%3D'11'%20fill%3D'url(%23g)'%2F%3E%3Ccircle%20cx%3D'18'%20cy%3D'21.5'%20r%3D'10'%20fill%3D'%23fff'%20mask%3D'url(%23m)'%2F%3E%3Cpath%20d%3D'M27.5%207%2028.7%2010.8%2032.5%2012%2028.7%2013.2%2027.5%2017%2026.3%2013.2%2022.5%2012%2026.3%2010.8Z'%20fill%3D'%23fff'%2F%3E%3C%2Fsvg%3E" />
     <meta
       name="description"
       content="QuietHours — phòng học tập private, local-first: pomodoro, nhạc nền, lịch học, bảng công việc, thống kê."
@@ -17,8 +18,34 @@
     />
     <link rel="stylesheet" href="css/styles.css" />
     <link rel="stylesheet" href="css/effects.css" />
+    <link rel="stylesheet" href="css/features.css" />
   </head>
   <body>
+    <!-- QuietHours logo (shared symbol: <svg><use href="#qh-logo"/></svg>). Follows the active accent theme. -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+      <defs>
+        <linearGradient id="qh-grad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" style="stop-color: color-mix(in srgb, var(--color-accent) 62%, #fff)" />
+          <stop offset="1" style="stop-color: color-mix(in srgb, var(--color-accent) 72%, #000)" />
+        </linearGradient>
+        <radialGradient id="qh-gloss" cx="0.3" cy="0.12" r="0.8">
+          <stop offset="0" stop-color="#fff" stop-opacity="0.38" />
+          <stop offset="1" stop-color="#fff" stop-opacity="0" />
+        </radialGradient>
+        <mask id="qh-moon-mask">
+          <rect width="40" height="40" fill="#fff" />
+          <circle cx="23.5" cy="16.5" r="8.6" fill="#000" />
+        </mask>
+        <symbol id="qh-logo" viewBox="0 0 40 40">
+          <rect x="1" y="1" width="38" height="38" rx="11" fill="url(#qh-grad)" />
+          <rect x="1" y="1" width="38" height="38" rx="11" fill="url(#qh-gloss)" />
+          <circle cx="18" cy="21.5" r="10" fill="#fff" mask="url(#qh-moon-mask)" />
+          <path class="qh-star" d="M27.5 7 28.7 10.8 32.5 12 28.7 13.2 27.5 17 26.3 13.2 22.5 12 26.3 10.8Z" fill="#fff" />
+          <circle cx="12" cy="9" r="1" fill="#fff" opacity="0.7" />
+          <circle cx="31" cy="27" r="0.8" fill="#fff" opacity="0.55" />
+        </symbol>
+      </defs>
+    </svg>
     <div class="grain" aria-hidden="true"></div>
 
     <!-- Floating Exit Zen Mode bar (only visible while Zen) -->
@@ -29,7 +56,7 @@
         <span class="zen-hint" data-i18n="zen.escapeHint">(nhấn ESC hoặc nút bên phải để thoát)</span>
       </div>
       <button type="button" class="btn btn-secondary btn-sm" id="btn-exit-zen">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currsentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
         <span data-i18n="zen.exit">Thoát Zen</span>
       </button>
     </div>
@@ -43,9 +70,7 @@
           <div class="top-nav-inner">
             <div class="top-nav-left">
               <div class="brand">
-                <span class="brand-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-                </span>
+                <span class="brand-icon" aria-hidden="true"><svg class="brand-logo" viewBox="0 0 40 40"><use href="#qh-logo" /></svg></span>
                 <div class="brand-text">
                   <p class="brand-title">QuietHours</p>
                   <p class="brand-tagline" data-i18n="brand.tagline">Phòng học tập cá nhân</p>
@@ -118,9 +143,7 @@
         <!-- Mobile compact header (below top-nav on small screens, shows brand+lang when nav collapses) -->
         <header class="mobile-header">
           <div class="brand">
-            <span class="brand-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-            </span>
+            <span class="brand-icon" aria-hidden="true"><svg class="brand-logo" viewBox="0 0 40 40"><use href="#qh-logo" /></svg></span>
             <div>
               <p class="brand-title">QuietHours</p>
               <p class="brand-tagline" data-i18n="brand.tagline">Phòng học tập cá nhân</p>
@@ -152,6 +175,9 @@
                  VIEW: FOCUS
                  ============================================= -->
             <section id="view-focus" class="view active" data-view="focus">
+              <!-- Exam countdown + XP / rank (rendered by js/features.js) -->
+              <div id="focus-extras" class="focus-extras"></div>
+
               <!-- StatRow (3 cards: Quote + Streak + Week Hours) -->
               <div class="stat-grid">
                 <div class="stat-card stat-card-quote" id="quote-card">
@@ -327,6 +353,7 @@
                     />
                     <span class="volume-val" id="master-volume-val">70</span>
                   </div>
+                  <div id="mixer-extras"></div>
 
                   <ul class="track-list">
                     <li class="track-row" data-track="rain">
@@ -385,7 +412,31 @@
                       <div class="track-body">
                         <div class="track-head">
                           <p class="track-name" data-i18n="mixer.tracks.lofi.label">Lofi</p>
-                          <p class="track-hint" data-i18n="mixer.tracks.lofi.hint">Hợp âm & beat nhẹ</p>
+                          <p class="track-hint" data-i18n="mixer.tracks.lofi.hint">Hợp âm, bass & trống nhẹ</p>
+                        </div>
+                        <input class="qh-slider track-volume" type="range" min="0" max="100" value="0" step="1" />
+                      </div>
+                    </li>
+                    <li class="track-row" data-track="forest">
+                      <button class="icon-toggle" aria-label="Forest">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M12 2 5 12h4l-3 5h12l-3-5h4z"></path><line x1="12" y1="17" x2="12" y2="22"></line></svg>
+                      </button>
+                      <div class="track-body">
+                        <div class="track-head">
+                          <p class="track-name" data-i18n="mixer.tracks.forest.label">Rừng</p>
+                          <p class="track-hint" data-i18n="mixer.tracks.forest.hint">Gió lá & chim hót</p>
+                        </div>
+                        <input class="qh-slider track-volume" type="range" min="0" max="100" value="0" step="1" />
+                      </div>
+                    </li>
+                    <li class="track-row" data-track="brown">
+                      <button class="icon-toggle" aria-label="Brown noise">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M2 12h2l2-6 3 12 3-9 2 6 2-3h6"></path></svg>
+                      </button>
+                      <div class="track-body">
+                        <div class="track-head">
+                          <p class="track-name" data-i18n="mixer.tracks.brown.label">Ồn nâu</p>
+                          <p class="track-hint" data-i18n="mixer.tracks.brown.hint">Che tiếng ồn, tập trung sâu</p>
                         </div>
                         <input class="qh-slider track-volume" type="range" min="0" max="100" value="0" step="1" />
                       </div>
@@ -409,6 +460,7 @@
                     <button data-sched="daily" class="active" data-i18n="schedule.timeline">Theo ngày</button>
                     <button data-sched="weekly" data-i18n="schedule.week">Theo tuần</button>
                   </div>
+                  <button class="btn btn-secondary btn-sm" id="btn-open-exams">🎯 <span class="exam-btn-label">Kỳ thi</span></button>
                   <button class="btn btn-primary btn-sm" id="btn-add-session">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                     <span data-i18n="common.add">Thêm</span>
@@ -514,6 +566,9 @@
                 </button>
               </div>
 
+              <div id="qh-heatmap"></div>
+              <div id="qh-achievements"></div>
+
               <div class="insight-grid">
                 <div class="chart-card">
                   <h3 class="chart-title" data-i18n="insights.dailyHours">Giờ tập trung / ngày</h3>
@@ -609,6 +664,10 @@
                       <button type="button" class="swatch sw-bg" data-bg="none" title="Mặc định (không nền)">
                         <span class="sw-preview bg-prev-none"></span>
                         <span class="sw-name" data-i18n="appearance.bgNone">Mặc định</span>
+                      </button>
+                      <button type="button" class="swatch sw-bg" data-bg="auto" title="Theo giờ trong ngày">
+                        <span class="sw-preview bg-prev-auto"></span>
+                        <span class="sw-name" data-i18n="appearance.bgAuto">Theo giờ</span>
                       </button>
                       <button type="button" class="swatch sw-bg" data-bg="rain" title="Rainy Window">
                         <span class="sw-preview bg-prev-rain"></span>
@@ -1017,6 +1076,7 @@
           <p class="swatch-label" data-i18n="appearance.backgrounds">Hình nền</p>
           <div class="swatch-list bg-swatches" id="bg-swatches-dialog">
             <button type="button" class="swatch sw-bg" data-bg="none"><span class="sw-preview bg-prev-none"></span><span class="sw-name" data-i18n="appearance.bgNone">Mặc định</span></button>
+            <button type="button" class="swatch sw-bg" data-bg="auto"><span class="sw-preview bg-prev-auto"></span><span class="sw-name" data-i18n="appearance.bgAuto">Theo giờ</span></button>
             <button type="button" class="swatch sw-bg" data-bg="rain"><span class="sw-preview bg-prev-rain"></span><span class="sw-name" data-i18n="appearance.bgRain">Cửa sổ mưa</span></button>
           </div>
         </div>
@@ -1040,7 +1100,7 @@
         <div class="weekly-card" id="weekly-card" style="user-select: text">
           <div class="wc-header">
             <div class="wc-brand">
-              <div class="wc-logo">QH</div>
+              <div class="wc-logo"><svg viewBox="0 0 40 40" width="100%" height="100%"><use href="#qh-logo" /></svg></div>
               <div>
                 <p class="wc-app" data-i18n="report.app">QuietHours</p>
                 <p class="wc-week" id="wc-week">—</p>
@@ -1148,5 +1208,6 @@
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <script src="js/app.js" defer></script>
     <script src="js/effects.js" defer></script>
+    <script src="js/features.js" defer></script>
   </body>
 </html>

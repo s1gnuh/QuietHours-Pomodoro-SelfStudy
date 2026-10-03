@@ -155,6 +155,8 @@
   function toast(msg) {
     var t = el("div", { class: "fx-toast", role: "status" });
     t.textContent = msg;
+    // Stack below toasts that are still visible
+    t.style.top = (20 + document.querySelectorAll(".fx-toast").length * 52) + "px";
     document.body.appendChild(t);
     requestAnimationFrame(function () { requestAnimationFrame(function () { t.classList.add("show"); }); });
     setTimeout(function () { t.classList.remove("show"); }, 3400);
@@ -186,7 +188,7 @@
     // app.js uses window.toast (if present) instead of alert() for small notices
     window.toast = toast;
     // Dev hook: QuietFX.test() fires the celebration without waiting a full Pomodoro.
-    window.QuietFX = { test: function () { confetti(); toast("🎉 Test"); } };
+    window.QuietFX = { test: function () { confetti(); toast("🎉 Test"); }, confetti: confetti };
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);

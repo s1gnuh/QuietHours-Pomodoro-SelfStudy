@@ -163,6 +163,7 @@ body.timer-running .timer-text {
 .top-nav-links .nav-btn { transition: background-color 0.2s, color 0.2s, box-shadow 0.2s; }
 .top-nav-links .nav-btn.active {
   background: color-mix(in oklab, var(--color-accent) 16%, var(--color-elevated));
+  color: var(--color-fg);
   box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-accent) 35%, transparent);
 }
 .segmented button { transition: background-color 0.2s, color 0.2s, box-shadow 0.2s; }

@@ -469,13 +469,18 @@ textarea {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: 0.375rem;
-  background: var(--color-elevated);
-  color: var(--color-accent);
-  box-shadow: var(--shadow-border);
+  width: 2.5rem;
+  height: 2.5rem;
+  flex-shrink: 0;
+  border-radius: 0.7rem;
+  filter: drop-shadow(0 4px 12px color-mix(in oklab, var(--color-accent) 45%, transparent));
+  transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.2, 1), filter 0.3s;
 }
+.brand-icon .brand-logo { display: block; width: 100%; height: 100%; }
+.brand-icon:hover { transform: rotate(-6deg) scale(1.06); filter: drop-shadow(0 6px 16px color-mix(in oklab, var(--color-accent) 65%, transparent)); }
+.brand-icon .qh-star { transform-origin: 27.5px 12px; animation: qh-twinkle 3.6s ease-in-out infinite; }
+@keyframes qh-twinkle { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(0.72); opacity: 0.75; } }
+.brand-title { background: linear-gradient(90deg, var(--color-fg), color-mix(in oklab, var(--color-fg) 55%, var(--color-accent))); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .brand-title {
   font-family: var(--font-display);
   font-size: 1.125rem;
@@ -2144,11 +2149,8 @@ textarea {
 .wc-logo {
   width: 40px; height: 40px;
   border-radius: 12px;
-  background: var(--color-accent);
-  color: var(--color-accent-fg);
-  display: grid; place-items: center;
-  font-weight: 800; letter-spacing: 0.02em;
-  box-shadow: 0 4px 14px -6px color-mix(in oklab, var(--color-accent) 80%, transparent);
+  display: block;
+  filter: drop-shadow(0 4px 12px color-mix(in oklab, var(--color-accent) 50%, transparent));
 }
 .wc-app { margin: 0; font-weight: 700; font-size: 1rem; line-height: 1.1; }
 .wc-week { margin: 0.1rem 0 0 0; font-size: 0.75rem; color: var(--color-subtle); }

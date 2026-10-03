@@ -50,7 +50,9 @@
           cafe: { label: "Quán cà phê", hint: "Tiếng người nói & cốc chén" },
           ocean: { label: "Biển", hint: "Sóng nhẹ dập bờ" },
           fireplace: { label: "Lò sưởi", hint: "Lửa kẹt nhẹ" },
-          lofi: { label: "Lofi", hint: "Hợp âm & beat nhẹ" }
+          lofi: { label: "Lofi", hint: "Hợp âm, bass & trống nhẹ" },
+          forest: { label: "Rừng", hint: "Gió lá & chim hót" },
+          brown: { label: "Ồn nâu", hint: "Che tiếng ồn, tập trung sâu" }
         }
       },
       schedule: {
@@ -101,6 +103,7 @@
         themes: "Màu nhấn",
         backgrounds: "Hình nền",
         bgNone: "Mặc định",
+        bgAuto: "Theo giờ",
         bgRain: "Cửa sổ mưa",
         bgLofi: "Lofi Pixel",
         bgCyber: "Cyber Neon"
@@ -187,7 +190,7 @@
         },
         plan: {
           title: "Lên kế hoạch & theo dõi tiến bộ",
-          body: "<ul><li><b>Lịch học</b>: thêm buổi học theo ngày / tuần, có hiển thị lịch âm.</li><li><b>Bảng việc</b>: kéo thả thẻ giữa Cần làm → Đang làm → Hoàn thành (trên điện thoại dùng menu ⋮).</li><li><b>Thống kê</b>: biểu đồ 14 ngày, thời gian theo môn và <b>Thẻ tổng kết tuần</b> xuất ảnh Story.</li></ul>"
+          body: "<ul><li><b>Lịch học</b>: thêm buổi học theo ngày / tuần, có hiển thị lịch âm.</li><li><b>Bảng việc</b>: kéo thả thẻ giữa Cần làm → Đang làm → Hoàn thành (trên điện thoại dùng menu ⋮).</li><li><b>Thống kê</b>: bản đồ chăm chỉ 12 tháng, biểu đồ theo môn và <b>Thẻ tổng kết tuần</b> xuất ảnh Story.</li><li>🎯 <b>Chế độ thi</b>: đếm ngược tới ngày thi và mục tiêu giờ ôn ngay trên màn hình chính (nút <b>Kỳ thi</b> ở tab Lịch học).</li><li>🏆 Mỗi phút tập trung cho bạn <b>XP</b> để lên cấp từ Sắt → Thách Đấu và mở khóa huy hiệu.</li></ul>"
         },
         data: {
           title: "Dữ liệu nằm trong máy của bạn",
@@ -239,7 +242,9 @@
           cafe: { label: "Cafe", hint: "Room murmur & cups" },
           ocean: { label: "Ocean", hint: "Slow shoreline wash" },
           fireplace: { label: "Fireplace", hint: "Low crackle" },
-          lofi: { label: "Lofi", hint: "Dusty chords & beat" }
+          lofi: { label: "Lofi", hint: "Dusty chords, bass & beat" },
+          forest: { label: "Forest", hint: "Wind, leaves & birdsong" },
+          brown: { label: "Brown noise", hint: "Masks noise for deep focus" }
         }
       },
       schedule: {
@@ -290,6 +295,7 @@
         themes: "Accent color",
         backgrounds: "Background",
         bgNone: "Default",
+        bgAuto: "Time of day",
         bgRain: "Rainy window",
         bgLofi: "Lofi Pixel",
         bgCyber: "Cyber Neon"
@@ -376,7 +382,7 @@
         },
         plan: {
           title: "Plan & track your progress",
-          body: "<ul><li><b>Schedule</b>: add sessions by day / week, with the lunar calendar shown.</li><li><b>Board</b>: drag cards between To Do → In Progress → Done (on mobile use the ⋮ menu).</li><li><b>Insights</b>: 14-day chart, time per subject and a <b>Weekly report card</b> you can export as a Story image.</li></ul>"
+          body: "<ul><li><b>Schedule</b>: add sessions by day / week, with the lunar calendar shown.</li><li><b>Board</b>: drag cards between To Do → In Progress → Done (on mobile use the ⋮ menu).</li><li><b>Insights</b>: 12-month focus heatmap, time per subject and a <b>Weekly report card</b> you can export as a Story image.</li><li>🎯 <b>Exam mode</b>: a countdown and study-hours goal right on the home screen (the <b>Exams</b> button in Schedule).</li><li>🏆 Every focus minute earns <b>XP</b> to rank up from Iron → Challenger and unlock badges.</li></ul>"
         },
         data: {
           title: "Your data stays on your device",
@@ -443,6 +449,7 @@
     renderCharts();
     renderQuote();
     ZenMode.syncLabels();
+    document.dispatchEvent(new CustomEvent("qh:lang", { detail: { lang } }));
   }
 
   // -------- Persistence (localStorage, mirror of PersistedData) --------------
@@ -470,13 +477,33 @@
           cafe: { on: false, volume: 0.4 },
           ocean: { on: false, volume: 0 },
           fireplace: { on: false, volume: 0 },
-          lofi: { on: false, volume: 0 }
+          lofi: { on: false, volume: 0 },
+          forest: { on: false, volume: 0 },
+          brown: { on: false, volume: 0 }
         }
       },
+      mixerPresets: [],
+      exams: [],
       schedule: [],
       kanban: [],
       logs: []
     };
+  }
+  // Fill in anything missing from older saves / imported backups so new features never hit undefined
+  function normalizeState(s) {
+    const df = seedSampleData();
+    ["subjects", "schedule", "kanban", "logs", "exams", "mixerPresets"].forEach((k) => { if (!Array.isArray(s[k])) s[k] = []; });
+    if (!s.timerSettings || typeof s.timerSettings !== "object") s.timerSettings = df.timerSettings;
+    if (!s.timer || typeof s.timer !== "object") s.timer = df.timer;
+    if (!s.mixer || typeof s.mixer !== "object") s.mixer = df.mixer;
+    if (!Number.isFinite(s.mixer.master)) s.mixer.master = df.mixer.master;
+    if (!s.mixer.tracks || typeof s.mixer.tracks !== "object") s.mixer.tracks = {};
+    Object.keys(df.mixer.tracks).forEach((k) => {
+      const tr = s.mixer.tracks[k];
+      if (!tr || typeof tr !== "object") s.mixer.tracks[k] = { ...df.mixer.tracks[k] };
+      else { tr.on = !!tr.on; tr.volume = Number.isFinite(tr.volume) ? tr.volume : 0; }
+    });
+    return s;
   }
   let isFirstVisit = false; // true when no saved data existed -> show onboarding
   let state = (function load() {
@@ -491,9 +518,8 @@
           if (typeof parsed.timerSettings.notifSound !== "string") parsed.timerSettings.notifSound = df.notifSound;
           if (!Number.isFinite(parsed.timerSettings.notifRepeat)) parsed.timerSettings.notifRepeat = df.notifRepeat;
           if (typeof parsed.timerSettings.lastSubjectId !== "string") parsed.timerSettings.lastSubjectId = null;
-          // An empty list is valid (user deleted every subject) — don't re-seed it
-          if (!Array.isArray(parsed.subjects)) parsed.subjects = [];
-          ["schedule", "kanban", "logs"].forEach((k) => { if (!Array.isArray(parsed[k])) parsed[k] = []; });
+          // An empty subject list is valid (user deleted every subject) — don't re-seed it
+          normalizeState(parsed);
           // Ensure every log has subjectId shape (never throw)
           if (Array.isArray(parsed.logs)) {
             parsed.logs.forEach((l) => {
@@ -511,6 +537,8 @@
   })();
   function persist() {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (_) {}
+    // Let add-on modules (js/features.js) refresh their views
+    document.dispatchEvent(new CustomEvent("qh:change"));
   }
 
   // -------- Date / time helpers ---------------------------------------------
@@ -825,8 +853,8 @@
     const THEME_KEY = "quiethours-static-theme";
     const BG_KEY = "quiethours-static-bg";
     const VALID_THEMES = ["sage", "sunset", "lavender", "ocean", "cyber"];
-    const VALID_BGS = ["none", "rain", "lofi", "cyber"];
-    const VISIBLE_BGS = ["none", "rain"];
+    const VALID_BGS = ["none", "auto", "rain", "lofi", "cyber"];
+    const VISIBLE_BGS = ["none", "auto", "rain"];
     let currentTheme = "sage";
     let currentBg = "none";
 
@@ -848,7 +876,8 @@
         const t = localStorage.getItem(THEME_KEY);
         if (VALID_THEMES.includes(t)) currentTheme = t;
         const b = localStorage.getItem(BG_KEY);
-        currentBg = sanitizeBg(b);
+        // New visitors get the time-of-day sky by default
+        currentBg = b == null ? "auto" : sanitizeBg(b);
         if (currentBg !== b) {
           try { localStorage.setItem(BG_KEY, currentBg); } catch (_) {}
         }
@@ -1569,6 +1598,7 @@
     renderStats();
     renderCharts();
     renderInsightsHistory();
+    document.dispatchEvent(new CustomEvent("qh:session", { detail: { mode: completedMode, next: nextMode } }));
   }
   function startTimer() {
     const tm = state.timer;
@@ -1671,12 +1701,18 @@
   }, 250);
 
   // -------- Ambient Mixer — Web Audio procedural engine ----------------------
-  // Generates all 5 ambient tracks procedurally using AudioNodes (no audio files needed)
+  // Generates every ambient track procedurally (no audio files). Tracks are built
+  // lazily the first time they're turned on; random-event schedulers skip work
+  // while a track is silent. Stereo noise beds + a shared generated reverb.
   const AmbientEngine = (function () {
     let ctx = null;
     let masterGain = null;
-    const tracks = {};
-    let unlocked = false;
+    let reverbSend = null;
+    const tracks = {};   // id -> { gain }
+    const desired = {};  // id -> target volume (0..1)
+    const bufCache = {};
+    // Per-track loudness trim so tracks sit at similar levels at the same slider value
+    const TRIM = { rain: 0.9, cafe: 1.0, ocean: 1.0, fireplace: 1.0, lofi: 0.85, forest: 0.9, brown: 0.8 };
 
     function ensureCtx() {
       if (!ctx) {
@@ -1685,287 +1721,385 @@
         ctx = new AC();
         masterGain = ctx.createGain();
         masterGain.gain.value = 0;
-        masterGain.connect(ctx.destination);
+        // Gentle glue compressor so stacked tracks never clip
+        const comp = ctx.createDynamicsCompressor();
+        comp.threshold.value = -14; comp.knee.value = 12; comp.ratio.value = 3;
+        comp.attack.value = 0.02; comp.release.value = 0.4;
+        masterGain.connect(comp);
+        comp.connect(ctx.destination);
+        // Shared room reverb (generated impulse response)
+        const conv = ctx.createConvolver();
+        conv.buffer = makeImpulse(2.4, 2.6);
+        reverbSend = ctx.createGain();
+        reverbSend.gain.value = 1;
+        reverbSend.connect(conv);
+        conv.connect(masterGain);
       }
-      if (ctx && !unlocked && ctx.state === "suspended") {
-        ctx.resume().then(() => { unlocked = true; }).catch(() => {});
-      }
+      if (ctx.state === "suspended") ctx.resume().catch(() => {});
       return ctx;
     }
-    function unlock() {
-      const c = ensureCtx();
-      if (c && c.state === "suspended") c.resume();
+    function unlock() { ensureCtx(); }
+
+    function makeImpulse(seconds, decay) {
+      const sr = ctx.sampleRate, len = Math.floor(sr * seconds);
+      const buf = ctx.createBuffer(2, len, sr);
+      for (let ch = 0; ch < 2; ch++) {
+        const d = buf.getChannelData(ch);
+        for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, decay);
+      }
+      return buf;
     }
 
-    // Noise buffer generators ------------------------------------------
-    function makeNoiseBuffer(seconds, type) {
-      const c = ensureCtx(); if (!c) return null;
-      const length = Math.floor(c.sampleRate * seconds);
-      const buffer = c.createBuffer(1, length, c.sampleRate);
-      const data = buffer.getChannelData(0);
-      let lastOut = 0, lastOut2 = 0;
-      for (let i = 0; i < length; i++) {
-        const white = Math.random() * 2 - 1;
-        if (type === "white") {
-          data[i] = white;
-        } else if (type === "pink") {
-          // Paul Kellet pink noise approximation
-          lastOut = 0.99765 * lastOut + white * 0.0990460;
-          lastOut2 = 0.96300 * lastOut2 + white * 0.2965164;
-          data[i] = (lastOut + lastOut2 + white * 1.0526913) * 0.11;
-        } else if (type === "brown") {
-          lastOut = (lastOut + (0.02 * white)) / 1.02;
-          data[i] = lastOut * 3.5;
+    // Stereo noise buffer with a short crossfade at the loop point (no click)
+    function noiseBuffer(seconds, type) {
+      const key = type + seconds;
+      if (bufCache[key]) return bufCache[key];
+      const sr = ctx.sampleRate, len = Math.floor(sr * seconds), fade = Math.floor(sr * 0.05);
+      const buf = ctx.createBuffer(2, len, sr);
+      for (let ch = 0; ch < 2; ch++) {
+        const tmp = new Float32Array(len + fade);
+        let b0 = 0, b1 = 0, b2 = 0, last = 0;
+        for (let i = 0; i < tmp.length; i++) {
+          const w = Math.random() * 2 - 1;
+          if (type === "white") tmp[i] = w * 0.5;
+          else if (type === "pink") {
+            b0 = 0.99765 * b0 + w * 0.099046;
+            b1 = 0.963 * b1 + w * 0.2965164;
+            b2 = 0.57 * b2 + w * 1.0526913;
+            tmp[i] = (b0 + b1 + b2 + w * 0.1848) * 0.06;
+          } else {
+            last = (last + 0.02 * w) / 1.02;
+            tmp[i] = last * 3.5;
+          }
         }
+        const d = buf.getChannelData(ch);
+        for (let i = 0; i < len; i++) d[i] = tmp[i];
+        for (let i = 0; i < fade; i++) { const a = i / fade; d[i] = tmp[i] * a + tmp[len + i] * (1 - a); }
       }
-      return buffer;
+      bufCache[key] = buf;
+      return buf;
     }
-    function playLoopBuffer(buf) {
-      const c = ensureCtx(); if (!c || !buf) return null;
-      const src = c.createBufferSource();
-      src.buffer = buf; src.loop = true;
-      src.start(0);
+    function loopNoise(type, seconds) {
+      const src = ctx.createBufferSource();
+      src.buffer = noiseBuffer(seconds, type);
+      src.loop = true;
+      src.start(0, Math.random() * seconds);
       return src;
     }
+    function filter(type, freq, q) {
+      const f = ctx.createBiquadFilter();
+      f.type = type; f.frequency.value = freq;
+      if (q != null) f.Q.value = q;
+      return f;
+    }
+    function gainNode(v) { const g = ctx.createGain(); g.gain.value = v; return g; }
+    function panner(p) {
+      if (ctx.createStereoPanner) { const n = ctx.createStereoPanner(); n.pan.value = p; return n; }
+      return ctx.createGain();
+    }
+    function chain(...nodes) { for (let i = 0; i < nodes.length - 1; i++) nodes[i].connect(nodes[i + 1]); return nodes[nodes.length - 1]; }
+    function rand(a, b) { return a + Math.random() * (b - a); }
+    function isOn(id) { return (desired[id] || 0) > 0.0005; }
+    // Run fn at random intervals, but only do the work while the track is audible
+    function every(id, minMs, maxMs, fn) {
+      const loop = () => {
+        if (isOn(id) && ctx.state === "running") { try { fn(); } catch (_) {} }
+        setTimeout(loop, rand(minMs, maxMs));
+      };
+      setTimeout(loop, rand(0, minMs));
+    }
+    // Slow random drift of an AudioParam (gusts, flicker, wandering filters)
+    function drift(id, param, min, max, minMs, maxMs, tc) {
+      every(id, minMs, maxMs, () => param.setTargetAtTime(rand(min, max), ctx.currentTime, tc));
+    }
+    // One-shot decaying noise burst (drops, crackles, hats, thuds)
+    function burst(dest, { type = "white", dur = 0.05, gain = 0.1, ftype = "bandpass", freq = 2000, q = 1, pan = 0, when = ctx.currentTime, attack = 0.002 }) {
+      const src = ctx.createBufferSource();
+      src.buffer = noiseBuffer(2, type);
+      const f = filter(ftype, freq, q);
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, when);
+      g.gain.exponentialRampToValueAtTime(gain, when + attack);
+      g.gain.exponentialRampToValueAtTime(0.0001, when + dur);
+      chain(src, f, g, panner(pan), dest);
+      src.start(when, Math.random() * 1.5, dur + 0.05);
+    }
+    function tone(dest, { freq, type = "sine", dur = 0.3, gain = 0.1, when = ctx.currentTime, attack = 0.005, freqEnd = null, pan = 0 }) {
+      const o = ctx.createOscillator();
+      o.type = type;
+      o.frequency.setValueAtTime(freq, when);
+      if (freqEnd) o.frequency.exponentialRampToValueAtTime(freqEnd, when + dur * 0.8);
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, when);
+      g.gain.exponentialRampToValueAtTime(gain, when + attack);
+      g.gain.exponentialRampToValueAtTime(0.0001, when + dur);
+      chain(o, g, panner(pan), dest);
+      o.start(when); o.stop(when + dur + 0.05);
+      return o;
+    }
 
-    // Track builders ---------------------------------------------------
-    function buildRain() {
-      const c = ensureCtx(); if (!c) return null;
-      const buf = makeNoiseBuffer(8, "white");
-      const src = playLoopBuffer(buf);
-      const hp = c.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 600;
-      const lp = c.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 4800;
-      const gain = c.createGain(); gain.gain.value = 0;
-      // Second layer: low rumbles
-      const buf2 = makeNoiseBuffer(10, "pink");
-      const src2 = playLoopBuffer(buf2);
-      const lp2 = c.createBiquadFilter(); lp2.type = "lowpass"; lp2.frequency.value = 600;
-      const g2 = c.createGain(); g2.gain.value = 0.5;
-      src.connect(hp); hp.connect(lp); lp.connect(gain);
-      src2.connect(lp2); lp2.connect(g2); g2.connect(gain);
-      // Occasional droplet pops using scheduled noise bursts
-      function drop() {
-        if (!c) return;
-        const t = c.currentTime;
-        const popBuf = c.createBuffer(1, Math.floor(c.sampleRate * 0.08), c.sampleRate);
-        const d = popBuf.getChannelData(0);
-        for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / d.length) * 0.6;
-        const s = c.createBufferSource(); s.buffer = popBuf;
-        const pg = c.createGain(); pg.gain.value = 0.08;
-        const pf = c.createBiquadFilter(); pf.type = "bandpass"; pf.frequency.value = 1800 + Math.random() * 1600;
-        s.connect(pf); pf.connect(pg); pg.connect(gain);
-        s.start(t);
-        setTimeout(drop, 120 + Math.random() * 1500);
-      }
-      drop();
-      return { node: gain, srcs: [src, src2] };
+    // ---- Track builders: each returns its output GainNode ------------------
+    function buildRain(out) {
+      // Steady hiss + body + low roof rumble
+      const hissG = gainNode(0.32);
+      chain(loopNoise("white", 9), filter("highpass", 900), filter("lowpass", 7500), hissG, out);
+      drift("rain", hissG.gain, 0.22, 0.42, 1500, 4000, 1.2); // gusts
+      chain(loopNoise("pink", 11), filter("bandpass", 1300, 0.5), gainNode(0.75), out);
+      chain(loopNoise("brown", 13), filter("lowpass", 260), gainNode(0.45), out);
+      // Individual drops all over the stereo field
+      every("rain", 35, 220, () => burst(out, { dur: rand(0.015, 0.05), gain: rand(0.015, 0.06), freq: rand(1800, 5200), q: rand(1, 4), pan: rand(-0.85, 0.85) }));
+      // Gutter drips (pitched plinks)
+      every("rain", 1200, 4200, () => tone(out, { freq: rand(1800, 3200), freqEnd: rand(900, 1400), dur: 0.09, gain: rand(0.015, 0.035), pan: rand(-0.7, 0.7) }));
+      // Distant thunder
+      every("rain", 45000, 110000, () => {
+        const t = ctx.currentTime;
+        const src = ctx.createBufferSource(); src.buffer = noiseBuffer(13, "brown");
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(rand(0.5, 0.9), t + rand(0.6, 1.4));
+        g.gain.exponentialRampToValueAtTime(0.0001, t + rand(5, 8));
+        chain(src, filter("lowpass", rand(110, 180)), g, panner(rand(-0.5, 0.5)), out);
+        src.start(t, rand(0, 4), 9);
+      });
+      return 0.12; // reverb send
     }
-    function buildCafe() {
-      const c = ensureCtx(); if (!c) return null;
-      // Brown noise base (room tone)
-      const buf = makeNoiseBuffer(8, "brown");
-      const src = playLoopBuffer(buf);
-      const bp = c.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = 500; bp.Q.value = 0.6;
-      const gain = c.createGain(); gain.gain.value = 0;
-      const tone = c.createGain(); tone.gain.value = 0.7;
-      src.connect(bp); bp.connect(tone); tone.connect(gain);
-      // Muffled speech murmur: slow AM modulation of filtered noise
-      const buf2 = makeNoiseBuffer(6, "pink");
-      const src2 = playLoopBuffer(buf2);
-      const bp2 = c.createBiquadFilter(); bp2.type = "bandpass"; bp2.frequency.value = 800; bp2.Q.value = 0.8;
-      const lfo = c.createOscillator(); lfo.frequency.value = 0.25;
-      const lfoG = c.createGain(); lfoG.gain.value = 0.5;
-      const am = c.createGain(); am.gain.value = 0.3;
-      lfo.connect(lfoG); lfoG.connect(am.gain);
-      src2.connect(bp2); bp2.connect(am); am.connect(gain);
-      lfo.start(0);
-      // Occasional clinks (cup/china)
-      function clink() {
-        if (!c) return;
-        const t = c.currentTime;
-        const freqA = 1800 + Math.random() * 600;
-        const freqB = freqA * 1.03;
-        const o1 = c.createOscillator(); o1.type = "sine"; o1.frequency.value = freqA;
-        const o2 = c.createOscillator(); o2.type = "sine"; o2.frequency.value = freqB;
-        const g = c.createGain(); g.gain.setValueAtTime(0.0001, t);
-        g.gain.exponentialRampToValueAtTime(0.06, t + 0.005);
-        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.4);
-        o1.connect(g); o2.connect(g); g.connect(gain);
-        o1.start(t); o2.start(t);
-        o1.stop(t + 0.5); o2.stop(t + 0.5);
-        setTimeout(clink, 2500 + Math.random() * 5000);
-      }
-      clink();
-      return { node: gain, srcs: [src, src2, lfo] };
-    }
-    function buildOcean() {
-      const c = ensureCtx(); if (!c) return null;
-      const buf = makeNoiseBuffer(10, "pink");
-      const src = playLoopBuffer(buf);
-      const lp = c.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 900;
-      const gain = c.createGain(); gain.gain.value = 0;
-      // Wave amplitude modulation — slow swell and fade
-      const lfo1 = c.createOscillator(); lfo1.type = "sine"; lfo1.frequency.value = 0.09;
-      const lfo1Gain = c.createGain(); lfo1Gain.gain.value = 0.55;
-      const modGain = c.createGain(); modGain.gain.value = 0.45;
-      lfo1.connect(lfo1Gain); lfo1Gain.connect(modGain.gain);
-      src.connect(lp); lp.connect(modGain); modGain.connect(gain);
-      // Second wave layer slightly out of phase
-      const buf2 = makeNoiseBuffer(12, "pink");
-      const src2 = playLoopBuffer(buf2);
-      const lp2 = c.createBiquadFilter(); lp2.type = "lowpass"; lp2.frequency.value = 600;
-      const lfo2 = c.createOscillator(); lfo2.type = "sine"; lfo2.frequency.value = 0.13;
-      const lfo2Gain = c.createGain(); lfo2Gain.gain.value = 0.35;
-      const modGain2 = c.createGain(); modGain2.gain.value = 0.35;
-      lfo2.connect(lfo2Gain); lfo2Gain.connect(modGain2.gain);
-      src2.connect(lp2); lp2.connect(modGain2); modGain2.connect(gain);
-      lfo1.start(0); lfo2.start(0);
-      return { node: gain, srcs: [src, src2, lfo1, lfo2] };
-    }
-    function buildFireplace() {
-      const c = ensureCtx(); if (!c) return null;
-      // Base: brown noise rumble
-      const buf = makeNoiseBuffer(8, "brown");
-      const src = playLoopBuffer(buf);
-      const lp = c.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 450;
-      const base = c.createGain(); base.gain.value = 0.7;
-      const gain = c.createGain(); gain.gain.value = 0;
-      src.connect(lp); lp.connect(base); base.connect(gain);
-      // Higher-frequency hiss (flame breath)
-      const buf2 = makeNoiseBuffer(6, "white");
-      const src2 = playLoopBuffer(buf2);
-      const bp = c.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = 2200; bp.Q.value = 0.4;
-      const hiss = c.createGain(); hiss.gain.value = 0.12;
-      // Hiss AM
-      const lfo = c.createOscillator(); lfo.type = "triangle"; lfo.frequency.value = 3.2;
-      const lfoG = c.createGain(); lfoG.gain.value = 0.07;
-      lfo.connect(lfoG); lfoG.connect(hiss.gain);
-      src2.connect(bp); bp.connect(hiss); hiss.connect(gain);
-      lfo.start(0);
-      // Crackles: random short high-pass bursts with rapid decay
-      function crackle() {
-        if (!c) return;
-        const t = c.currentTime;
-        const count = 2 + Math.floor(Math.random() * 4);
-        for (let i = 0; i < count; i++) {
-          const tt = t + i * (0.005 + Math.random() * 0.01);
-          const dur = 0.008 + Math.random() * 0.015;
-          const b = c.createBuffer(1, Math.ceil(c.sampleRate * dur), c.sampleRate);
-          const d = b.getChannelData(0);
-          for (let j = 0; j < d.length; j++) d[j] = (Math.random() * 2 - 1) * (1 - j / d.length);
-          const s = c.createBufferSource(); s.buffer = b;
-          const hp = c.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 3200;
-          const g = c.createGain();
-          const amp = 0.05 + Math.random() * 0.08;
-          g.gain.setValueAtTime(0.0001, tt);
-          g.gain.exponentialRampToValueAtTime(amp, tt + 0.001);
-          g.gain.exponentialRampToValueAtTime(0.0001, tt + dur);
-          s.connect(hp); hp.connect(g); g.connect(gain);
-          s.start(tt); s.stop(tt + dur + 0.01);
-        }
-        setTimeout(crackle, 150 + Math.random() * 1200);
-      }
-      crackle();
-      return { node: gain, srcs: [src, src2, lfo] };
-    }
-    function buildLofi() {
-      const c = ensureCtx(); if (!c) return null;
-      const gain = c.createGain(); gain.gain.value = 0;
-      // Ambient dust: very slow low-pass noise pad
-      const buf = makeNoiseBuffer(20, "pink");
-      const src = playLoopBuffer(buf);
-      const lpNoise = c.createBiquadFilter(); lpNoise.type = "lowpass"; lpNoise.frequency.value = 550;
-      const noiseG = c.createGain(); noiseG.gain.value = 0.08;
-      src.connect(lpNoise); lpNoise.connect(noiseG); noiseG.connect(gain);
-      // Soft Lofi chord progression (vi–IV–I–V in C-ish, detuned to feel dusty)
-      const chords = [
-        [220.00, 261.63, 329.63, 392.00], // Am
-        [174.61, 220.00, 261.63, 329.63], // F
-        [196.00, 246.94, 293.66, 392.00], // G
-        [261.63, 329.63, 392.00, 493.88]  // C
-      ];
-      const chordLen = 4.2;
-      let step = 0;
-      function scheduleChord(startAt) {
-        if (!c) return;
-        const notes = chords[step % chords.length];
-        step++;
-        notes.forEach((f, idx) => {
-          const o1 = c.createOscillator(); o1.type = "triangle";
-          o1.frequency.value = f * (0.996 + Math.random() * 0.008);
-          const o2 = c.createOscillator(); o2.type = "sine";
-          o2.frequency.value = (f * 2) * (0.994 + Math.random() * 0.012);
-          const g = c.createGain();
-          const vel = 0.055 + idx * 0.008;
-          g.gain.setValueAtTime(0.0001, startAt);
-          g.gain.exponentialRampToValueAtTime(vel, startAt + 0.7);
-          g.gain.setValueAtTime(vel, startAt + chordLen - 1.2);
-          g.gain.exponentialRampToValueAtTime(0.0001, startAt + chordLen - 0.1);
-          const lp = c.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 1300;
-          o1.connect(lp); o2.connect(lp); lp.connect(g); g.connect(gain);
-          o1.start(startAt); o2.start(startAt);
-          o1.stop(startAt + chordLen); o2.stop(startAt + chordLen);
+    function buildCafe(out) {
+      // Room tone
+      chain(loopNoise("brown", 9), filter("bandpass", 420, 0.6), gainNode(0.5), out);
+      // Murmur: several "voices" — narrow formant bands with syllable-like envelopes
+      for (let v = 0; v < 5; v++) {
+        const f1 = filter("bandpass", rand(350, 800), rand(3, 6));
+        const f2 = filter("bandpass", rand(1100, 2200), rand(4, 8));
+        const env = gainNode(0);
+        const pan = panner(rand(-0.8, 0.8));
+        const src = loopNoise("pink", 7);
+        src.connect(f1); src.connect(f2);
+        const mix = gainNode(1); f1.connect(mix); f2.connect(gainNode(0.4)).connect(mix);
+        chain(mix, filter("lowpass", 2400), env, pan, out);
+        const level = rand(0.25, 0.6);
+        every("cafe", 110, 320, () => {
+          const talking = Math.random() < 0.72;
+          env.gain.setTargetAtTime(talking ? rand(0.25, 1) * level : 0, ctx.currentTime, 0.05);
+          if (Math.random() < 0.08) { f1.frequency.setTargetAtTime(rand(350, 800), ctx.currentTime, 0.4); }
         });
       }
-      function loopChords() {
-        const t0 = (c ? c.currentTime : 0) + 0.1;
-        scheduleChord(t0 + 0 * chordLen);
-        scheduleChord(t0 + 1 * chordLen);
-        scheduleChord(t0 + 2 * chordLen);
-        scheduleChord(t0 + 3 * chordLen);
-        setTimeout(loopChords, chordLen * 4 * 1000 - 50);
+      // Cups & spoons: inharmonic metallic partials
+      every("cafe", 2200, 7000, () => {
+        const base = rand(1900, 3000), p = rand(-0.8, 0.8), g = rand(0.02, 0.045);
+        [1, 2.76, 5.4].forEach((m, i) => tone(out, { freq: base * m, dur: rand(0.25, 0.6) / (i + 1), gain: g / (i + 1), pan: p, attack: 0.002 }));
+        if (Math.random() < 0.4) setTimeout(() => tone(out, { freq: base * 1.07, dur: 0.2, gain: g * 0.5, pan: p, attack: 0.002 }), rand(90, 200));
+      });
+      // Cup set down on a saucer / table
+      every("cafe", 5000, 14000, () => burst(out, { type: "brown", dur: 0.08, gain: 0.25, ftype: "lowpass", freq: 600, pan: rand(-0.6, 0.6) }));
+      return 0.35;
+    }
+    function buildOcean(out) {
+      // Undertow bed
+      chain(loopNoise("brown", 12), filter("lowpass", 380), gainNode(0.3), out);
+      // Individual waves: swell -> crash -> foamy retreat
+      function wave() {
+        const t = ctx.currentTime;
+        const rise = rand(2.2, 3.6), fall = rand(4, 6.5), peak = rand(0.45, 0.85), pan = rand(-0.45, 0.45);
+        const src = ctx.createBufferSource(); src.buffer = noiseBuffer(12, "pink");
+        const lp = filter("lowpass", 300);
+        lp.frequency.setValueAtTime(300, t);
+        lp.frequency.exponentialRampToValueAtTime(rand(1800, 2600), t + rise);
+        lp.frequency.exponentialRampToValueAtTime(450, t + rise + fall);
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(peak, t + rise);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + rise + fall);
+        chain(src, lp, g, panner(pan), out);
+        src.start(t, rand(0, 5), rise + fall + 0.2);
+        // Foam hiss right after the crash
+        const fs = ctx.createBufferSource(); fs.buffer = noiseBuffer(9, "white");
+        const fg = ctx.createGain();
+        fg.gain.setValueAtTime(0.0001, t + rise - 0.3);
+        fg.gain.exponentialRampToValueAtTime(peak * 0.35, t + rise + 0.2);
+        fg.gain.exponentialRampToValueAtTime(0.0001, t + rise + fall * 0.8);
+        chain(fs, filter("highpass", 2600), fg, panner(-pan * 0.6), out);
+        fs.start(t, rand(0, 3), rise + fall);
       }
-      loopChords();
-      // Slow tape warble via a chorus-like LFO on a master filter
-      const lp = c.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 1800;
-      const warble = c.createOscillator(); warble.type = "sine"; warble.frequency.value = 0.4;
-      const wg = c.createGain(); wg.gain.value = 0.5;
-      warble.connect(wg); wg.connect(lp.frequency);
-      warble.start(0);
-      gain.connect(lp); lp.connect(gain);
-      // Re-route: split noise into warble chain too is messy; simpler: keep output clean
-      // Actually rewire properly: disconnect noise then go through lp to destination.
-      // Build a clean pre-master.
-      lp.disconnect();
-      lp.connect(c.destination); // bypass masterGain temporarily — we'll fix below
-      // To honor master gain properly, use a separate chain below.
-      return { node: gain, srcs: [src, warble], _lp: lp };
+      every("ocean", 5200, 9500, wave);
+      return 0.15;
+    }
+    function buildFireplace(out) {
+      // Low roar with a wandering cutoff
+      const roarLp = filter("lowpass", 320);
+      chain(loopNoise("brown", 9), roarLp, gainNode(0.7), out);
+      drift("fireplace", roarLp.frequency, 200, 450, 400, 1400, 0.3);
+      // Flame breath
+      const hiss = gainNode(0.08);
+      chain(loopNoise("white", 7), filter("bandpass", 2400, 0.5), hiss, out);
+      drift("fireplace", hiss.gain, 0.03, 0.12, 150, 600, 0.08);
+      // Crackle clusters across the stereo field
+      every("fireplace", 120, 900, () => {
+        const t = ctx.currentTime, n = 1 + Math.floor(Math.random() * 5), p = rand(-0.6, 0.6);
+        for (let i = 0; i < n; i++) {
+          burst(out, { dur: rand(0.004, 0.02), gain: rand(0.05, 0.18), ftype: "highpass", freq: rand(2500, 5000), q: 0.7, pan: p + rand(-0.1, 0.1), when: t + i * rand(0.005, 0.03), attack: 0.0008 });
+        }
+      });
+      // Occasional wood pop / log settling
+      every("fireplace", 3000, 9000, () => {
+        const p = rand(-0.5, 0.5);
+        tone(out, { freq: rand(90, 150), freqEnd: 50, dur: 0.18, gain: 0.18, pan: p, attack: 0.002 });
+        burst(out, { dur: 0.06, gain: 0.12, ftype: "bandpass", freq: 900, q: 1.5, pan: p });
+      });
+      return 0.1;
+    }
+    function buildForest(out) {
+      // Wind through trees
+      const windBp = filter("bandpass", 500, 0.7);
+      const windG = gainNode(0.35);
+      chain(loopNoise("pink", 11), windBp, windG, out);
+      drift("forest", windBp.frequency, 300, 900, 1500, 4000, 1.5);
+      drift("forest", windG.gain, 0.18, 0.5, 2000, 5000, 1.8);
+      // Leaves rustle
+      const leaves = gainNode(0.05);
+      chain(loopNoise("white", 8), filter("highpass", 4200), leaves, out);
+      drift("forest", leaves.gain, 0.01, 0.09, 600, 2200, 0.4);
+      // Birds: a few "species" with different chirp shapes, near and far
+      const species = [
+        { f: [2600, 4200], dur: 0.09, n: [3, 6], gap: 0.12 },  // quick tweets
+        { f: [1800, 2600], dur: 0.25, n: [2, 3], gap: 0.3 },   // slow whistles
+        { f: [3500, 5200], dur: 0.05, n: [5, 9], gap: 0.06 },  // trills
+        { f: [1300, 1700], dur: 0.35, n: [2, 2], gap: 0.45 }   // cuckoo-ish
+      ];
+      every("forest", 1400, 5500, () => {
+        const s = species[Math.floor(Math.random() * species.length)];
+        const far = Math.random() < 0.45;
+        const pan = rand(-0.9, 0.9), base = rand(s.f[0], s.f[1]);
+        const n = Math.round(rand(s.n[0], s.n[1]));
+        let t = ctx.currentTime;
+        for (let i = 0; i < n; i++) {
+          const up = Math.random() < 0.6;
+          tone(out, { freq: base * (up ? 0.85 : 1.15), freqEnd: base * (up ? 1.2 : 0.8), dur: s.dur, gain: far ? 0.012 : rand(0.025, 0.05), pan, when: t, attack: 0.01 });
+          t += s.dur + s.gap * rand(0.7, 1.3);
+        }
+      });
+      return 0.3;
+    }
+    function buildBrown(out) {
+      chain(loopNoise("brown", 15), filter("lowpass", 900), gainNode(0.8), out);
+      return 0;
+    }
+    function buildLofi(out) {
+      // Tape-ish bus: everything goes through a soft lowpass
+      const bus = gainNode(1);
+      chain(bus, filter("lowpass", 3600), out);
+      // Vinyl: hiss + sparse clicks
+      chain(loopNoise("white", 6), filter("bandpass", 5000, 0.4), gainNode(0.012), bus);
+      every("lofi", 80, 700, () => burst(bus, { dur: 0.004, gain: rand(0.02, 0.08), ftype: "highpass", freq: 3000, attack: 0.0005 }));
+      // Wow & flutter applied to all pitched notes
+      const wobble = ctx.createOscillator(); wobble.frequency.value = 0.45;
+      const wobbleDepth = gainNode(7); // cents
+      wobble.connect(wobbleDepth); wobble.start();
+
+      const midi = (m) => 440 * Math.pow(2, (m - 69) / 12);
+      const prog = [
+        { bass: 45, notes: [57, 60, 64, 67, 71] }, // Am9
+        { bass: 38, notes: [62, 65, 69, 72] },     // Dm7
+        { bass: 41, notes: [53, 57, 60, 64] },     // Fmaj7
+        { bass: 43, notes: [55, 59, 62, 64] }      // G6
+      ];
+      const BPM = 72, beat = 60 / BPM, six = beat / 4, swing = beat * 0.07;
+      let step = 0, bar = 0, nextTime = 0;
+
+      function epiano(m, when, dur, vel) {
+        [[1, "sine", 1], [2, "triangle", 0.18]].forEach(([mult, type, lvl]) => {
+          const o = ctx.createOscillator(); o.type = type;
+          o.frequency.value = midi(m) * mult;
+          o.detune.value = rand(-6, 6);
+          wobbleDepth.connect(o.detune);
+          const g = ctx.createGain();
+          g.gain.setValueAtTime(0.0001, when);
+          g.gain.exponentialRampToValueAtTime(vel * lvl, when + 0.012);
+          g.gain.exponentialRampToValueAtTime(vel * lvl * 0.35, when + 0.6);
+          g.gain.setValueAtTime(vel * lvl * 0.35, when + dur - 0.25);
+          g.gain.exponentialRampToValueAtTime(0.0001, when + dur);
+          chain(o, filter("lowpass", 1600), g, bus);
+          o.start(when); o.stop(when + dur + 0.05);
+        });
+      }
+      function kick(when) {
+        const o = ctx.createOscillator();
+        o.frequency.setValueAtTime(120, when);
+        o.frequency.exponentialRampToValueAtTime(42, when + 0.25);
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0.0001, when);
+        g.gain.exponentialRampToValueAtTime(0.55, when + 0.005);
+        g.gain.exponentialRampToValueAtTime(0.0001, when + 0.38);
+        chain(o, g, bus); o.start(when); o.stop(when + 0.4);
+      }
+      function snare(when) {
+        burst(bus, { dur: 0.18, gain: 0.16, freq: 1800, q: 0.8, when });
+        tone(bus, { freq: 190, freqEnd: 150, dur: 0.1, gain: 0.08, when });
+      }
+      function hat(when, vel) { burst(bus, { dur: 0.035, gain: vel, ftype: "highpass", freq: 7500, when, attack: 0.001 }); }
+
+      function scheduleStep(s, t) {
+        const chord = prog[bar % prog.length];
+        if (s === 0) {
+          chord.notes.forEach((m, i) => epiano(m, t + i * 0.012, beat * 3.6, 0.05));
+          tone(bus, { freq: midi(chord.bass), type: "triangle", dur: beat * 1.6, gain: 0.16, when: t, attack: 0.01 });
+        }
+        if (s === 10) tone(bus, { freq: midi(chord.bass), type: "triangle", dur: beat * 0.9, gain: 0.12, when: t, attack: 0.01 });
+        if (s === 6 && Math.random() < 0.5) chord.notes.slice(1).forEach((m) => epiano(m, t, beat * 1.2, 0.025));
+        if (s === 0 || s === 8 || (s === 11 && Math.random() < 0.35)) kick(t);
+        if (s === 4 || s === 12) snare(t);
+        if (s % 2 === 0) hat(t, s % 4 === 0 ? 0.035 : 0.022);
+        else if (Math.random() < 0.15) hat(t, 0.012);
+      }
+      setInterval(() => {
+        if (!isOn("lofi") || ctx.state !== "running") { nextTime = 0; return; }
+        if (nextTime < ctx.currentTime) { nextTime = ctx.currentTime + 0.05; step = 0; }
+        while (nextTime < ctx.currentTime + 0.25) {
+          const swingOffset = step % 4 === 2 ? swing : 0;
+          scheduleStep(step, nextTime + swingOffset);
+          nextTime += six;
+          step = (step + 1) % 16;
+          if (step === 0) bar++;
+        }
+      }, 60);
+      return 0.12;
+    }
+    const BUILDERS = { rain: buildRain, cafe: buildCafe, ocean: buildOcean, fireplace: buildFireplace, lofi: buildLofi, forest: buildForest, brown: buildBrown };
+
+    function buildTrack(id) {
+      if (tracks[id] || !BUILDERS[id] || !ensureCtx()) return tracks[id];
+      const out = ctx.createGain();
+      out.gain.value = 0;
+      out.connect(masterGain);
+      let send = 0;
+      try { send = BUILDERS[id](out) || 0; } catch (e) { console.error(e); }
+      if (send > 0) { const s = gainNode(send); out.connect(s); s.connect(reverbSend); }
+      tracks[id] = { gain: out };
+      return tracks[id];
     }
 
-    // Public: build all tracks and connect to master
-    function buildAll() {
-      if (!ensureCtx()) return;
-      if (Object.keys(tracks).length) return;
-      const builders = { rain: buildRain, cafe: buildCafe, ocean: buildOcean, fireplace: buildFireplace, lofi: buildLofi };
-      Object.keys(builders).forEach((k) => {
-        try {
-          const t = builders[k]();
-          if (!t) return;
-          // Reconnect track to master
-          try { t.node.disconnect(); } catch (_) {}
-          t.node.connect(masterGain);
-          // Lofi: also reconnect its lp through master
-          if (t._lp) { try { t._lp.disconnect(); t._lp.connect(masterGain); } catch (_) {} }
-          tracks[k] = { built: t, gain: t.node };
-        } catch (_) {}
-      });
-    }
     function setMaster(vol) {
-      buildAll();
-      ensureCtx();
-      if (masterGain) masterGain.gain.setTargetAtTime(Math.max(0, vol), ctx.currentTime, 0.05);
+      if (!ensureCtx()) return;
+      masterGain.gain.setTargetAtTime(Math.max(0, vol), ctx.currentTime, 0.08);
     }
     function setTrack(id, on, vol) {
-      buildAll();
-      ensureCtx();
+      const target = on ? Math.max(0, Math.min(1, vol)) * (TRIM[id] || 1) : 0;
+      desired[id] = target;
+      if (target > 0) buildTrack(id); // build lazily on first use
       const t = tracks[id];
-      if (!t) return;
-      const target = on ? Math.max(0, Math.min(1, vol)) : 0;
-      if (t.gain) t.gain.gain.setTargetAtTime(target, ctx.currentTime, 0.08);
+      if (!t || !ctx) return;
+      t.gain.gain.setTargetAtTime(target, ctx.currentTime, 0.35);
+    }
+    // Smoothly fade the master to 0 (used by the sleep timer)
+    function fadeOut(seconds) {
+      if (!ctx || !masterGain) return;
+      const now = ctx.currentTime;
+      masterGain.gain.cancelScheduledValues(now);
+      masterGain.gain.setValueAtTime(masterGain.gain.value, now);
+      masterGain.gain.linearRampToValueAtTime(0, now + seconds);
     }
     function getContext() { ensureCtx(); return ctx; }
 
-    return { unlock, setMaster, setTrack, getContext };
+    return { unlock, setMaster, setTrack, fadeOut, getContext, TRACKS: Object.keys(BUILDERS) };
   })();
   function unlockAudioIfNeeded() { try { AmbientEngine.unlock(); } catch (_) {} }
 
@@ -2744,12 +2878,7 @@
     const txt = await file.text();
     const obj = JSON.parse(txt);
     if (!obj || typeof obj !== "object") throw new Error(t("data.couldNotImport"));
-    state = Object.assign(seedSampleData(), obj);
-    // Clamp types for safety
-    if (!Array.isArray(state.subjects)) state.subjects = [];
-    if (!Array.isArray(state.schedule)) state.schedule = [];
-    if (!Array.isArray(state.kanban)) state.kanban = [];
-    if (!Array.isArray(state.logs)) state.logs = [];
+    state = normalizeState(Object.assign(seedSampleData(), obj));
     persist();
     renderAll();
   }
@@ -3131,6 +3260,17 @@
     });
   }
 
+  // -------- Bridge for add-on modules (js/features.js) ------------------------
+  window.QH = {
+    get state() { return state; },
+    get lang() { return currentLang; },
+    persist, t, formatTpl, minutesToLabel, todayISO, addDays, computeStreak,
+    subjectNameFor, rebuildSubjectOptions, openDialog, closeDialog, switchView,
+    renderMixer, unlockAudio: unlockAudioIfNeeded,
+    fadeOutAmbient: (s) => AmbientEngine.fadeOut(s),
+    TONES
+  };
+
   // -------- Bootstrap --------------------------------------------------------
   document.addEventListener("DOMContentLoaded", () => {
     // Apply persisted theme/background ASAP (before paint) to avoid FOUC
@@ -3147,5 +3287,6 @@
     try { savedView = sessionStorage.getItem("quiethours-static-view"); } catch (_) {}
     switchView(savedView && document.getElementById("view-" + savedView) ? savedView : "focus");
     Onboarding.init();
+    document.dispatchEvent(new CustomEvent("qh:ready"));
   });
 })();
