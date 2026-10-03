@@ -162,6 +162,38 @@
         h3p3: "📸 <b>Tải ảnh Story 9:16:</b> Trong Modal Tổng kết tuần, bấm nút <b>Tải ảnh Story</b>. Ứng dụng sẽ dựng một thẻ tỉ lệ <b>9:16</b> (chuẩn Instagram / Facebook Story) với gradient hiện đại, chụp bằng thư viện <code>html2canvas</code> và tự động tải về máy với tên <code>quiethours-story-TuầnDD-MM.png</code>. Bạn chỉ cần đăng tải lên MXH thôi!",
         h3p4: "💡 <b>Chia sẻ hay nói gì?</b> Đừng quên tag <code>@quiethours</code> / hashtag <code>#quiethours</code> / <code>#s1gnuh</code> để mình có thể thấy và vui cùng bạn 💚"
       },
+      onboard: {
+        stepOf: "Bước {n}/{total}", skip: "Bỏ qua", back: "Quay lại", next: "Tiếp tục",
+        finish: "Bắt đầu học thôi!", replay: "Xem lại hướng dẫn nhanh",
+        welcome: {
+          title: "Chào mừng đến với QuietHours",
+          body: "<p>Phòng học riêng của bạn ngay trên trình duyệt: <b>Pomodoro</b>, <b>nhạc nền</b>, <b>lịch học</b>, <b>bảng việc</b> và <b>thống kê</b>.</p><p>Chỉ mất khoảng 1 phút để làm quen — bạn có thể bỏ qua bất cứ lúc nào. Chọn ngôn ngữ bạn muốn dùng:</p>"
+        },
+        subjects: {
+          title: "Tạo môn học của bạn",
+          body: "<p>Môn học dùng để gắn nhãn cho phiên Pomodoro, lịch học và thẻ công việc, giúp <b>thống kê theo môn</b> chính xác. Thêm vài môn ngay bây giờ, hoặc để sau ở tab <b>Dữ liệu</b>.</p>",
+          placeholder: "Tên môn, ví dụ: Toán cao cấp",
+          suggestions: "Gợi ý:",
+          empty: "Chưa có môn nào — bạn có thể bỏ qua bước này.",
+          suggestList: ["Toán", "Tiếng Anh", "Vật lý", "Lập trình", "Ngữ văn"]
+        },
+        pomodoro: {
+          title: "Học theo nhịp Pomodoro",
+          body: "<ul><li>Chọn <b>môn học</b> rồi bấm <b>Bắt đầu</b> (hoặc nhấn phím <code>Space</code>).</li><li>Mặc định: 25 phút tập trung → 5 phút nghỉ; cứ sau 4 phiên có một lần nghỉ dài 15 phút.</li><li>Bấm biểu tượng ✏️ trên thẻ Pomodoro để chỉnh thời lượng, tự động chạy phiên tiếp và <b>chuông báo</b>.</li><li>Mỗi phiên tập trung hoàn thành được ghi vào <b>Thống kê</b> và nối dài <b>chuỗi ngày</b> 🔥.</li></ul>"
+        },
+        atmosphere: {
+          title: "Âm thanh, giao diện & Zen Mode",
+          body: "<ul><li>Thẻ <b>Không gian</b>: bật Mưa, Quán cà phê, Biển, Lò sưởi, Lofi và chỉnh âm lượng từng kênh — tự động lưu.</li><li>Nút 🎨 <b>Giao diện</b> trên thanh trên cùng: đổi màu nhấn và hình nền.</li><li><b>Zen Mode</b>: toàn màn hình, chỉ còn đồng hồ — nhấn <code>Esc</code> để thoát.</li></ul>"
+        },
+        plan: {
+          title: "Lên kế hoạch & theo dõi tiến bộ",
+          body: "<ul><li><b>Lịch học</b>: thêm buổi học theo ngày / tuần, có hiển thị lịch âm.</li><li><b>Bảng việc</b>: kéo thả thẻ giữa Cần làm → Đang làm → Hoàn thành (trên điện thoại dùng menu ⋮).</li><li><b>Thống kê</b>: biểu đồ 14 ngày, thời gian theo môn và <b>Thẻ tổng kết tuần</b> xuất ảnh Story.</li></ul>"
+        },
+        data: {
+          title: "Dữ liệu nằm trong máy của bạn",
+          body: "<p>Mọi thứ được lưu <b>100% trong trình duyệt này</b> — không tài khoản, không máy chủ.</p><p>Xóa dữ liệu trình duyệt sẽ mất hết, nên hãy <b>Xuất dữ liệu</b> định kỳ ở tab <b>Dữ liệu</b>. Bạn có thể mở lại hướng dẫn này ở tab <b>Cảm ơn & HD</b>.</p>"
+        }
+      },
       lang: { switch: "Chuyển ngôn ngữ" }
     },
     en: {
@@ -319,6 +351,38 @@
         h3p3: "📸 <b>Download 9:16 Story:</b> inside the Weekly modal, click <b>Download Story</b>. The app renders a <b>9:16</b> Instagram/Facebook Story-sized card with a modern gradient, captures it with <code>html2canvas</code>, and auto-downloads a PNG named <code>quiethours-story-WeekDD-MM.png</code>. Just share!",
         h3p4: "💡 <b>What to say when sharing:</b> tag <code>@quiethours</code> / use <code>#quiethours</code> / <code>#s1gnuh</code> so I can celebrate with you 💚"
       },
+      onboard: {
+        stepOf: "Step {n} of {total}", skip: "Skip", back: "Back", next: "Next",
+        finish: "Let's start studying!", replay: "Replay quick tour",
+        welcome: {
+          title: "Welcome to QuietHours",
+          body: "<p>Your private study room right in the browser: <b>Pomodoro</b>, <b>ambient sound</b>, <b>schedule</b>, <b>task board</b> and <b>insights</b>.</p><p>This takes about a minute — you can skip anytime. Pick your language:</p>"
+        },
+        subjects: {
+          title: "Create your subjects",
+          body: "<p>Subjects tag your Pomodoro sessions, schedule and task cards so <b>per-subject analytics</b> stay accurate. Add a few now, or later in the <b>Data</b> tab.</p>",
+          placeholder: "Subject name, e.g. Linear Algebra",
+          suggestions: "Suggestions:",
+          empty: "No subjects yet — feel free to skip this step.",
+          suggestList: ["Math", "English", "Physics", "Programming", "Literature"]
+        },
+        pomodoro: {
+          title: "Study in Pomodoro rhythm",
+          body: "<ul><li>Pick a <b>subject</b>, then press <b>Start</b> (or hit <code>Space</code>).</li><li>Default: 25 min focus → 5 min break; every 4 sessions you get a 15 min long break.</li><li>Click the ✏️ icon on the Pomodoro card to change durations, auto-start and the <b>end chime</b>.</li><li>Every completed focus session is logged to <b>Insights</b> and extends your <b>streak</b> 🔥.</li></ul>"
+        },
+        atmosphere: {
+          title: "Sound, appearance & Zen Mode",
+          body: "<ul><li><b>Atmosphere</b> card: turn on Rain, Cafe, Ocean, Fireplace, Lofi and mix each volume — saved automatically.</li><li>The 🎨 <b>Appearance</b> button in the top bar: change accent color and background.</li><li><b>Zen Mode</b>: fullscreen with just the clock — press <code>Esc</code> to exit.</li></ul>"
+        },
+        plan: {
+          title: "Plan & track your progress",
+          body: "<ul><li><b>Schedule</b>: add sessions by day / week, with the lunar calendar shown.</li><li><b>Board</b>: drag cards between To Do → In Progress → Done (on mobile use the ⋮ menu).</li><li><b>Insights</b>: 14-day chart, time per subject and a <b>Weekly report card</b> you can export as a Story image.</li></ul>"
+        },
+        data: {
+          title: "Your data stays on your device",
+          body: "<p>Everything is stored <b>100% in this browser</b> — no account, no server.</p><p>Clearing browser data wipes it, so <b>Export data</b> regularly from the <b>Data</b> tab. You can replay this tour from the <b>Guide</b> tab.</p>"
+        }
+      },
       lang: { switch: "Switch language" }
     }
   };
@@ -394,23 +458,9 @@
     return `${y}-${m}-${dd}`;
   }
   function seedSampleData() {
-    const defaultSubjects = (langOverride) => {
-      const vi = ["Toán học", "Vật lý", "Tiếng Anh", "Ngữ văn", "Lịch sử"];
-      const en = ["Mathematics", "Physics", "English", "Literature", "History"];
-      const list = langOverride === "en" ? en : vi;
-      return list.map((n, i) => ({ id: uid(), name: n, tone: TONES[i % TONES.length] }));
-    };
+    // New users start with no subjects — they create their own (onboarding / Data / quick add)
     return {
-      subjects: defaultSubjects(
-        (function () {
-          try {
-            const saved = localStorage.getItem("quiethours-static-lang");
-            if (saved === "en" || saved === "vi") return saved;
-          } catch (_) {}
-          const nav = (navigator.language || "vi").toLowerCase();
-          return nav.startsWith("vi") ? "vi" : "en";
-        })()
-      ),
+      subjects: [],
       timerSettings: { focusMin: 25, shortBreakMin: 5, longBreakMin: 15, longBreakEvery: 4, autoStart: false, notifSound: "chime", notifRepeat: 2, lastSubjectId: null },
       timer: { mode: "focus", running: false, endAt: null, remainingMs: 25 * 60 * 1000, focusCount: 0 },
       mixer: {
@@ -428,6 +478,7 @@
       logs: []
     };
   }
+  let isFirstVisit = false; // true when no saved data existed -> show onboarding
   let state = (function load() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -440,7 +491,9 @@
           if (typeof parsed.timerSettings.notifSound !== "string") parsed.timerSettings.notifSound = df.notifSound;
           if (!Number.isFinite(parsed.timerSettings.notifRepeat)) parsed.timerSettings.notifRepeat = df.notifRepeat;
           if (typeof parsed.timerSettings.lastSubjectId !== "string") parsed.timerSettings.lastSubjectId = null;
-          if (!Array.isArray(parsed.subjects) || parsed.subjects.length === 0) parsed.subjects = seedSampleData().subjects;
+          // An empty list is valid (user deleted every subject) — don't re-seed it
+          if (!Array.isArray(parsed.subjects)) parsed.subjects = [];
+          ["schedule", "kanban", "logs"].forEach((k) => { if (!Array.isArray(parsed[k])) parsed[k] = []; });
           // Ensure every log has subjectId shape (never throw)
           if (Array.isArray(parsed.logs)) {
             parsed.logs.forEach((l) => {
@@ -451,6 +504,7 @@
         }
       }
     } catch (_) {}
+    isFirstVisit = true;
     const sd = seedSampleData();
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(sd)); } catch (_) {}
     return sd;
@@ -980,8 +1034,6 @@
       // Per-day minutes
       const perDay = days.map((d) => 0);
       weekLogs.forEach((l) => {
-        const ld = parseISO(l.date);
-        if (!ld) return;
         const idx = days.findIndex((d) => todayISO(d) === l.date);
         if (idx >= 0) perDay[idx] += l.minutes || 0;
       });
@@ -999,12 +1051,14 @@
       perDay.forEach((m, i) => { if (m > bestMin) { bestMin = m; bestIdx = i; } });
       const bestDayName = bestIdx >= 0 ? dowLabel(days[bestIdx]) : "—";
       const bestDayMin = bestIdx >= 0 ? bestMin : 0;
-      // Quote
+      // Quote (sync: pick from the already-loaded cache; Quotes.random() is async)
       let quoteTxt = "";
-      try {
-        const q = Quotes.random();
-        quoteTxt = currentLang === "vi" ? (q.vi || "") : (q.en || "");
-      } catch (_) {
+      const list = Quotes.allLoaded();
+      if (Array.isArray(list) && list.length) {
+        const q = list[Math.floor(Math.random() * list.length)];
+        quoteTxt = (currentLang === "vi" ? q.vi : q.en) || q.vi || q.en || "";
+      }
+      if (!quoteTxt) {
         quoteTxt = currentLang === "vi"
           ? "Hành trình ngàn dặm bắt đầu từ một bước chân. — Lão Tử"
           : "A journey of a thousand miles begins with a single step. — Lao Tzu";
@@ -1135,6 +1189,175 @@
     return { openWeekly, downloadStory, computeWeekData };
   })();
 
+  // -------- Onboarding (first-visit walkthrough) ------------------------------
+  const Onboarding = (function () {
+    const DONE_KEY = "quiethours-static-onboarded";
+    const STEPS = ["welcome", "subjects", "pomodoro", "atmosphere", "plan", "data"];
+    const ICONS = { welcome: "🌿", subjects: "📚", pomodoro: "🍅", atmosphere: "🎧", plan: "🗓️", data: "🔒" };
+    let step = 0;
+    let open = false;
+
+    function $(id) { return document.getElementById(id); }
+    function isOpen() { return open; }
+
+    function renderLangPicker(host) {
+      const wrap = document.createElement("div");
+      wrap.className = "onboard-lang";
+      [["vi", "Tiếng Việt"], ["en", "English"]].forEach(([code, label]) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "btn btn-sm " + (currentLang === code ? "btn-primary" : "btn-secondary");
+        b.textContent = label;
+        b.addEventListener("click", () => setLang(code));
+        wrap.appendChild(b);
+      });
+      host.appendChild(wrap);
+    }
+
+    function renderSubjectStep(host) {
+      const chips = document.createElement("ul");
+      chips.className = "subject-chips onboard-chips";
+      if (!state.subjects.length) {
+        const li = document.createElement("li");
+        li.className = "onboard-empty";
+        li.textContent = t("onboard.subjects.empty");
+        chips.appendChild(li);
+      }
+      state.subjects.forEach((s) => {
+        const li = document.createElement("li");
+        li.className = "subject-chip";
+        const label = document.createElement("span");
+        label.className = "chip-label";
+        label.textContent = s.name;
+        const del = document.createElement("button");
+        del.type = "button";
+        del.className = "chip-delete";
+        del.setAttribute("aria-label", t("common.delete"));
+        del.innerHTML = "&times;";
+        del.addEventListener("click", () => {
+          const used = [state.logs, state.schedule, state.kanban].some((arr) => arr.some((x) => x.subjectId === s.id));
+          if (used) deleteSubject(s.id); // asks for confirmation + unassigns
+          else {
+            state.subjects = state.subjects.filter((x) => x.id !== s.id);
+            if (state.timerSettings.lastSubjectId === s.id) state.timerSettings.lastSubjectId = null;
+            if (state.timer.subjectId === s.id) delete state.timer.subjectId;
+            persist();
+            renderAll();
+          }
+          render();
+        });
+        li.appendChild(label);
+        li.appendChild(del);
+        chips.appendChild(li);
+      });
+      host.appendChild(chips);
+
+      const form = document.createElement("form");
+      form.className = "onboard-add";
+      form.innerHTML = `<input type="text" maxlength="40" /><button type="submit" class="btn btn-primary btn-sm"></button>`;
+      const input = form.querySelector("input");
+      input.placeholder = t("onboard.subjects.placeholder");
+      form.querySelector("button").textContent = t("common.add");
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        if (addSubject(input.value)) {
+          render();
+          const again = $("onboard-body").querySelector(".onboard-add input");
+          if (again) again.focus();
+        }
+      });
+      host.appendChild(form);
+
+      const sugg = document.createElement("div");
+      sugg.className = "onboard-suggest";
+      const lbl = document.createElement("span");
+      lbl.textContent = t("onboard.subjects.suggestions");
+      sugg.appendChild(lbl);
+      const existing = new Set(state.subjects.map((s) => s.name.toLowerCase()));
+      (t("onboard.subjects.suggestList") || []).filter((n) => !existing.has(n.toLowerCase())).forEach((name) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "onboard-suggest-chip";
+        b.textContent = "+ " + name;
+        b.addEventListener("click", () => { addSubject(name); render(); });
+        sugg.appendChild(b);
+      });
+      host.appendChild(sugg);
+    }
+
+    function render() {
+      const body = $("onboard-body");
+      if (!body) return;
+      const key = STEPS[step];
+      body.innerHTML = `
+        <div class="onboard-icon" aria-hidden="true">${ICONS[key]}</div>
+        <p class="onboard-step"></p>
+        <h3 class="onboard-title" id="onboard-title"></h3>
+        <div class="onboard-text"></div>
+        <div class="onboard-extra"></div>`;
+      body.querySelector(".onboard-step").textContent = formatTpl(t("onboard.stepOf"), { n: step + 1, total: STEPS.length });
+      body.querySelector(".onboard-title").textContent = t(`onboard.${key}.title`);
+      body.querySelector(".onboard-text").innerHTML = t(`onboard.${key}.body`); // static dictionary HTML
+      const extra = body.querySelector(".onboard-extra");
+      if (key === "welcome") renderLangPicker(extra);
+      if (key === "subjects") renderSubjectStep(extra);
+      // restart entrance animation
+      body.classList.remove("onboard-anim");
+      void body.offsetWidth;
+      body.classList.add("onboard-anim");
+
+      const dots = $("onboard-dots");
+      if (dots) {
+        dots.innerHTML = "";
+        STEPS.forEach((_, i) => {
+          const d = document.createElement("button");
+          d.type = "button";
+          d.className = "onboard-dot" + (i === step ? " active" : i < step ? " done" : "");
+          d.setAttribute("aria-label", formatTpl(t("onboard.stepOf"), { n: i + 1, total: STEPS.length }));
+          d.addEventListener("click", () => { step = i; render(); });
+          dots.appendChild(d);
+        });
+      }
+      const bar = $("onboard-bar");
+      if (bar) bar.style.width = ((step + 1) / STEPS.length) * 100 + "%";
+      const back = $("onboard-back");
+      if (back) { back.textContent = t("onboard.back"); back.style.visibility = step === 0 ? "hidden" : "visible"; }
+      const next = $("onboard-next");
+      if (next) next.textContent = step === STEPS.length - 1 ? t("onboard.finish") : t("onboard.next");
+      const skip = $("onboard-skip");
+      if (skip) { skip.textContent = t("onboard.skip"); skip.style.visibility = step === STEPS.length - 1 ? "hidden" : "visible"; }
+    }
+
+    function openAt(i) {
+      step = Math.max(0, Math.min(STEPS.length - 1, i || 0));
+      open = true;
+      render();
+      openDialog("dialog-onboard");
+    }
+    function finish() {
+      open = false;
+      closeDialog("dialog-onboard");
+      try { localStorage.setItem(DONE_KEY, "1"); } catch (_) {}
+    }
+    function init() {
+      const next = $("onboard-next");
+      if (next) next.addEventListener("click", () => {
+        if (step >= STEPS.length - 1) finish();
+        else { step++; render(); }
+      });
+      const back = $("onboard-back");
+      if (back) back.addEventListener("click", () => { if (step > 0) { step--; render(); } });
+      const skip = $("onboard-skip");
+      if (skip) skip.addEventListener("click", finish);
+      const replay = $("btn-replay-onboarding");
+      if (replay) replay.addEventListener("click", () => openAt(0));
+      let done = false;
+      try { done = localStorage.getItem(DONE_KEY) === "1"; } catch (_) {}
+      if (isFirstVisit && !done) setTimeout(() => openAt(0), 350);
+    }
+    return { init, openAt, finish, render, isOpen };
+  })();
+
   // -------- View / navigation switching -------------------------------------
   function switchView(viewId) {
     document.querySelectorAll(".view").forEach((v) => v.classList.remove("active"));
@@ -1244,7 +1467,7 @@
       time.textContent = `${timeStr} · ${dateStr}`;
       const mins = document.createElement("span");
       mins.style.cssText = "color: var(--color-muted); font-size:0.72rem";
-      mins.textContent = `${log.minutes || 0} ${currentLang === "vi" ? "phút" : "min"} · ${currentLang === "vi" ? "phiên " + (String(log.mode || "focus").charAt(0).toUpperCase() + String(log.mode || "focus").slice(1)) : String(log.mode || "focus").charAt(0).toUpperCase() + String(log.mode || "focus").slice(1)}`;
+      mins.textContent = `${log.minutes || 0} ${currentLang === "vi" ? "phút" : "min"} · ${t(modeLabelKey(log.mode || "focus"))}`;
       left.appendChild(time);
       left.appendChild(mins);
 
@@ -1306,7 +1529,8 @@
       state.logs.push({
         id: uid(),
         date: todayISO(),
-        minutes: Math.round(durationMsFor(completedMode) / 60000),
+        // Use the length the session actually started with (settings may change mid-session)
+        minutes: Math.round((tm.plannedMs || durationMsFor(completedMode)) / 60000),
         subjectId: sid || undefined,
         mode: completedMode,
         completedAt: Date.now()
@@ -1324,6 +1548,7 @@
     }
     state.timer.mode = nextMode;
     state.timer.remainingMs = durationMsFor(nextMode);
+    state.timer.plannedMs = state.timer.remainingMs;
     state.timer.endAt = null;
     state.timer.running = !!state.timerSettings.autoStart;
     if (state.timer.running) state.timer.endAt = Date.now() + state.timer.remainingMs;
@@ -1354,6 +1579,7 @@
       if (v) state.timerSettings.lastSubjectId = v;
     }
     const ms = tm.remainingMs > 0 ? tm.remainingMs : durationMsFor(tm.mode);
+    if (!tm.plannedMs || ms > tm.plannedMs) tm.plannedMs = Math.max(ms, durationMsFor(tm.mode));
     tm.remainingMs = ms;
     tm.endAt = Date.now() + ms;
     tm.running = true;
@@ -1372,6 +1598,7 @@
     state.timer.running = false;
     state.timer.endAt = null;
     state.timer.remainingMs = durationMsFor(state.timer.mode);
+    state.timer.plannedMs = null;
     completingRef = false;
     persist();
     renderTimer();
@@ -1381,6 +1608,7 @@
     state.timer.running = false;
     state.timer.endAt = null;
     state.timer.remainingMs = durationMsFor(mode);
+    state.timer.plannedMs = null;
     completingRef = false;
     persist();
     renderTimer();
@@ -1388,8 +1616,8 @@
   function renderTimer() {
     const tm = state.timer;
     const remaining = remainingMsNow();
-    const total = durationMsFor(tm.mode);
-    const progress = total > 0 ? 1 - remaining / total : 0;
+    const total = tm.plannedMs || durationMsFor(tm.mode);
+    const progress = total > 0 ? Math.max(0, Math.min(1, 1 - remaining / total)) : 0;
     const CIRC = 2 * Math.PI * 130; // r=130
     const progressEl = document.getElementById("dial-progress");
     if (progressEl) progressEl.setAttribute("stroke-dashoffset", String(CIRC * (1 - progress)));
@@ -1420,7 +1648,7 @@
     }
     document.title = tm.running
       ? `${formatMs(remaining)} · ${t(modeLabelKey(tm.mode))} · QuietHours`
-      : "QuietHours · Static Port";
+      : "QuietHours · Self-Study";
     document.getElementById("timer-focus-count").textContent = String(tm.focusCount);
     // Update title on Segmented
     document.querySelectorAll("#timer-modes button").forEach((b) => {
@@ -1944,8 +2172,9 @@
     const now = new Date();
     // Next session
     const today = todayISO(now);
+    // Only sessions not yet finished (ended or marked done are skipped)
     const sorted = [...state.schedule]
-      .filter((t) => t.date >= today)
+      .filter((t) => !t.completed && t.date >= today && combineDateTime(t.date, t.end).getTime() > now.getTime())
       .sort((a, b) => combineDateTime(a.date, a.start).getTime() - combineDateTime(b.date, b.start).getTime());
     const next = sorted[0];
     const nextTitleEl = document.getElementById("stat-next-title");
@@ -2073,7 +2302,7 @@
                 <span class="badge badge-${typeToneMap[task.type] || "muted"}">${t("schedule.types." + task.type)}</span>
                 ${subject ? `<span class="badge badge-${subject.tone}"></span>` : ""}
               </div>
-              ${task.link ? `<a class="task-link" href="${task.link}" target="_blank" rel="noreferrer">${t("common.openLink")} ↗</a>` : ""}
+              ${safeUrl(task.link) ? `<a class="task-link" target="_blank" rel="noreferrer">${t("common.openLink")} ↗</a>` : ""}
             </div>
             <div class="task-actions">
               <button type="button" class="btn ${task.completed ? "btn-secondary" : "btn-ghost"} btn-sm" data-action="toggle">${task.completed ? t("common.undo") : t("common.done")}</button>
@@ -2082,6 +2311,8 @@
               </button>
             </div>`;
           li.querySelector(".task-name").textContent = task.name;
+          const linkEl = li.querySelector(".task-link");
+          if (linkEl) linkEl.href = safeUrl(task.link);
           if (subject) li.querySelector(".badge-" + subject.tone + ":last-of-type").textContent = subject.name;
           li.querySelector('[data-action="toggle"]').addEventListener("click", () => {
             state.schedule = state.schedule.map((t) => t.id === task.id ? { ...t, completed: !t.completed } : t);
@@ -2149,6 +2380,14 @@
     }
     // Update sched-date lunar label when dialog opens
     updateSchedDateLunar();
+  }
+  // Only allow http(s) links (blocks javascript: etc. from imported/typed data)
+  function safeUrl(raw) {
+    if (!raw) return "";
+    try {
+      const u = new URL(String(raw).trim(), location.href);
+      return u.protocol === "http:" || u.protocol === "https:" ? u.href : "";
+    } catch (_) { return ""; }
   }
   function updateSchedDateLunar() {
     const dateInput = document.getElementById("sched-date");
@@ -2284,6 +2523,25 @@
   }
 
   // -------- Subjects (Data view) --------------------------------------------
+  // Returns the subject id (existing one when the name is a case-insensitive duplicate), or null if empty
+  function addSubject(rawName) {
+    const name = String(rawName || "").trim().slice(0, 40);
+    if (!name) return null;
+    const dup = state.subjects.find((s) => s.name.toLowerCase() === name.toLowerCase());
+    if (dup) return dup.id;
+    const usedTones = new Set(state.subjects.map((s) => s.tone));
+    const tone = TONES.find((x) => !usedTones.has(x)) || TONES[state.subjects.length % TONES.length];
+    const id = uid();
+    state.subjects.push({ id, name, tone });
+    persist();
+    renderSubjectChips();
+    renderSchedule();
+    renderKanban();
+    renderCharts();
+    renderFocusSubjectPicker();
+    renderInsightsHistory();
+    return id;
+  }
   function deleteSubject(id) {
     const subj = state.subjects.find((s) => s.id === id);
     if (!subj) return;
@@ -2349,6 +2607,10 @@
     document.querySelectorAll(".drop-hint").forEach((el) => {
       el.textContent = t("board.dropHere");
     });
+    // applyTranslations() resets this to the raw "{n}" template
+    const descEl = document.querySelector("#dialog-timer .desc");
+    if (descEl) descEl.textContent = formatTpl(t("timerSettings.desc"), { n: state.timerSettings.longBreakEvery });
+    if (typeof Onboarding !== "undefined" && Onboarding.isOpen()) Onboarding.render();
   }
 
   // -------- Dialogs ----------------------------------------------------------
@@ -2396,7 +2658,7 @@
         datasets: [{
           label: t("insights.hours"),
           data: values,
-          backgroundColor: "#8a9e8e",
+          backgroundColor: getComputedStyle(document.body).getPropertyValue("--color-accent").trim() || "#8a9e8e",
           borderRadius: 6,
           maxBarThickness: 28
         }]
@@ -2582,6 +2844,7 @@
       // Reset remaining if not running
       if (!state.timer.running) {
         state.timer.remainingMs = durationMsFor(state.timer.mode);
+        state.timer.plannedMs = null;
       }
       persist();
       renderAll();
@@ -2608,14 +2871,14 @@
     window.addEventListener("keydown", (e) => {
       const tag = (e.target && e.target.tagName) || "";
       if (["INPUT", "TEXTAREA", "SELECT"].includes(tag)) return;
-      if (e.code === "Space") {
+      const dialogOpen = !!document.querySelector(".dialog-backdrop.open");
+      if (e.code === "Space" && !dialogOpen) {
         e.preventDefault();
         state.timer.running ? pauseTimer() : startTimer();
       }
       if (e.key === "Escape") {
-        closeDialog("dialog-timer");
-        closeDialog("dialog-schedule");
-        closeDialog("dialog-card");
+        if (Onboarding.isOpen()) Onboarding.finish();
+        document.querySelectorAll(".dialog-backdrop.open").forEach((d) => d.classList.remove("open"));
         closeMenus();
       }
     });
@@ -2655,6 +2918,7 @@
     document.querySelectorAll(".theme-swatches .swatch[data-theme]").forEach((sw) => {
       sw.addEventListener("click", () => {
         Appearance.theme(sw.getAttribute("data-theme"));
+        renderCharts(); // bar color follows the accent
       });
     });
     // Appearance: Background swatches
@@ -2718,7 +2982,10 @@
       if (!name) return;
       const sd = combineDateTime(date, start);
       const ed = combineDateTime(date, end);
-      if (ed.getTime() <= sd.getTime()) return;
+      if (ed.getTime() <= sd.getTime()) {
+        alert(currentLang === "vi" ? "Giờ kết thúc phải sau giờ bắt đầu." : "End time must be after start time.");
+        return;
+      }
       state.schedule.push({
         id: uid(),
         name, date, start, end,
@@ -2778,19 +3045,9 @@
 
     // Data view: subjects + backup + reset
     document.getElementById("subject-form").addEventListener("submit", () => {
-      const name = document.getElementById("subject-name").value.trim();
-      if (!name) return;
-      const tone = TONES[state.subjects.length % TONES.length];
-      const newId = uid();
-      state.subjects.push({ id: newId, name, tone });
-      persist();
-      document.getElementById("subject-name").value = "";
-      renderSubjectChips();
-      renderSchedule();
-      renderKanban();
-      renderCharts();
-      renderFocusSubjectPicker();
-      renderInsightsHistory();
+      if (addSubject(document.getElementById("subject-name").value)) {
+        document.getElementById("subject-name").value = "";
+      }
     });
     // Data view: delete subject (event delegation)
     const chipsUl = document.getElementById("subject-chips");
@@ -2835,22 +3092,14 @@
     if (qaForm && qaInput) {
       qaForm.addEventListener("submit", (e) => {
         if (e && e.preventDefault) e.preventDefault();
-        const name = qaInput.value.trim();
-        if (!name) return;
-        const tone = TONES[state.subjects.length % TONES.length];
-        const newId = uid();
-        state.subjects.push({ id: newId, name, tone });
+        const newId = addSubject(qaInput.value);
+        if (!newId) return;
         state.timerSettings.lastSubjectId = newId;
         state.timer.subjectId = newId;
         persist();
         qaInput.value = "";
         qaForm.style.display = "none";
-        renderSubjectChips();
-        renderSchedule();
-        renderKanban();
-        renderCharts();
         renderFocusSubjectPicker();
-        renderInsightsHistory();
       });
     }
     document.getElementById("btn-export").addEventListener("click", exportBackup);
@@ -2871,7 +3120,10 @@
     // Close dialogs via backdrop click / [data-dialog-close]
     document.querySelectorAll(".dialog-backdrop").forEach((bd) => {
       bd.addEventListener("click", (e) => {
-        if (e.target === bd) bd.classList.remove("open");
+        if (e.target !== bd) return;
+        // Onboarding needs an explicit Skip/Finish so a stray click doesn't dismiss it
+        if (bd.id === "dialog-onboard") return;
+        bd.classList.remove("open");
       });
     });
     document.querySelectorAll("[data-dialog-close]").forEach((b) => {
@@ -2890,10 +3142,10 @@
     renderAll();
     // Sync swatch active states in Data panel
     Appearance.refreshActiveSwatches();
-    // Restore last view
-    try {
-      const saved = sessionStorage.getItem("quiethours-static-view");
-      if (saved) switchView(saved);
-    } catch (_) {}
+    // Restore last view (always call switchView so the dock visibility is correct on first load)
+    let savedView = null;
+    try { savedView = sessionStorage.getItem("quiethours-static-view"); } catch (_) {}
+    switchView(savedView && document.getElementById("view-" + savedView) ? savedView : "focus");
+    Onboarding.init();
   });
 })();

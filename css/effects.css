@@ -1,0 +1,226 @@
+/* ==========================================================
+   QuietHours - Visual & motion polish layer
+   Additive: loaded after styles.css, no changes to app logic.
+   ========================================================== */
+
+/* ---------- Aurora ambient background (only when bg = none) ---------- */
+.aurora {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  display: none;
+}
+body.bg-none .aurora,
+body:not([class*="bg-"]) .aurora {
+  display: block;
+}
+.aurora i {
+  position: absolute;
+  width: 46vmax;
+  height: 46vmax;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.16;
+  background: var(--color-accent);
+  will-change: transform;
+  animation: aurora-float 26s ease-in-out infinite alternate;
+}
+.aurora i:nth-child(1) { top: -18vmax; left: -12vmax; }
+.aurora i:nth-child(2) {
+  bottom: -22vmax; right: -14vmax;
+  background: var(--color-mist);
+  opacity: 0.12;
+  animation-duration: 34s;
+  animation-delay: -9s;
+}
+.aurora i:nth-child(3) {
+  top: 35%; left: 45%;
+  width: 28vmax; height: 28vmax;
+  background: var(--color-clay);
+  opacity: 0.07;
+  animation-duration: 40s;
+  animation-delay: -18s;
+}
+@keyframes aurora-float {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  50%  { transform: translate3d(6vmax, 4vmax, 0) scale(1.15); }
+  100% { transform: translate3d(-4vmax, 8vmax, 0) scale(0.95); }
+}
+/* Aurora breathes a little stronger while the timer is running */
+body.timer-running .aurora i { opacity: 0.22; transition: opacity 1.2s ease; }
+
+/* ---------- Cards: spotlight + soft lift ---------- */
+.card,
+.stat-card {
+  position: relative;
+  isolation: isolate;
+  transition: box-shadow 0.25s ease, transform 0.25s ease, background-color 0.25s ease;
+}
+.card::before,
+.stat-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  background: radial-gradient(
+    380px circle at var(--mx, 50%) var(--my, 0%),
+    color-mix(in oklab, var(--color-accent) 14%, transparent),
+    transparent 65%
+  );
+}
+@media (hover: hover) {
+  .card:hover::before,
+  .stat-card:hover::before { opacity: 1; }
+  .stat-card:hover,
+  .kanban-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-border-hover), var(--shadow-lift);
+  }
+}
+.kanban-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+body.zen-mode .card::before,
+body.zen-mode .stat-card::before { display: none; }
+
+/* ---------- Staggered view entrance ---------- */
+.view.active > * {
+  animation: rise-in 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+}
+.view.active > *:nth-child(2) { animation-delay: 0.06s; }
+.view.active > *:nth-child(3) { animation-delay: 0.12s; }
+.view.active > *:nth-child(4) { animation-delay: 0.18s; }
+.view.active > *:nth-child(5) { animation-delay: 0.24s; }
+.view.active > *:nth-child(n+6) { animation-delay: 0.3s; }
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ---------- Pomodoro dial ---------- */
+.dial-svg #dial-progress {
+  stroke: url(#dial-grad);
+  filter: drop-shadow(0 0 6px color-mix(in oklab, var(--color-accent) 55%, transparent));
+}
+.dial-ticks line {
+  stroke: var(--color-border);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+.dial-ticks line.major { stroke: var(--color-subtle); stroke-width: 2; }
+.dial-knob {
+  fill: var(--color-fg);
+  filter: drop-shadow(0 0 7px var(--color-accent));
+  transition: opacity 0.3s ease;
+}
+body.timer-running .dial-knob { animation: knob-pulse 2s ease-in-out infinite; }
+@keyframes knob-pulse {
+  0%, 100% { r: 5; }
+  50%      { r: 7; }
+}
+body.timer-running .dial-wrap::after {
+  content: "";
+  position: absolute;
+  inset: 4%;
+  border-radius: 50%;
+  pointer-events: none;
+  box-shadow: 0 0 60px -10px color-mix(in oklab, var(--color-accent) 40%, transparent);
+  animation: dial-breathe 4s ease-in-out infinite;
+}
+@keyframes dial-breathe {
+  0%, 100% { opacity: 0.35; transform: scale(0.98); }
+  50%      { opacity: 1;    transform: scale(1.02); }
+}
+body.timer-running .timer-text {
+  text-shadow: 0 0 28px color-mix(in oklab, var(--color-accent) 35%, transparent);
+}
+
+/* ---------- Buttons ---------- */
+.btn { position: relative; overflow: hidden; }
+.btn:active:not(:disabled) { transform: scale(0.97); }
+.btn-primary {
+  box-shadow: 0 6px 18px -8px color-mix(in oklab, var(--color-accent) 80%, transparent);
+}
+.btn-primary:hover {
+  box-shadow: 0 8px 24px -8px color-mix(in oklab, var(--color-accent) 95%, transparent);
+}
+.fx-ripple {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  background: currentColor;
+  opacity: 0.22;
+  transform: scale(0);
+  animation: fx-ripple 0.6s ease-out forwards;
+}
+@keyframes fx-ripple { to { transform: scale(1); opacity: 0; } }
+
+/* ---------- Navigation ---------- */
+.top-nav-links .nav-btn { transition: background-color 0.2s, color 0.2s, box-shadow 0.2s; }
+.top-nav-links .nav-btn.active {
+  background: color-mix(in oklab, var(--color-accent) 16%, var(--color-elevated));
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-accent) 35%, transparent);
+}
+.segmented button { transition: background-color 0.2s, color 0.2s, box-shadow 0.2s; }
+.segmented button.active {
+  box-shadow: var(--shadow-border), 0 4px 14px -8px color-mix(in oklab, var(--color-accent) 70%, transparent);
+}
+
+/* ---------- Dialogs ---------- */
+.dialog-backdrop {
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.dialog { animation: popIn 0.28s cubic-bezier(0.2, 0.8, 0.2, 1); }
+
+/* ---------- Focus ring + scrollbar ---------- */
+:focus-visible {
+  outline: 2px solid var(--color-ring);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--color-subtle); background-clip: content-box; }
+
+/* ---------- Confetti canvas + toast ---------- */
+.fx-confetti {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 80;
+  pointer-events: none;
+}
+.fx-toast {
+  position: fixed;
+  left: 50%;
+  top: 1.25rem;
+  z-index: 81;
+  transform: translate(-50%, -140%);
+  padding: 0.65rem 1.1rem;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-fg);
+  background: color-mix(in oklab, var(--color-elevated) 88%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: var(--shadow-border), var(--shadow-lift), 0 0 24px -6px var(--color-accent);
+  transition: transform 0.5s cubic-bezier(0.2, 0.9, 0.2, 1);
+  pointer-events: none;
+}
+.fx-toast.show { transform: translate(-50%, 0); }
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora i, .dial-wrap::after, .dial-knob { animation: none !important; }
+}

@@ -16,6 +16,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/effects.css" />
   </head>
   <body>
     <div class="grain" aria-hidden="true"></div>
@@ -636,6 +637,10 @@
                 <p class="section-kicker" data-i18n="guide.kicker">Góc nhỏ</p>
                 <h2 class="section-title" data-i18n="guide.title">Cảm ơn & Hướng dẫn sử dụng</h2>
                 <p class="desc" data-i18n="guide.subtitle">Những điều nhỏ xinh bạn nên biết để đồng hành cùng QuietHours thật hiệu quả.</p>
+                <button type="button" class="btn btn-secondary btn-sm" id="btn-replay-onboarding" style="margin-top: 0.75rem">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                  <span data-i18n="onboard.replay">Xem lại hướng dẫn nhanh</span>
+                </button>
               </div>
 
               <!-- Thank you letter -->
@@ -871,6 +876,21 @@
         <div class="form-actions">
           <button class="btn btn-ghost btn-sm" data-dialog-close="dialog-timer" data-i18n="common.cancel">Hủy</button>
           <button class="btn btn-primary btn-sm" id="btn-save-timer-settings" data-i18n="common.save">Lưu</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Onboarding Dialog (first visit) -->
+    <div class="dialog-backdrop" id="dialog-onboard">
+      <div class="dialog onboard" role="dialog" aria-modal="true" aria-labelledby="onboard-title">
+        <div class="onboard-progress"><span id="onboard-bar"></span></div>
+        <div class="onboard-body" id="onboard-body"></div>
+        <div class="onboard-dots" id="onboard-dots"></div>
+        <div class="onboard-actions">
+          <button type="button" class="btn btn-ghost btn-sm" id="onboard-skip">Bỏ qua</button>
+          <span class="onboard-spacer"></span>
+          <button type="button" class="btn btn-secondary btn-sm" id="onboard-back">Quay lại</button>
+          <button type="button" class="btn btn-primary btn-sm" id="onboard-next">Tiếp tục</button>
         </div>
       </div>
     </div>
@@ -1127,5 +1147,6 @@
     <!-- html2canvas used to export 9:16 story share image (PNG download) -->
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <script src="js/app.js" defer></script>
+    <script src="js/effects.js" defer></script>
   </body>
 </html>

@@ -2884,3 +2884,138 @@ body.zen-mode .dialog-backdrop {
   }
   body.zen-mode .zen-exit-bar { transform: translate(0, 0); }
 }
+
+/* ==========================================================
+   ONBOARDING (first-visit walkthrough)
+   ========================================================== */
+.dialog.onboard {
+  max-width: 34rem;
+  padding: 0 0 1.25rem;
+  overflow-x: hidden;
+}
+.onboard-progress {
+  height: 3px;
+  background: var(--color-elevated);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  overflow: hidden;
+}
+.onboard-progress span {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--color-accent);
+  box-shadow: 0 0 12px var(--color-accent);
+  transition: width 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.onboard-body {
+  padding: 1.5rem 1.5rem 0.5rem;
+  min-height: 17rem;
+}
+.onboard-body.onboard-anim > * {
+  animation: onboard-in 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+}
+.onboard-body.onboard-anim > *:nth-child(2) { animation-delay: 0.04s; }
+.onboard-body.onboard-anim > *:nth-child(3) { animation-delay: 0.08s; }
+.onboard-body.onboard-anim > *:nth-child(4) { animation-delay: 0.12s; }
+.onboard-body.onboard-anim > *:nth-child(5) { animation-delay: 0.16s; }
+@keyframes onboard-in {
+  from { opacity: 0; transform: translateX(14px); }
+  to   { opacity: 1; transform: none; }
+}
+.onboard-icon {
+  width: 3.25rem;
+  height: 3.25rem;
+  display: grid;
+  place-items: center;
+  font-size: 1.6rem;
+  border-radius: 1rem;
+  background: color-mix(in oklab, var(--color-accent) 18%, var(--color-elevated));
+  box-shadow: 0 8px 24px -12px var(--color-accent);
+  margin-bottom: 0.9rem;
+}
+.onboard-step {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+.dialog .onboard-title {
+  font-size: 1.35rem;
+  margin-bottom: 0.6rem;
+}
+.onboard-text {
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: color-mix(in oklab, var(--color-fg) 85%, var(--color-muted));
+}
+.onboard-text p { margin-bottom: 0.55rem; }
+.onboard-text ul { padding-left: 1.1rem; display: grid; gap: 0.4rem; }
+.onboard-text code {
+  padding: 0.05rem 0.35rem;
+  font-size: 0.82em;
+  border-radius: 6px;
+  background: color-mix(in oklab, var(--color-fg) 8%, transparent);
+}
+.onboard-extra { margin-top: 0.9rem; }
+.onboard-lang { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.onboard-chips { margin-bottom: 0.75rem; min-height: 1.6rem; }
+.onboard-empty { font-size: 0.8rem; color: var(--color-muted); list-style: none; }
+.onboard-add { display: flex; gap: 0.5rem; }
+.onboard-add input {
+  flex: 1;
+  min-width: 0;
+  height: 2rem;
+  padding: 0 0.7rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-border);
+  background: var(--color-elevated);
+}
+.onboard-suggest {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.7rem;
+  font-size: 0.75rem;
+  color: var(--color-muted);
+}
+.onboard-suggest-chip {
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  color: var(--color-fg);
+  border: 1px dashed color-mix(in oklab, var(--color-accent) 50%, transparent);
+  transition: background-color 0.15s, border-color 0.15s;
+}
+.onboard-suggest-chip:hover {
+  background: color-mix(in oklab, var(--color-accent) 16%, transparent);
+  border-style: solid;
+}
+.onboard-dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.75rem 0 1rem;
+}
+.onboard-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: var(--color-border);
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+.onboard-dot.done { background: color-mix(in oklab, var(--color-accent) 50%, var(--color-border)); }
+.onboard-dot.active { width: 1.4rem; background: var(--color-accent); }
+.onboard-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 1.5rem;
+}
+.onboard-spacer { flex: 1; }
+@media (max-width: 520px) {
+  .onboard-body { padding: 1.25rem 1.1rem 0.25rem; min-height: 0; }
+  .onboard-actions { padding: 0 1.1rem; }
+}
