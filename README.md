@@ -1,127 +1,213 @@
-# QuietHours
+<div align="center">
 
-> **Your private, distraction-free study room — 100% offline-first, zero dependencies, zero build step.**
-> Phòng học tập cá nhân — không bị xao nhãng, 100% hoạt động trên trình duyệt, không cài gì cả.
+# 🌙 QuietHours
 
----
+**A calm, private study room that lives in your browser.**<br>
+Pomodoro · ambient sound · schedule · task board · analytics · exam countdown — no backend, no account, no build step.
 
-## 🇬🇧 English
+[![Live demo](https://img.shields.io/badge/Live_demo-open_app-8a9e8e?style=for-the-badge&logo=githubpages&logoColor=white)](https://s1gnuh.github.io/QuietHours-Pomodoro-SelfStudy/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
+[![Zero dependencies](https://img.shields.io/badge/Build_step-none-success?style=for-the-badge)](#-getting-started)
+[![Languages](https://img.shields.io/badge/UI-English_%7C_Ti%E1%BA%BFng_Vi%E1%BB%87t-orange?style=for-the-badge)](README.vi.md)
 
-### What is QuietHours?
-QuietHours is a static, self-contained web app that turns any browser tab into a calm Pomodoro / focus workspace. All data lives inside your browser's `localStorage` — there is no backend, no account, no telemetry.
+**English** · [Tiếng Việt](README.vi.md)
 
-### ✨ Features
-- 🍅 **Pomodoro Timer** — Focus / Short break / Long break cycles with auto-start, configurable durations, and **5 end-of-session notification chimes** (Chime / Bell / Zen Bowl / Digital / Nature) plus 1–5 repeat.
-- 📅 **Study Schedule (Lịch học)** — calendar view with built-in **Vietnamese Lunar (Hồ Ngọc Đức algorithm)** support.
-- 📋 **Task Board (Bảng việc)** — your own TODO / task list.
-- 📊 **Insights (Thống kê)** — weekly & all-time Pomodoro stats rendered with **Chart.js**, plus a **Weekly Report Card** you can export as PNG (Story).
-- 🌧️ **Ambient Sound Mixer** — 5 procedurally-generated tracks via the Web Audio API (Rain / Café / Ocean / Fireplace / Lo-fi) with per-track volume sliders and master volume.
-- 🔥 **Daily Quote Card** — 200 bilingual (VI / EN) motivational quotes, picked daily, offline fallback included.
-- 🎨 **5 Theme Packs** — Sage / Sunset / Lavender / Ocean / Cyber, switch at any time.
-- 🧘 **Zen Mode** — fullscreen distraction-free focus, press `Esc` or click the floating bar to exit.
-- 🌐 **Bilingual UI** — Vietnamese · English, one-click switch.
-- 📱 **Fully responsive** — optimized for desktop sticky top-nav and mobile 6-column bottom-nav with iPhone safe-area support.
-- 🔒 **100% Local Storage** — your data never leaves your browser. Clear site data = wipe everything, back up your localStorage if you need to.
+<img src="docs/screenshots/focus.webp" alt="QuietHours — focus view with exam countdown, rank card, Pomodoro dial and ambient mixer" width="900">
 
-### 🏗️ Tech stack
-| Layer | What |
-|---|---|
-| Markup | Pure HTML5, no framework |
-| Styling | Vanilla CSS + custom CSS vars (Themes, light/dark via accent packs) |
-| Logic | Vanilla ES6 JavaScript, organized with IIFE modules (`AmbientEngine`, `NotificationSounds`, `Lunar`, `I18N`, `ThemePack`, …) |
-| Charts | [Chart.js 4.4.1 UMD](https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js) (CDN) |
-| PNG export | [html2canvas 1.4.1 UMD](https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js) (CDN) |
-| Audio | Web Audio API, procedurally generated oscillators / noise buffers (no MP3/WAV assets) |
-| Persistence | `localStorage` key `quiethours-static-v1` |
-| Fonts | Google Fonts **Figtree** (UI) + **Fraunces** (headings) |
-| Build step | **None.** Just open [`index.html`](index.html). |
-
-### 🚀 Run locally
-No `npm`, no bundler. Any static HTTP server will do. Example:
-
-```bash
-# Python 3
-python -m http.server 8765
-# then visit http://127.0.0.1:8765/
-```
-
-Or just open `index.html` directly in most browsers (audio might be blocked until a user gesture — click any button to unlock).
-
-### 📂 Project structure
-```
-QuietHours/
-├── index.html          # Entire app shell + all 6 views (Focus/Schedule/Board/Insights/Data/Guide)
-├── css/styles.css      # All styles + 5 theme packs + responsive breakpoints
-├── js/app.js           # Full app logic (state, timer, audio, charts, i18n, lunar, etc.)
-└── data/quotes.json    # 200 bilingual offline quotes (VI + EN)
-```
-
-### 🧑‍💻 Author
-Made with ♥ by **Việt Hùng (s1gnuh)**
-- GitHub: [github.com/s1gnuh](https://github.com/s1gnuh)
-- Facebook: [viet.hung.183615](https://www.facebook.com/viet.hung.183615/)
-- Instagram: [@s1gnuh](https://www.instagram.com/s1gnuh/?hl=en)
-
-### 📜 License
-MIT — use freely.
+</div>
 
 ---
 
-## 🇻🇳 Tiếng Việt
+## Table of contents
 
-### QuietHours là gì?
-QuietHours là một ứng dụng web tĩnh **chỉ gồm 1 file HTML, 1 file CSS, 1 file JS**, biến tab trình duyệt thành phòng học tập Pomodoro yên tĩnh. Mọi dữ liệu lưu hoàn toàn ở `localStorage` trình duyệt của bạn — **không có server, không cần tài khoản, không thu thập dữ liệu**.
+- [Why QuietHours](#-why-quiethours)
+- [Features](#-features)
+- [Screenshots](#-screenshots)
+- [Getting started](#-getting-started)
+- [Deploy to GitHub Pages](#-deploy-to-github-pages)
+- [How XP and ranks work](#-how-xp-and-ranks-work)
+- [Keyboard shortcuts](#-keyboard-shortcuts)
+- [Your data and privacy](#-your-data-and-privacy)
+- [Tech stack](#-tech-stack)
+- [Project structure](#-project-structure)
+- [Contributing](#-contributing)
+- [Author](#-author) · [License](#-license)
 
-### ✨ Tính năng chính
-- 🍅 **Bộ đếm Pomodoro** — 3 chế độ Tập trung / Nghỉ ngắn / Nghỉ dài, tự động chạy phiên tiếp, cấu hình thời gian. **5 loại chuông báo khi hết phiên** (Chime / Chuông tháp / Tibetan Bowl / Digital / Chim hót) + số lần lặp 1–5.
-- 📅 **Lịch học** — lịch tháng với hỗ trợ **Lịch Vạn niên Việt Nam** (thuật toán Hồ Ngọc Đức, múi giờ +7).
-- 📋 **Bảng việc** — danh sách TODO / ghi chú cá nhân.
-- 📊 **Thống kê** — biểu đồ tuần / toàn thời gian bằng **Chart.js** + **Thẻ Tổng Kết Tuần (Weekly Report Card)** xuất ảnh PNG (Story).
-- 🌧️ **Trộn nhạc nền** — 5 luồng nhạc nền procedural sinh bằng Web Audio API (Mưa / Quán cà phê / Biển / Lò sưởi / Lo-fi), điều khiển âm lượng từng track + master.
-- 🔥 **Câu nói cảm hứng hàng ngày** — 200 câu song ngữ (VI / EN) trong `data/quotes.json`, có 5 câu dự phòng offline nếu load JSON lỗi.
-- 🎨 **5 bộ giao diện** — Sage / Sunset / Lavender / Ocean / Cyber, đổi bất cứ lúc nào.
-- 🧘 **Chế độ Zen** — toàn màn hình không xao nhãng, nhấn `Esc` hoặc bar nổi để thoát.
-- 🌐 **2 ngôn ngữ** — Tiếng Việt · English, 1 click đổi.
-- 📱 **Responsive hoàn toàn** — desktop top-nav dính, mobile bottom-nav 6 nút, hỗ trợ safe-area (notch / Dynamic Island iPhone).
-- 🔒 **100% Local Storage** — dữ liệu không đi đâu cả. Xóa cache trình duyệt = mất toàn bộ, hãy backup localStorage nếu cần.
+## ✨ Why QuietHours
 
-### 🏗️ Công nghệ
-| Thành phần | Chi tiết |
+Most study apps want an account, a subscription, or your data. QuietHours is the opposite: **one static site** you can open anywhere, that stores everything in your own browser and stays out of your way.
+
+- 🔒 **Private by design** — nothing leaves your device. No analytics, no tracking, no server.
+- ⚡ **Zero setup** — plain HTML, CSS and vanilla JavaScript. Open `index.html` and study.
+- 🎧 **No audio files** — every ambient sound is synthesised live with the Web Audio API.
+- 🌐 **Bilingual** — full Vietnamese and English UI, switchable in one click.
+
+## 🚀 Features
+
+### Focus
+| | |
 |---|---|
-| Giao diện | HTML5 thuần, không dùng framework |
-| Kiểu dáng | CSS + biến CSS tuỳ chỉnh (5 Theme Pack) |
-| Logic | ES6 JavaScript thuần, gom thành các IIFE module (`AmbientEngine`, `NotificationSounds`, `Lunar`, `I18N`, `ThemePack`, …) |
-| Biểu đồ | [Chart.js 4.4.1 UMD](https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js) (CDN) |
-| Xuất ảnh PNG | [html2canvas 1.4.1 UMD](https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js) (CDN) |
-| Âm thanh | Web Audio API: OSC / noise buffer procedural **hoàn toàn** — không có file MP3/WAV. |
-| Lưu trữ | `localStorage` key `quiethours-static-v1` |
-| Fonts | Google Fonts **Figtree** (UI) + **Fraunces** (tiêu đề) |
-| Build step | **Không có gì cả.** Mở [`index.html`](index.html) là chạy. |
+| 🍅 **Pomodoro timer** | Focus / short break / long break cycles, auto-start, configurable lengths, glowing progress dial. Every completed session is logged against a subject. |
+| 🔔 **End-of-session chimes** | Five synthesised chimes (Chime, Bell, Zen bowl, Digital, Nature) with 1–5 repeats and a preview button. |
+| 🧘 **Zen mode** | Fullscreen, distraction-free: just the clock. `Esc` to exit. |
+| 💬 **Daily quote** | 200 bilingual motivational quotes with an offline fallback. |
 
-### 🚀 Chạy local
-Không cần `npm`, không cần bundler. Mọi HTTP server tĩnh đều được. Ví dụ với Python 3:
+### Atmosphere
+| | |
+|---|---|
+| 🌧️ **Ambient mixer** | Seven procedurally generated stereo tracks — **Rain** (with drops, gutters and distant thunder), **Café** (murmuring voices, cups), **Ocean** (individual waves with foam), **Fireplace** (crackles and pops), **Lo-fi** (chords, bass, drums, vinyl), **Forest** (wind and birdsong) and **Brown noise**. Shared reverb and a glue compressor keep stacked tracks clean. |
+| 🎛️ **Presets** | Seven built-in mixes (Rainy night, Cozy café, Beach, Fireside, Lo-fi chill, Deep forest, Deep focus) plus **your own saved presets**. |
+| 🌙 **Sleep timer** | Fade the sound out after 15 / 30 / 45 / 60 / 90 minutes, or when the current session ends. |
+| 🌅 **Time-of-day sky** | A background that moves from dawn to night with a travelling sun/moon glow and twinkling stars. |
+| 🎨 **Five theme packs** | Sage, Sunset, Lavender, Ocean and Cyber — the logo, charts and rank cards follow the accent. |
+
+### Plan & track
+| | |
+|---|---|
+| 🎯 **Exam mode** | Add exams with date, time, subject, study-hours goal and target score. A live countdown sits on the home screen, turns amber/red as the date nears, and shows the pace you need per day. |
+| 📅 **Study schedule** | Daily and weekly views with a built-in **Vietnamese lunar calendar** (Hồ Ngọc Đức algorithm). |
+| 📋 **Kanban board** | To do → In progress → Done, with drag-and-drop, priorities, deadlines and subjects. |
+| 🗺️ **Focus heatmap** | A GitHub-style, 12-month calendar of your focus minutes. |
+| 📊 **Insights** | Daily-hours chart, time-by-subject donut and an editable session history. |
+| 🪪 **Weekly report card** | Export a shareable 9:16 Story image (PNG) of your week. |
+
+### Motivation
+| | |
+|---|---|
+| 🏆 **XP, levels & ranks** | Earn XP for every minute you focus and climb nine ranks — Iron → Bronze → Silver → Gold → Platinum → Emerald → Diamond → Master → Challenger. |
+| 🏅 **17 achievement badges** | Streaks, total hours, marathons, early-bird / night-owl sessions and more, each with a progress bar. |
+| 🎉 **Celebrations** | Confetti and toasts when you finish a session, level up or unlock a badge. |
+| 👋 **First-visit tour** | A six-step bilingual walkthrough (replayable from the Guide tab). |
+
+## 🖼️ Screenshots
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/insights.webp" alt="Insights: heatmap, ranks and badges, charts"><br><sub><b>Insights</b> — focus heatmap, rank ladder, badges and charts</sub></td>
+    <td width="50%"><img src="docs/screenshots/schedule.webp" alt="Study schedule with lunar calendar"><br><sub><b>Schedule</b> — week strip, lunar dates and session list</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/board.webp" alt="Kanban board"><br><sub><b>Board</b> — drag-and-drop Kanban with priorities and subjects</sub></td>
+    <td width="50%" align="center"><img src="docs/screenshots/mobile-focus.webp" alt="Mobile layout" width="260"><br><sub><b>Mobile</b> — responsive layout with bottom navigation</sub></td>
+  </tr>
+</table>
+
+## 🏁 Getting started
+
+QuietHours is a static site — there is nothing to install.
+
+**Option 1 — use it online**
+
+👉 **<https://s1gnuh.github.io/QuietHours-Pomodoro-SelfStudy/>**
+
+**Option 2 — run it locally**
 
 ```bash
-python -m http.server 8765
-# mở trình duyệt vào http://127.0.0.1:8765/
+git clone https://github.com/s1gnuh/QuietHours-Pomodoro-SelfStudy.git
+cd QuietHours-Pomodoro-SelfStudy
+
+# any static file server works, for example:
+python -m http.server 8765        # Python 3
+# or
+npx serve .                       # Node.js
 ```
 
-Hoặc mở thẳng `index.html` trong File Explorer (âm thanh có thể bị chặn đến khi bạn click một nút bất kỳ).
+Then open <http://127.0.0.1:8765/>.
 
-### 📂 Cấu trúc dự án
+> You can also double-click `index.html`. Daily quotes then use the built-in fallback set (browsers block `fetch` on `file://`), and audio starts after your first click — a browser rule for all web audio.
+
+## 🌍 Deploy to GitHub Pages
+
+1. Push the repository to GitHub.
+2. Go to **Settings → Pages**.
+3. Under **Build and deployment**, choose **Deploy from a branch**, select `main` and the `/ (root)` folder, then save.
+4. Your site goes live at `https://<your-username>.github.io/<repo-name>/` within a minute or two.
+
+No build pipeline is needed. All asset paths are relative, so the app also works from a sub-folder.
+
+## 🧮 How XP and ranks work
+
 ```
-QuietHours/
-├── index.html          # Toàn bộ shell app + 6 màn hình (Tập trung / Lịch / Bảng / Thống kê / Dữ liệu / Cảm ơn & HD)
-├── css/styles.css      # CSS toàn app + 5 Theme + breakpoints responsive
-├── js/app.js           # Logic toàn app (state, timer, audio, charts, i18n, Lịch âm,…)
-└── data/quotes.json    # 200 câu nói offline song ngữ VI / EN
+XP = 1 × focus minutes  +  5 × completed sessions  +  10 × active days
 ```
 
-### 🧑‍💻 Tác giả
-Tạo ra với ♥ bởi **Việt Hùng (s1gnuh)**
-- GitHub: [github.com/s1gnuh](https://github.com/s1gnuh)
-- Facebook: [viet.hung.183615](https://www.facebook.com/viet.hung.183615/)
-- Instagram: [@s1gnuh](https://www.instagram.com/s1gnuh/?hl=en)
+Each level needs `100 + 50 × (level − 1)` XP. Every **four levels** you move up a rank, and each rank has four divisions (IV → I). **Challenger** is the top tier.
 
-### 📜 Bản quyền
-MIT — sử dụng tự do.
+| Rank | From level | Rank | From level |
+|---|---:|---|---:|
+| Iron | 1 | Emerald | 21 |
+| Bronze | 5 | Diamond | 25 |
+| Silver | 9 | Master | 29 |
+| Gold | 13 | Challenger | 33 |
+| Platinum | 17 | | |
+
+As a rough guide, **a steady 2 focus hours a day reaches Gold in about a month**.
+
+## ⌨️ Keyboard shortcuts
+
+| Key | Action |
+|---|---|
+| `Space` | Start / pause the timer (ignored while a dialog or text field is focused) |
+| `Esc` | Close the open dialog, or leave Zen mode |
+
+## 🔐 Your data and privacy
+
+- Everything — sessions, schedule, board, exams, presets and settings — is saved in your browser's **`localStorage`** under the key `quiethours-static-v1` (plus a few small preference keys for language, theme and onboarding).
+- **Nothing is sent to any server.** The only network requests are two public CDN scripts (Chart.js, html2canvas) and Google Fonts — see the tech stack below.
+- Clearing site data, switching browser or switching device **erases your data**. Use **Data → Export** to download a JSON backup, and **Import** to restore it. Backups from older versions are upgraded automatically.
+
+## 🧰 Tech stack
+
+| Layer | Choice |
+|---|---|
+| Markup & styling | Plain HTML5 and CSS (custom properties for five theme packs) |
+| Logic | Vanilla ES6 JavaScript — no framework, no bundler, no transpiler |
+| Audio | Web Audio API, fully procedural (oscillators, filtered noise, convolution reverb) |
+| Charts | [Chart.js 4.4.1](https://www.chartjs.org/) (CDN) |
+| Image export | [html2canvas 1.4.1](https://html2canvas.hertzen.com/) (CDN) |
+| Fonts | Google Fonts — Figtree and Fraunces |
+| Storage | `localStorage` |
+| Hosting | Any static host; GitHub Pages recommended |
+
+## 📂 Project structure
+
+```
+QuietHours-Pomodoro-SelfStudy/
+├── index.html            # App shell, views and dialogs
+├── css/
+│   ├── styles.css        # Base design system, layout, themes, responsive rules
+│   ├── effects.css       # Motion and visual polish (aurora, dial glow, ripples)
+│   └── features.css      # Heatmap, ranks, exam mode, mixer presets, sky
+├── js/
+│   ├── app.js            # Core: state, timer, audio engine, charts, i18n, lunar calendar, onboarding
+│   ├── effects.js        # Visual effects: aurora, dial ticks and knob, confetti, toasts
+│   └── features.js       # Heatmap, XP / ranks / badges, exam mode, presets, sleep timer, sky
+├── data/quotes.json      # 200 bilingual quotes
+├── docs/screenshots/     # README images
+├── LICENSE
+├── README.md
+└── README.vi.md
+```
+
+`features.js` and `effects.js` are add-on modules: they talk to `app.js` only through a small `window.QH` bridge and `qh:*` DOM events, so each can be removed without touching the core.
+
+## 🤝 Contributing
+
+Issues and pull requests are welcome.
+
+1. Fork the repo and create a branch: `git checkout -b feature/my-idea`
+2. Keep the project dependency-free — no build step, no frameworks.
+3. Test in a current Chromium-based browser and Firefox, on desktop and mobile widths.
+4. Open a pull request describing what changed and why.
+
+**Ideas on the roadmap:** installable PWA with offline cache, JSON backup reminders, notification and wake-lock support, custom Pomodoro presets, more ambient tracks.
+
+## 👤 Author
+
+Made with ♥ by **Việt Hùng ([@s1gnuh](https://github.com/s1gnuh))**
+
+[GitHub](https://github.com/s1gnuh) · [Facebook](https://www.facebook.com/viet.hung.183615/) · [Instagram](https://www.instagram.com/s1gnuh/)
+
+## 📜 License
+
+Released under the [MIT License](LICENSE) — use it freely, personally or commercially.
